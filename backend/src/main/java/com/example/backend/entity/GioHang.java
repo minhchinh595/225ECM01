@@ -3,7 +3,7 @@ package com.example.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity @Table(name = "GioHang")
+@Entity @Table(name = "giohang")
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class GioHang {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

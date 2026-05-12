@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
 
-@Entity @Table(name = "ChiTietGioHang")
+@Entity @Table(name = "chitietgiohang")
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class ChiTietGioHang {
 

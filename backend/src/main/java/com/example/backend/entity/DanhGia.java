@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
-@Entity @Table(name = "DanhGia")
+@Entity @Table(name = "danhgia")
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class DanhGia {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
