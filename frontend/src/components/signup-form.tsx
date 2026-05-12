@@ -70,7 +70,7 @@ export function SignupForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Tạo tài khoản quản trị</h1>
+          <h1 className="text-2xl font-bold">Tạo tài khoản</h1>
         </div>
         <Field>
           <FieldLabel htmlFor="username">Tên đăng nhập</FieldLabel>
