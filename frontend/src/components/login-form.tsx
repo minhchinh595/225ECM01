@@ -39,7 +39,7 @@ export function LoginForm({
         setError(
           submitError instanceof Error
             ? submitError.message
-            : "Khong the dang nhap luc nay",
+            : "Không thể đăng nhập lúc này",
         )
       }
     })
@@ -53,13 +53,10 @@ export function LoginForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Dang nhap quan tri cua hang</h1>
-          <p className="text-sm text-balance text-muted-foreground">
-            Su dung tai khoan backend de vao khu quan ly san pham va nguoi dung
-          </p>
+          <h1 className="text-2xl font-bold">Đăng nhập quản trị cửa hàng</h1>
         </div>
         <Field>
-          <FieldLabel htmlFor="username">Ten dang nhap</FieldLabel>
+          <FieldLabel htmlFor="username">Tên đăng nhập</FieldLabel>
           <Input
             id="username"
             type="text"
@@ -72,7 +69,7 @@ export function LoginForm({
         </Field>
         <Field>
           <div className="flex items-center">
-            <FieldLabel htmlFor="password">Mat khau</FieldLabel>
+            <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
           </div>
           <Input
             id="password"
@@ -90,20 +87,20 @@ export function LoginForm({
         ) : null}
         <Field>
           <Button type="submit" disabled={isPending}>
-            {isPending ? "Dang xu ly..." : "Dang nhap"}
+            {isPending ? "Đang xử lý..." : "Đăng nhập"}
           </Button>
         </Field>
-        <FieldSeparator>Or continue with</FieldSeparator>
+        <FieldSeparator>Hoặc tiếp tục với</FieldSeparator>
         <Field>
           <Button variant="outline" type="button" asChild>
             <Link href="/">
-              Xem giao dien cua hang
+              Xem giao diện cửa hàng
             </Link>
           </Button>
           <FieldDescription className="text-center">
-            Chua co tai khoan?{" "}
+            Chưa có tài khoản?{" "}
             <Link href="/signup" className="underline underline-offset-4">
-              Dang ky ngay
+              Đăng ký ngay
             </Link>
           </FieldDescription>
         </Field>

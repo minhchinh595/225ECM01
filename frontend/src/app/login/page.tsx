@@ -2,18 +2,15 @@
 
 import { LoginForm } from "@/components/login-form"
 import Link from "next/link"
-import { GalleryVerticalEndIcon } from "lucide-react"
+import { ArrowLeftIcon } from "lucide-react"
 
 export default function LoginPage() {
   return (
     <div className="grid min-h-svh bg-[linear-gradient(135deg,#f7efe5_0%,#efe4d4_45%,#d8b38c_100%)] lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Link href="/" className="flex items-center gap-2 font-medium">
-            <div className="flex size-6 items-center justify-center rounded-md bg-stone-900 text-white">
-              <GalleryVerticalEndIcon className="size-4" />
-            </div>
-            Fashion Commerce
+        <div className="flex items-center gap-3">
+          <Link href="/" className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 text-white">
+            <ArrowLeftIcon className="h-5 w-5" />
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
@@ -22,21 +19,21 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="relative hidden overflow-hidden lg:block">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.35),transparent_30%),linear-gradient(180deg,rgba(28,25,23,0.1),rgba(28,25,23,0.55)),linear-gradient(135deg,#7c2d12,#431407,#1c1917)]" />
-        <div className="absolute inset-0 p-12 text-white">
-          <div className="flex h-full flex-col justify-between rounded-[2rem] border border-white/15 bg-white/5 p-8 backdrop-blur-sm">
-            <p className="max-w-sm text-sm uppercase tracking-[0.35em] text-amber-200">
-              Backend-first workflow
+      <div className="relative hidden overflow-hidden lg:block bg-gradient-to-b from-[#261d16] via-[#3c2f24] to-[#5b4735]">
+        <img
+          src="https://cdn-media.sforum.vn/storage/app/media/wp-content/uploads/2024/01/local-brand-la-gi-thumb.jpg"
+          alt="Local fashion brand styled photo"
+          className="absolute inset-0 m-auto h-full w-full max-h-full max-w-full object-contain"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1f170f]/60 via-transparent to-[#473a2f]/70" />
+        <div className="absolute inset-0 flex items-end p-10">
+          <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/30 p-6 text-white backdrop-blur-sm">
+            <p className="text-xs uppercase tracking-[0.35em] text-white/70">
+              Thương hiệu thời trang local
             </p>
-            <div>
-              <h2 className="max-w-lg text-4xl font-semibold leading-tight">
-                Dang nhap de kiem tra API, quan ly san pham va tiep tuc xay dung frontend.
-              </h2>
-              <p className="mt-4 max-w-md text-white/75">
-                Form nay goi truc tiep API `POST /api/nguoi-dung/login` cua Spring Boot.
-              </p>
-            </div>
+            <h2 className="mt-3 text-3xl font-semibold">
+              Đẳng cấp &amp; tinh tế theo phong cách Việt
+            </h2>
           </div>
         </div>
       </div>

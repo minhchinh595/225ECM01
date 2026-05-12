@@ -37,7 +37,7 @@ export function SignupForm({
     setError("")
 
     if (form.matKhau !== form.confirmPassword) {
-      setError("Mat khau xac nhan khong khop")
+      setError("Mật khẩu xác nhận không khớp")
       return
     }
 
@@ -56,7 +56,7 @@ export function SignupForm({
         setError(
           submitError instanceof Error
             ? submitError.message
-            : "Khong the dang ky luc nay",
+            : "Không thể đăng ký lúc này",
         )
       }
     })
@@ -70,13 +70,10 @@ export function SignupForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Tao tai khoan quan tri</h1>
-          <p className="text-sm text-balance text-muted-foreground">
-            Dien thong tin co ban de tao tai khoan va thu nghiem API backend
-          </p>
+          <h1 className="text-2xl font-bold">Tạo tài khoản quản trị</h1>
         </div>
         <Field>
-          <FieldLabel htmlFor="username">Ten dang nhap</FieldLabel>
+          <FieldLabel htmlFor="username">Tên đăng nhập</FieldLabel>
           <Input
             id="username"
             type="text"
@@ -108,12 +105,9 @@ export function SignupForm({
               }))
             }
           />
-          <FieldDescription>
-            Email nay se duoc gui len API `register` cua backend.
-          </FieldDescription>
         </Field>
         <Field>
-          <FieldLabel htmlFor="phone">So dien thoai</FieldLabel>
+          <FieldLabel htmlFor="phone">Số điện thoại</FieldLabel>
           <Input
             id="phone"
             type="text"
@@ -130,7 +124,7 @@ export function SignupForm({
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="address">Dia chi</FieldLabel>
+          <FieldLabel htmlFor="address">Địa chỉ</FieldLabel>
           <Input
             id="address"
             type="text"
@@ -146,7 +140,7 @@ export function SignupForm({
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
           <Input
             id="password"
             type="password"
@@ -160,12 +154,9 @@ export function SignupForm({
               }))
             }
           />
-          <FieldDescription>
-            Backend dang validate toi thieu 6 ky tu.
-          </FieldDescription>
         </Field>
         <Field>
-          <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
+          <FieldLabel htmlFor="confirm-password">Xác nhận mật khẩu</FieldLabel>
           <Input
             id="confirm-password"
             type="password"
@@ -179,7 +170,7 @@ export function SignupForm({
               }))
             }
           />
-          <FieldDescription>Nhap lai mat khau de xac nhan.</FieldDescription>
+          <FieldDescription>Nhập lại mật khẩu để xác nhận.</FieldDescription>
         </Field>
         {error ? (
           <FieldDescription className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -188,20 +179,20 @@ export function SignupForm({
         ) : null}
         <Field>
           <Button type="submit" disabled={isPending}>
-            {isPending ? "Dang tao tai khoan..." : "Tao tai khoan"}
+            {isPending ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
           </Button>
         </Field>
-        <FieldSeparator>Or continue with</FieldSeparator>
+        <FieldSeparator>Hoặc tiếp tục với</FieldSeparator>
         <Field>
           <Button variant="outline" type="button" asChild>
             <Link href="/">
-              Quay ve trang san pham
+              Quay về trang sản phẩm
             </Link>
           </Button>
           <FieldDescription className="px-6 text-center">
-            Da co tai khoan?{" "}
+            Đã có tài khoản?{" "}
             <Link href="/login" className="underline underline-offset-4">
-              Dang nhap
+              Đăng nhập
             </Link>
           </FieldDescription>
         </Field>
