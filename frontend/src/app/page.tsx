@@ -18,7 +18,11 @@ import {
   SearchIcon,
   SparklesIcon,
   StarIcon,
-  StoreIcon,
+  HeartIcon,
+  ShoppingBagIcon,
+  TrendingUpIcon,
+  CheckCircle2Icon,
+  MapPinIcon,
 } from "lucide-react"
 import { startTransition, useDeferredValue, useEffect, useState } from "react"
 
@@ -94,347 +98,499 @@ export default function Home() {
     return matchesCategory && matchesSearch
   })
 
-  const featuredProduct = filteredProducts[0] ?? products[0] ?? null
+  const featuredProducts = filteredProducts.slice(0, 3)
+  const trendingProducts = filteredProducts.slice(0, 6)
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,#fff8ef_0%,#f5ebdf_30%,#efe1d1_62%,#ead8c6_100%)] text-stone-900">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[36rem] bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.9),transparent_22%),radial-gradient(circle_at_80%_10%,rgba(233,180,132,0.25),transparent_24%)]" />
-
-      <section className="relative mx-auto flex max-w-7xl flex-col gap-8 px-5 py-6 lg:px-8 lg:py-8">
-        <header className="rounded-[2.25rem] border border-white/70 bg-white/75 p-5 shadow-[0_28px_80px_rgba(115,84,52,0.12)] backdrop-blur">
-          <div className="flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
-            <div className="max-w-3xl">
-              <Badge
-                variant="outline"
-                className="rounded-full border-amber-200 bg-amber-50 px-3 py-1 text-[0.7rem] uppercase tracking-[0.35em] text-amber-900"
-              >
-                Bộ sưu tập áo dài cao cấp
-              </Badge>
-              <h1 className="mt-5 font-heading text-5xl leading-[0.95] font-semibold text-stone-950 sm:text-6xl xl:text-7xl">
-                Tôn vẻ đẹp Việt bằng thiết kế tinh xảo và cảm hứng thời trang
-                đương đại.
-              </h1>
-              <p className="mt-5 max-w-2xl text-base leading-8 text-stone-600 sm:text-lg">
-                Trang chủ này đang lấy dữ liệu thật từ backend Spring Boot để
-                giới thiệu những thiết kế áo dài, phụ kiện và thương hiệu mang
-                tinh thần thẩm mỹ cao cấp.
-              </p>
+    <main className="bg-white">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 border-b border-stone-100 bg-white/95 backdrop-blur-sm">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-linear-to-br from-amber-500 via-rose-500 to-orange-500" />
+              <span className="font-heading text-2xl font-semibold text-stone-950">
+                THƯƠNG MẠI
+              </span>
             </div>
-
-            <div className="grid gap-3 sm:grid-cols-2 xl:w-[26rem]">
-              <Button
-                asChild
-                size="lg"
-                className="h-12 rounded-full bg-stone-950 px-6 text-white hover:bg-stone-800"
-              >
-                <Link href="/login">Đăng nhập quản trị</Link>
+            <div className="hidden md:flex gap-8">
+              <a href="#collection" className="text-sm font-medium text-stone-600 hover:text-stone-950 transition">
+                Bộ sưu tập
+              </a>
+              <a href="#trending" className="text-sm font-medium text-stone-600 hover:text-stone-950 transition">
+                Xu hướng
+              </a>
+              <a href="#about" className="text-sm font-medium text-stone-600 hover:text-stone-950 transition">
+                Về chúng tôi
+              </a>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button asChild size="sm" variant="outline" className="rounded-full">
+                <Link href="/login">Đăng nhập</Link>
               </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="h-12 rounded-full border-stone-300 bg-white/80 px-6"
-              >
-                <Link href="/signup">Tạo tài khoản mới</Link>
+              <Button asChild size="sm" className="rounded-full bg-stone-950 hover:bg-stone-800">
+                <Link href="/signup">Tham gia</Link>
               </Button>
             </div>
           </div>
-        </header>
+        </div>
+      </nav>
 
-        <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-          <Card className="rounded-[2rem] border-none bg-[linear-gradient(135deg,#171311_0%,#2c211c_45%,#8f5f35_100%)] text-stone-50 shadow-[0_28px_80px_rgba(42,29,21,0.32)]">
-            <CardHeader className="px-6 pt-6">
-              <Badge
-                variant="secondary"
-                className="w-fit rounded-full border border-white/10 bg-white/10 px-3 text-white"
-              >
-                Điểm nhấn từ API
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-stone-50 via-amber-50 to-orange-50 py-20 sm:py-32 lg:py-40">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-gradient-to-br from-amber-200 to-orange-200 opacity-20 blur-3xl" />
+          <div className="absolute -left-40 bottom-0 h-80 w-80 rounded-full bg-gradient-to-tr from-rose-200 to-amber-200 opacity-20 blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 items-center">
+            {/* Left Content */}
+            <div className="space-y-8">
+              <Badge className="w-fit rounded-full bg-amber-100 text-amber-900 hover:bg-amber-100 border-amber-200 border">
+                ✨ Thương hiệu thời trang cao cấp
               </Badge>
-              <CardTitle className="mt-4 max-w-xl font-heading text-3xl leading-tight text-white sm:text-4xl">
-                {featuredProduct?.tenSanPham ??
-                  "Dữ liệu sản phẩm sẽ xuất hiện ngay khi backend trả về."}
-              </CardTitle>
-              <CardDescription className="max-w-lg text-stone-200/80">
-                {featuredProduct?.moTa ??
-                  "Bạn đang xem giao diện storefront ưu tiên cảm xúc thẩm mỹ, kết hợp dữ liệu thật từ cơ sở dữ liệu PostgreSQL."}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-6 px-6 pb-6 pt-2 sm:grid-cols-[0.7fr_0.3fr]">
-              <div className="rounded-[1.6rem] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.32em] text-stone-300/80">
-                      Giá nổi bật
-                    </p>
-                    <p className="mt-3 font-heading text-4xl text-amber-200">
-                      {featuredProduct
-                        ? formatCurrency(featuredProduct.gia)
-                        : "—"}
-                    </p>
-                  </div>
-                  <div className="rounded-full border border-white/12 bg-white/10 p-3">
-                    <SparklesIcon className="size-5 text-amber-200" />
-                  </div>
-                </div>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  <Badge className="rounded-full bg-white/12 px-3 text-white">
-                    {featuredProduct?.tenDanhMuc ?? "Danh mục"}
-                  </Badge>
-                  <Badge className="rounded-full bg-white/12 px-3 text-white">
-                    {featuredProduct?.tenThuongHieu ?? "Thương hiệu"}
-                  </Badge>
-                  <Badge className="rounded-full bg-white/12 px-3 text-white">
-                    {featuredProduct?.size ?? "Nhiều kích cỡ"}
-                  </Badge>
-                </div>
+
+              <div className="space-y-4">
+                <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight text-stone-950">
+                  Thể hiện cá nhân,
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-rose-500 to-orange-500">
+                    tôn vinh phong cách
+                  </span>
+                </h1>
+                <p className="text-lg text-stone-600 leading-relaxed max-w-lg">
+                  Khám phá bộ sưu tập áo dài, thời trang hiện đại và phụ kiện cao cấp từ các thương hiệu địa phương yêu thích. Mỗi sản phẩm được lựa chọn với tâm huyết để mang đến sự tuyệt vời.
+                </p>
               </div>
 
-              <div className="grid gap-3">
-                <StatCard
-                  label="Sản phẩm"
-                  value={products.length}
-                  note="Đang đồng bộ từ backend"
-                />
-                <StatCard
-                  label="Thương hiệu"
-                  value={brands.length}
-                  note="Tạo điểm nhấn bộ sưu tập"
-                />
-                <StatCard
-                  label="Danh mục"
-                  value={categories.length}
-                  note="Giúp khách lọc nhanh hơn"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid gap-5">
-            <Card className="rounded-[2rem] border-none bg-white/82 shadow-[0_22px_60px_rgba(95,73,44,0.12)]">
-              <CardHeader className="px-6 pt-6">
-                <CardTitle className="font-heading text-3xl text-stone-950">
-                  Thẩm mỹ và dữ liệu gặp nhau ở cùng một trải nghiệm.
-                </CardTitle>
-                <CardDescription className="text-stone-600">
-                  Frontend đang dùng shadcn/ui để tạo cấu trúc hiện đại, nhưng
-                  hình khối và màu sắc được đẩy theo hướng sang trọng, mềm và
-                  tinh tế hơn.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="px-6 pb-6">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <FeaturePill title="API đang dùng" value={API_URL} />
-                  <FeaturePill
-                    title="Sản phẩm hiển thị"
-                    value={`${filteredProducts.length} mục`}
-                  />
-                  <FeaturePill
-                    title="Tông giao diện"
-                    value="Kem, hổ phách, nâu đá"
-                  />
-                  <FeaturePill title="Trải nghiệm" value="Biên tập như lookbook" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-[2rem] border-none bg-white/82 shadow-[0_22px_60px_rgba(95,73,44,0.12)]">
-              <CardHeader className="px-6 pt-6">
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                  <div>
-                    <CardDescription className="uppercase tracking-[0.28em] text-stone-500">
-                      Tìm kiếm sản phẩm
-                    </CardDescription>
-                    <CardTitle className="mt-2 font-heading text-3xl">
-                      Chọn đúng chất liệu, đúng phong cách
-                    </CardTitle>
-                  </div>
-                  <div className="relative w-full lg:max-w-sm">
-                    <SearchIcon className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-stone-400" />
-                    <Input
-                      value={search}
-                      onChange={(event) => setSearch(event.target.value)}
-                      placeholder="Tìm theo tên sản phẩm hoặc thương hiệu"
-                      className="h-12 rounded-full border-stone-200 bg-stone-50 pl-11"
-                    />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="flex flex-wrap gap-3 px-6 pb-6">
-                <Button
-                  type="button"
-                  variant={selectedCategory === null ? "default" : "outline"}
-                  className="rounded-full px-4"
-                  onClick={() => startTransition(() => setSelectedCategory(null))}
-                >
-                  Tất cả
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button asChild size="lg" className="rounded-full bg-stone-950 hover:bg-stone-800 px-8 h-12">
+                  <Link href="/login">Khám phá ngay</Link>
                 </Button>
-                {categories.map((category) => (
-                  <Button
-                    key={category.maDanhMuc}
-                    type="button"
-                    variant={
-                      selectedCategory === category.maDanhMuc
-                        ? "default"
-                        : "outline"
-                    }
-                    className="rounded-full px-4"
-                    onClick={() =>
-                      startTransition(() =>
-                        setSelectedCategory(category.maDanhMuc),
-                      )
-                    }
-                  >
-                    {category.tenDanhMuc}
-                  </Button>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-        </section>
+                <Button asChild size="lg" variant="outline" className="rounded-full border-stone-300 px-8 h-12">
+                  <Link href="#collection">Xem bộ sưu tập</Link>
+                </Button>
+              </div>
 
-        {error ? (
-          <div className="rounded-[1.5rem] border border-destructive/20 bg-destructive/10 px-5 py-4 text-sm text-destructive">
-            {error}
-          </div>
-        ) : null}
-
-        <section className="rounded-[2.25rem] border border-white/65 bg-white/78 p-6 shadow-[0_28px_80px_rgba(115,84,52,0.1)] backdrop-blur">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <Badge
-                variant="outline"
-                className="rounded-full border-stone-200 bg-stone-50 px-3 py-1 text-[0.7rem] uppercase tracking-[0.32em] text-stone-700"
-              >
-                Bộ sưu tập đang hiển thị
-              </Badge>
-              <h2 className="mt-4 font-heading text-4xl leading-tight text-stone-950 sm:text-5xl">
-                Những thiết kế được chọn để kể một câu chuyện dịu dàng và sang
-                trọng.
-              </h2>
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-4 pt-4">
+                <div>
+                  <p className="text-3xl font-bold text-stone-950">{products.length}+</p>
+                  <p className="text-sm text-stone-600">Sản phẩm</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-stone-950">{brands.length}</p>
+                  <p className="text-sm text-stone-600">Thương hiệu</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-stone-950">{categories.length}</p>
+                  <p className="text-sm text-stone-600">Danh mục</p>
+                </div>
+              </div>
             </div>
-            <p className="max-w-xl text-sm leading-7 text-stone-600">
-              Giao diện được ưu tiên theo phong cách lookbook: nhiều khoảng
-              thở, typography sang trọng và thẻ sản phẩm nổi khối để tôn cảm
-              giác thẩm mỹ của thương hiệu.
+
+            {/* Right Visual */}
+            <div className="relative h-96 sm:h-[500px] lg:h-[600px]">
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-amber-200/40 via-rose-200/30 to-orange-200/40 blur-2xl" />
+              <div className="absolute inset-0 rounded-3xl border border-white/60 bg-white/20 backdrop-blur-xl overflow-hidden">
+                <div className="h-full w-full flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-6xl mb-4">👗</div>
+                    <p className="text-stone-600 font-medium">Thời trang sang trọng</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Collections */}
+      <section id="collection" className="py-16 sm:py-20 lg:py-24 bg-stone-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-4 mb-16">
+            <Badge className="inline-block rounded-full bg-amber-100 text-amber-900 hover:bg-amber-100 border-amber-200 border">
+              Bộ sưu tập nổi bật
+            </Badge>
+            <h2 className="font-heading text-4xl sm:text-5xl font-bold text-stone-950">
+              Những thiết kế tinh tế, được chọn lọc
+            </h2>
+            <p className="text-lg text-stone-600 max-w-2xl mx-auto">
+              Mỗi bộ sưu tập là câu chuyện về văn hóa, cảm xúc và sự khéo léo trong từng chi tiết
             </p>
           </div>
 
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {/* Featured Products Grid */}
+          {error ? (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 mb-8">
+              {error}
+            </div>
+          ) : null}
+
+          <div className="grid gap-6 md:grid-cols-3 mb-12">
+            {loading
+              ? Array.from({ length: 3 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="h-96 rounded-2xl bg-gradient-to-br from-stone-200 to-stone-300 animate-pulse"
+                  />
+                ))
+              : featuredProducts.map((product) => (
+                  <FeaturedProductCard key={product.maSanPham} product={product} />
+                ))}
+          </div>
+
+          <div className="text-center">
+            <Button asChild size="lg" className="rounded-full bg-stone-950 hover:bg-stone-800">
+              <Link href="#trending">Xem thêm sản phẩm</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Search & Filter Section */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-stone-950">
+                Tìm kiếm sản phẩm yêu thích
+              </h2>
+              <p className="text-lg text-stone-600">
+                Lọc theo danh mục hoặc tìm kiếm từ khóa để khám phá sản phẩm phù hợp với phong cách của bạn
+              </p>
+            </div>
+
+            {/* Search Input */}
+            <div className="relative">
+              <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-stone-400" />
+              <Input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Tìm theo tên sản phẩm, thương hiệu hoặc danh mục..."
+                className="h-14 rounded-full border-stone-200 bg-stone-50 pl-12 text-base"
+              />
+            </div>
+
+            {/* Category Buttons */}
+            <div className="flex flex-wrap gap-3">
+              <Button
+                type="button"
+                variant={selectedCategory === null ? "default" : "outline"}
+                className="rounded-full px-6"
+                onClick={() => startTransition(() => setSelectedCategory(null))}
+              >
+                Tất cả danh mục
+              </Button>
+              {categories.map((category) => (
+                <Button
+                  key={category.maDanhMuc}
+                  type="button"
+                  variant={
+                    selectedCategory === category.maDanhMuc
+                      ? "default"
+                      : "outline"
+                  }
+                  className="rounded-full px-6"
+                  onClick={() =>
+                    startTransition(() =>
+                      setSelectedCategory(category.maDanhMuc),
+                    )
+                  }
+                >
+                  {category.tenDanhMuc}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trending Products */}
+      <section id="trending" className="py-16 sm:py-20 lg:py-24 bg-stone-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between mb-12 gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <TrendingUpIcon className="h-5 w-5 text-amber-600" />
+                <span className="text-sm font-semibold text-amber-600 uppercase tracking-wide">Đang bán chạy</span>
+              </div>
+              <h2 className="font-heading text-4xl sm:text-5xl font-bold text-stone-950">
+                Những sản phẩm được yêu thích
+              </h2>
+            </div>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {loading
               ? Array.from({ length: 6 }).map((_, index) => (
                   <div
                     key={index}
-                    className="min-h-72 rounded-[1.9rem] bg-[linear-gradient(135deg,#f5ece2,#eee2d4)]"
+                    className="h-80 rounded-2xl bg-gradient-to-br from-stone-200 to-stone-300 animate-pulse"
                   />
                 ))
-              : filteredProducts.map((product, index) => (
-                  <article
+              : trendingProducts.map((product, index) => (
+                  <ProductCard
                     key={product.maSanPham}
-                    className="group overflow-hidden rounded-[1.9rem] border border-stone-900/8 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(110,82,49,0.14)]"
-                  >
-                    <div
-                      className="relative flex h-56 items-end overflow-hidden p-5 text-white"
-                      style={{
-                        backgroundImage: `linear-gradient(145deg, rgba(33,28,25,0.96) 0%, rgba(${98 + index * 4}, ${72 + index * 3}, ${49 + index * 2}, 0.94) 48%, rgba(184, 123, 67, 0.92) 100%)`,
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.16),transparent_28%),linear-gradient(180deg,transparent_20%,rgba(0,0,0,0.28)_100%)]" />
-                      <div className="relative">
-                        <Badge className="rounded-full bg-white/12 px-3 text-white">
-                          {product.tenDanhMuc ?? "Danh mục"}
-                        </Badge>
-                        <h3 className="mt-4 font-heading text-3xl leading-tight">
-                          {product.tenSanPham}
-                        </h3>
-                      </div>
-                    </div>
-
-                    <div className="space-y-5 p-5">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <p className="text-sm text-stone-500">Thương hiệu</p>
-                          <p className="mt-1 font-medium text-stone-900">
-                            {product.tenThuongHieu ?? "Chưa gắn"}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-stone-500">Tồn kho</p>
-                          <p className="mt-1 font-medium text-stone-900">
-                            {product.soLuongTon}
-                          </p>
-                        </div>
-                      </div>
-
-                      <p className="line-clamp-3 min-h-[4.5rem] text-sm leading-7 text-stone-600">
-                        {product.moTa ||
-                          "Thiết kế đang được đồng bộ từ hệ thống dữ liệu thật và sẵn sàng hiển thị cho khách hàng."}
-                      </p>
-
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-stone-500">Giá bán</p>
-                          <p className="mt-1 font-heading text-3xl text-rose-700">
-                            {formatCurrency(product.gia)}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2 rounded-full bg-amber-50 px-3 py-2 text-xs font-medium uppercase tracking-[0.18em] text-amber-900">
-                          <StarIcon className="size-3.5 fill-current" />
-                          {product.size || "Nhiều size"}
-                        </div>
-                      </div>
-
-                      <Link
-                        href="/login"
-                        className="inline-flex items-center gap-2 text-sm font-medium text-stone-900 transition-colors hover:text-amber-800"
-                      >
-                        Xem chi tiết và quản trị
-                        <ArrowRightIcon className="size-4" />
-                      </Link>
-                    </div>
-                  </article>
+                    product={product}
+                    index={index}
+                  />
                 ))}
           </div>
-        </section>
-
-        <footer className="pb-8 text-center text-sm text-stone-500">
-          <span className="font-medium text-stone-700">Web Thời Trang</span> ·
-          Giao diện storefront đang đọc dữ liệu thật từ backend Spring Boot và
-          PostgreSQL.
-        </footer>
+        </div>
       </section>
+
+      {/* About Brand Section */}
+      <section id="about" className="py-16 sm:py-20 lg:py-24 bg-gradient-to-r from-stone-950 via-stone-900 to-amber-900 text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-2 items-center">
+            {/* Left */}
+            <div className="space-y-6">
+              <Badge className="w-fit rounded-full bg-white/10 text-white border-white/20 border hover:bg-white/20">
+                Về chúng tôi
+              </Badge>
+
+              <h2 className="font-heading text-4xl sm:text-5xl font-bold leading-tight">
+                Thương hiệu thời trang của người Việt, cho người Việt
+              </h2>
+
+              <p className="text-lg text-white/80 leading-relaxed">
+                Chúng tôi tin rằng thời trang là một cách để thể hiện cá nhân và tôn vinh văn hóa truyền thống. Mỗi sản phẩm được tạo ra với tâm huyết, chất lượng cao và thiết kế tinh tế.
+              </p>
+
+              <div className="space-y-4 pt-4">
+                {[
+                  "Sản phẩm chất lượng cao từ các thương hiệu địa phương",
+                  "Thiết kế hiện đại kết hợp yếu tố truyền thống",
+                  "Dịch vụ chăm sóc khách hàng tuyệt vời",
+                ].map((feature, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <CheckCircle2Icon className="h-5 w-5 mt-0.5 text-amber-300 flex-shrink-0" />
+                    <span className="text-white/90">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right - Stats */}
+            <div className="grid grid-cols-2 gap-6">
+              {[
+                { number: "5K+", label: "Khách hàng hài lòng" },
+                { number: "150+", label: "Sản phẩm được yêu thích" },
+                { number: "50+", label: "Thương hiệu đối tác" },
+                { number: "24/7", label: "Hỗ trợ khách hàng" },
+              ].map((stat, index) => (
+                <div
+                  key={index}
+                  className="rounded-2xl bg-white/10 border border-white/20 p-6 text-center backdrop-blur-sm"
+                >
+                  <p className="text-3xl sm:text-4xl font-bold text-amber-200">
+                    {stat.number}
+                  </p>
+                  <p className="text-sm text-white/70 mt-2">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-8">
+          <div className="space-y-4">
+            <h2 className="font-heading text-4xl sm:text-5xl font-bold text-stone-950">
+              Bạn đã sẵn sàng khám phá?
+            </h2>
+            <p className="text-xl text-stone-600 max-w-2xl mx-auto">
+              Tham gia cộng đồng những người yêu thích thời trang cao cấp và nhận những đặc quyền độc quyền
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <Button asChild size="lg" className="rounded-full bg-stone-950 hover:bg-stone-800 px-8 h-12">
+              <Link href="/signup">Đăng ký miễn phí</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="rounded-full border-stone-300 px-8 h-12">
+              <Link href="#trending">Xem sản phẩm</Link>
+            </Button>
+          </div>
+
+          <div className="pt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 border-t border-stone-200">
+            {[
+              { icon: ShoppingBagIcon, label: "Giao hàng nhanh" },
+              { icon: StarIcon, label: "Chất lượng đảm bảo" },
+              { icon: HeartIcon, label: "100% hài lòng" },
+            ].map((item, index) => (
+              <div key={index} className="space-y-2">
+                <item.icon className="h-6 w-6 mx-auto text-amber-600" />
+                <p className="font-medium text-stone-900">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-stone-950 text-white py-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 via-rose-500 to-orange-500" />
+                <span className="font-heading text-xl font-semibold">THƯƠNG MẠI</span>
+              </div>
+              <p className="text-sm text-white/60">
+                Thương hiệu thời trang cao cấp của người Việt
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="font-semibold text-white">Điều hướng</h3>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><a href="#collection" className="hover:text-white transition">Bộ sưu tập</a></li>
+                <li><a href="#trending" className="hover:text-white transition">Xu hướng</a></li>
+                <li><a href="#about" className="hover:text-white transition">Về chúng tôi</a></li>
+              </ul>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="font-semibold text-white">Hỗ trợ</h3>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><a href="/login" className="hover:text-white transition">Đăng nhập</a></li>
+                <li><a href="/signup" className="hover:text-white transition">Đăng ký</a></li>
+              </ul>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="font-semibold text-white">Liên hệ</h3>
+              <div className="space-y-2 text-sm text-white/60">
+                <p className="flex items-center gap-2">
+                  <MapPinIcon className="h-4 w-4" />
+                  Hà Nội, Việt Nam
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-white/60">
+              © 2024 Thương Mại. Tất cả quyền được bảo lưu.
+            </p>
+            <p className="text-xs text-white/50">
+              Được xây dựng với ❤️ bằng Next.js + Spring Boot
+            </p>
+          </div>
+        </div>
+      </footer>
     </main>
   )
 }
 
-function StatCard({
-  label,
-  value,
-  note,
-}: {
-  label: string
-  value: number
-  note: string
-}) {
+// Featured Product Card Component
+function FeaturedProductCard({ product }: { product: SanPham }) {
   return (
-    <div className="rounded-[1.5rem] border border-white/12 bg-white/7 p-4 backdrop-blur-sm">
-      <p className="text-[0.7rem] uppercase tracking-[0.28em] text-stone-300/80">
-        {label}
-      </p>
-      <p className="mt-2 font-heading text-4xl text-white">{value}</p>
-      <p className="mt-2 text-xs leading-6 text-stone-300/75">{note}</p>
-    </div>
+    <Card className="group overflow-hidden rounded-2xl border-stone-200 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+      <div className="relative h-48 bg-gradient-to-br from-amber-200/40 to-rose-200/40 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </div>
+      <CardContent className="p-6 flex-1 flex flex-col">
+        <div className="mb-4">
+          <Badge className="rounded-full bg-amber-100 text-amber-900 border-amber-200 border">
+            {product.tenDanhMuc ?? "Danh mục"}
+          </Badge>
+        </div>
+        <h3 className="font-heading text-2xl font-semibold text-stone-950 mb-2 line-clamp-2">
+          {product.tenSanPham}
+        </h3>
+        <p className="text-sm text-stone-600 mb-4 flex-1">
+          {product.tenThuongHieu ?? "Thương hiệu cao cấp"}
+        </p>
+        <div className="flex items-end justify-between gap-2 pt-4 border-t border-stone-200">
+          <div>
+            <p className="text-xs text-stone-500 uppercase tracking-wide mb-1">Giá</p>
+            <p className="font-heading text-2xl font-bold text-amber-600">
+              {formatCurrency(product.gia)}
+            </p>
+          </div>
+          <Button asChild size="sm" className="rounded-full bg-stone-950 hover:bg-stone-800">
+            <Link href="/login">Xem</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 
-function FeaturePill({ title, value }: { title: string; value: string }) {
+// Product Card Component
+function ProductCard({
+  product,
+  index,
+}: {
+  product: SanPham
+  index: number
+}) {
   return (
-    <div className="rounded-[1.4rem] border border-stone-200 bg-stone-50 px-4 py-3">
-      <p className="text-[0.68rem] uppercase tracking-[0.28em] text-stone-500">
-        {title}
-      </p>
-      <p className="mt-2 text-sm font-medium leading-6 text-stone-900">
-        {value}
-      </p>
-    </div>
+    <Card className="group overflow-hidden rounded-2xl border-stone-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
+      <div
+        className="relative h-52 overflow-hidden bg-gradient-to-br"
+        style={{
+          backgroundImage: `linear-gradient(135deg, rgba(${217 - index * 10}, ${180 - index * 8}, ${140 - index * 6}, 0.8) 0%, rgba(${245 - index * 12}, ${200 - index * 10}, ${150 - index * 8}, 0.6) 100%)`,
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-6xl opacity-30 group-hover:opacity-40 transition-opacity">
+            👔
+          </div>
+        </div>
+      </div>
+
+      <CardContent className="p-5 flex-1 flex flex-col">
+        <div className="mb-3">
+          <Badge variant="outline" className="rounded-full text-xs">
+            {product.tenDanhMuc ?? "Danh mục"}
+          </Badge>
+        </div>
+
+        <h3 className="font-heading text-xl font-semibold text-stone-950 mb-1 line-clamp-2">
+          {product.tenSanPham}
+        </h3>
+
+        <p className="text-xs text-stone-500 mb-3">
+          {product.tenThuongHieu ?? "Thương hiệu"}
+        </p>
+
+        <p className="text-sm text-stone-600 mb-4 line-clamp-2 flex-1">
+          {product.moTa || "Sản phẩm chất lượng cao"}
+        </p>
+
+        <div className="space-y-3 pt-3 border-t border-stone-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-stone-500 mb-1">Giá</p>
+              <p className="font-heading text-2xl font-bold text-amber-600">
+                {formatCurrency(product.gia)}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-stone-500 mb-1">Kho</p>
+              <p className="font-semibold text-stone-900">{product.soLuongTon}</p>
+            </div>
+          </div>
+
+          <Button
+            asChild
+            className="w-full rounded-full bg-stone-950 hover:bg-stone-800 text-white"
+          >
+            <Link href="/login" className="flex items-center justify-center gap-2">
+              <ShoppingBagIcon className="h-4 w-4" />
+              Xem chi tiết
+            </Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
