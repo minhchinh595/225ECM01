@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import Link from "next/link"
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
@@ -13,180 +14,118 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { GalleryVerticalEndIcon, AudioLinesIcon, TerminalIcon, TerminalSquareIcon, BotIcon, BookOpenIcon, Settings2Icon, FrameIcon, PieChartIcon, MapIcon } from "lucide-react"
+import { getStoredUser } from "@/lib/auth"
+import {
+  GalleryVerticalEndIcon,
+  HomeIcon,
+  Layers3Icon,
+  PackageIcon,
+  ShoppingBagIcon,
+  TagsIcon,
+  UsersIcon,
+} from "lucide-react"
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+const baseData = {
   teams: [
     {
-      name: "Acme Inc",
-      logo: (
-        <GalleryVerticalEndIcon
-        />
-      ),
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: (
-        <AudioLinesIcon
-        />
-      ),
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: (
-        <TerminalIcon
-        />
-      ),
-      plan: "Free",
+      name: "Web Thoi Trang",
+      logo: <GalleryVerticalEndIcon />,
+      plan: "Spring Boot + Next.js",
     },
   ],
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: (
-        <TerminalSquareIcon
-        />
-      ),
+      title: "Tong quan",
+      url: "/dashboard",
+      icon: <HomeIcon />,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Dashboard",
+          url: "/dashboard",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Trang chu",
+          url: "/",
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: (
-        <BotIcon
-        />
-      ),
+      title: "Danh muc",
+      url: "/dashboard",
+      icon: <Layers3Icon />,
       items: [
         {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
+          title: "San pham",
+          url: "/dashboard",
         },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: (
-        <BookOpenIcon
-        />
-      ),
+      title: "Tai nguyen",
+      url: "/dashboard",
+      icon: <TagsIcon />,
       items: [
         {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: (
-        <Settings2Icon
-        />
-      ),
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
+          title: "Thuong hieu",
+          url: "/dashboard",
         },
       ],
     },
   ],
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: (
-        <FrameIcon
-        />
-      ),
+      name: "San pham",
+      url: "/dashboard",
+      icon: <PackageIcon />,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: (
-        <PieChartIcon
-        />
-      ),
+      name: "Nguoi dung",
+      url: "/dashboard",
+      icon: <UsersIcon />,
     },
     {
-      name: "Travel",
-      url: "#",
-      icon: (
-        <MapIcon
-        />
-      ),
+      name: "Ban hang",
+      url: "/",
+      icon: <ShoppingBagIcon />,
     },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [userName, setUserName] = React.useState("Khach")
+  const [email, setEmail] = React.useState("guest@example.com")
+
+  React.useEffect(() => {
+    const user = getStoredUser()
+    if (!user) {
+      return
+    }
+    setUserName(user.tenDangNhap)
+    setEmail(user.email)
+  }, [])
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <div className="px-2 pt-2">
+          <Link href="/" className="block">
+            <TeamSwitcher teams={baseData.teams} />
+          </Link>
+        </div>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={baseData.navMain} />
+        <NavProjects projects={baseData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser
+          user={{
+            name: userName,
+            email,
+            avatar: "",
+          }}
+        />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

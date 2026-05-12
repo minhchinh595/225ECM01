@@ -1,0 +1,1 @@
+- [Project Stack](project_stack.md) — Spring Boot backend, Next.js frontend, PostgreSQL database
