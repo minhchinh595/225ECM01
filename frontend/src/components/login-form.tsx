@@ -53,7 +53,7 @@ export function LoginForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Đăng nhập quản trị cửa hàng</h1>
+          <h1 className="text-2xl font-bold">Đăng nhập</h1>
         </div>
         <Field>
           <FieldLabel htmlFor="username">Tên đăng nhập</FieldLabel>
