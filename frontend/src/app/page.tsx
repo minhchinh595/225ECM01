@@ -5,9 +5,6 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { API_URL, getBrands, getCategories, getProducts } from "@/lib/api"
@@ -32,6 +29,32 @@ function formatCurrency(value: number) {
     currency: "VND",
   }).format(value)
 }
+
+const API_ORIGIN = API_URL.replace(/\/api\/?$/, "")
+
+function productImageSrc(hinhAnh?: string | null): string | null {
+  if (!hinhAnh?.trim()) {
+    return null
+  }
+  const path = hinhAnh.trim()
+  if (/^https?:\/\//i.test(path)) {
+    return path
+  }
+  return `${API_ORIGIN}${path.startsWith("/") ? path : `/${path}`}`
+}
+
+/** Hero lookbook — ảnh banner local brand (hiển thị trọn, không crop) */
+const HERO_IMAGE =
+  "https://cdn-media.sforum.vn/storage/app/media/wp-content/uploads/2024/01/local-brand-la-gi-thumb.jpg"
+
+const FALLBACK_GRADIENTS = [
+  "from-rose-50 via-orange-50/90 to-amber-100/80",
+  "from-violet-50 via-fuchsia-50/70 to-rose-50/80",
+  "from-sky-50 via-indigo-50/80 to-violet-100/70",
+  "from-emerald-50 via-teal-50/80 to-cyan-50/70",
+  "from-amber-50 via-orange-50/70 to-rose-50/80",
+  "from-stone-100 via-neutral-50 to-zinc-100",
+]
 
 export default function Home() {
   const [products, setProducts] = useState<SanPham[]>([])
@@ -102,138 +125,200 @@ export default function Home() {
   const trendingProducts = filteredProducts.slice(0, 6)
 
   return (
-    <main className="bg-white">
+    <main className="min-h-svh scroll-smooth bg-[#faf9f7] text-stone-900 antialiased selection:bg-amber-200/40 selection:text-stone-900">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-stone-100 bg-white/95 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-linear-to-br from-amber-500 via-rose-500 to-orange-500" />
-              <span className="font-heading text-2xl font-semibold text-stone-950">
-                THƯƠNG MẠI
+      <header className="sticky top-0 z-50 border-b border-stone-200/50 bg-[#faf9f7]/80 backdrop-blur-xl backdrop-saturate-150">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+          <Link href="/" className="group flex items-center gap-3">
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-200 via-rose-100 to-violet-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] ring-1 ring-white/80">
+              <span className="font-heading text-lg font-bold tracking-tight text-stone-800">
+                T
               </span>
             </div>
-            <div className="hidden md:flex gap-8">
-              <a href="#collection" className="text-sm font-medium text-stone-600 hover:text-stone-950 transition">
-                Bộ sưu tập
-              </a>
-              <a href="#trending" className="text-sm font-medium text-stone-600 hover:text-stone-950 transition">
-                Xu hướng
-              </a>
-              <a href="#about" className="text-sm font-medium text-stone-600 hover:text-stone-950 transition">
-                Về chúng tôi
-              </a>
+            <div className="leading-tight">
+              <span className="font-heading block text-lg font-semibold tracking-[0.12em] text-stone-900 sm:text-xl">
+                THƯƠNG MẠI
+              </span>
+              <span className="hidden text-[10px] font-medium uppercase tracking-[0.28em] text-stone-500 sm:block">
+                Maison locale
+              </span>
             </div>
-            <div className="flex items-center gap-3">
-              <Button asChild size="sm" variant="outline" className="rounded-full">
-                <Link href="/login">Đăng nhập</Link>
-              </Button>
-              <Button asChild size="sm" className="rounded-full bg-stone-950 hover:bg-stone-800">
-                <Link href="/signup">Tham gia</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+          </Link>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-stone-50 via-amber-50 to-orange-50 py-20 sm:py-32 lg:py-40">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-gradient-to-br from-amber-200 to-orange-200 opacity-20 blur-3xl" />
-          <div className="absolute -left-40 bottom-0 h-80 w-80 rounded-full bg-gradient-to-tr from-rose-200 to-amber-200 opacity-20 blur-3xl" />
+          <div className="hidden items-center gap-10 md:flex">
+            {[
+              { href: "#collection", label: "Bộ sưu tập" },
+              { href: "#trending", label: "Xu hướng" },
+              { href: "#about", label: "Câu chuyện" },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="text-sm font-medium text-stone-500 transition-colors hover:text-stone-900"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <Button
+              asChild
+              size="sm"
+              variant="ghost"
+              className="rounded-full px-4 text-stone-600 hover:bg-white/80 hover:text-stone-900"
+            >
+              <Link href="/login">Đăng nhập</Link>
+            </Button>
+            <Button
+              asChild
+              size="sm"
+              className="rounded-full border-0 bg-stone-900 px-5 text-white shadow-lg shadow-stone-900/15 transition hover:bg-stone-800 hover:shadow-xl"
+            >
+              <Link href="/signup">Tham gia</Link>
+            </Button>
+          </div>
+        </nav>
+      </header>
+
+      {/* Hero */}
+      <section className="relative overflow-x-clip pb-20 pt-12 sm:pb-28 sm:pt-16 lg:pb-36 lg:pt-20">
+        <div
+          className="pointer-events-none absolute inset-0"
+          aria-hidden
+        >
+          <div className="absolute -left-32 top-20 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-amber-100/50 via-rose-100/40 to-transparent blur-3xl" />
+          <div className="absolute -right-24 bottom-0 h-[380px] w-[380px] rounded-full bg-gradient-to-tl from-violet-100/50 via-sky-50/40 to-transparent blur-3xl" />
+          <div className="absolute left-1/2 top-0 h-px w-[min(80%,48rem)] -translate-x-1/2 bg-gradient-to-r from-transparent via-stone-300/40 to-transparent" />
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 items-center">
-            {/* Left Content */}
-            <div className="space-y-8">
-              <Badge className="w-fit rounded-full bg-amber-100 text-amber-900 hover:bg-amber-100 border-amber-200 border">
-                ✨ Thương hiệu thời trang cao cấp
+          <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start lg:gap-10 xl:gap-12">
+            <div className="order-2 space-y-8 lg:order-1 lg:max-w-none lg:pr-2 xl:pr-4">
+              <Badge className="w-fit gap-1.5 rounded-full border border-amber-200/60 bg-white/90 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-900/90 shadow-sm shadow-amber-900/5 backdrop-blur-sm">
+                <SparklesIcon className="size-3.5" aria-hidden />
+                Thời trang tuyển chọn
               </Badge>
 
-              <div className="space-y-4">
-                <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight text-stone-950">
-                  Thể hiện cá nhân,
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-rose-500 to-orange-500">
-                    tôn vinh phong cách
+              <div className="space-y-6">
+                <h1 className="font-heading text-[clamp(2.5rem,6vw,4.25rem)] font-semibold leading-[1.08] tracking-tight text-stone-950">
+                  Nơi phong cách
+                  <span className="mt-1 block bg-gradient-to-r from-amber-700 via-rose-600 to-violet-700 bg-clip-text font-semibold text-transparent">
+                    được thì thầm
                   </span>
                 </h1>
-                <p className="text-lg text-stone-600 leading-relaxed max-w-lg">
-                  Khám phá bộ sưu tập áo dài, thời trang hiện đại và phụ kiện cao cấp từ các thương hiệu địa phương yêu thích. Mỗi sản phẩm được lựa chọn với tâm huyết để mang đến sự tuyệt vời.
+                <p className="max-w-xl text-lg leading-relaxed text-stone-600 sm:text-xl">
+                  Ánh sáng dịu, chất liệu chọn lọc và đường cắt tinh tế — mỗi món đồ là lời mời để bạn sống chậm và đẹp hơn mỗi ngày.
                 </p>
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Button asChild size="lg" className="rounded-full bg-stone-950 hover:bg-stone-800 px-8 h-12">
-                  <Link href="/login">Khám phá ngay</Link>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Button
+                  asChild
+                  size="lg"
+                  className="h-12 rounded-full border-0 bg-stone-900 px-8 text-[15px] font-medium text-white shadow-xl shadow-stone-900/20 transition hover:bg-stone-800 hover:shadow-2xl"
+                >
+                  <Link href="#collection" className="inline-flex items-center gap-2">
+                    Khám phá bộ sưu tập
+                    <ArrowRightIcon className="size-4" />
+                  </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="rounded-full border-stone-300 px-8 h-12">
-                  <Link href="#collection">Xem bộ sưu tập</Link>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="h-12 rounded-full border-stone-200/90 bg-white/70 px-8 text-[15px] font-medium text-stone-800 shadow-sm backdrop-blur-sm transition hover:border-stone-300 hover:bg-white"
+                >
+                  <Link href="/signup">Trải nghiệm thành viên</Link>
                 </Button>
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-4 pt-4">
-                <div>
-                  <p className="text-3xl font-bold text-stone-950">{products.length}+</p>
-                  <p className="text-sm text-stone-600">Sản phẩm</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-stone-950">{brands.length}</p>
-                  <p className="text-sm text-stone-600">Thương hiệu</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-stone-950">{categories.length}</p>
-                  <p className="text-sm text-stone-600">Danh mục</p>
-                </div>
-              </div>
+              <dl className="grid max-w-md grid-cols-3 gap-4 border-t border-stone-200/60 pt-8">
+                {[
+                  { value: `${products.length || "—"}`, label: "Sản phẩm" },
+                  { value: `${brands.length || "—"}`, label: "Thương hiệu" },
+                  { value: `${categories.length || "—"}`, label: "Danh mục" },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-2xl border border-white/80 bg-white/50 px-3 py-3 text-center shadow-sm backdrop-blur-sm"
+                  >
+                    <dt className="sr-only">{stat.label}</dt>
+                    <dd className="font-heading text-2xl font-semibold tabular-nums text-stone-900 sm:text-3xl">
+                      {loading ? "…" : stat.value}
+                      {!loading && stat.label === "Sản phẩm" ? "+" : null}
+                    </dd>
+                    <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-stone-500">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </dl>
             </div>
 
-            {/* Right Visual */}
-            <div className="relative h-96 sm:h-[500px] lg:h-[600px]">
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-amber-200/40 via-rose-200/30 to-orange-200/40 blur-2xl" />
-              <div className="absolute inset-0 rounded-3xl border border-white/60 bg-white/20 backdrop-blur-xl overflow-hidden">
-                <div className="h-full w-full flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-6xl mb-4">👗</div>
-                    <p className="text-stone-600 font-medium">Thời trang sang trọng</p>
+            <div className="order-1 w-full lg:order-2">
+              <div className="relative mx-auto w-[min(100%,20rem)] sm:w-[min(100%,22rem)] md:w-[min(100%,24rem)] lg:mx-0 lg:ms-auto lg:me-0 lg:w-[min(100%,28rem)] xl:w-[min(100%,32rem)]">
+                <div
+                  className="pointer-events-none absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-amber-200/30 via-rose-200/20 to-violet-200/25 blur-2xl"
+                  aria-hidden
+                />
+                <figure className="relative grid aspect-[3/4] w-full grid-rows-[3fr_1fr] overflow-hidden rounded-[1.75rem] bg-white shadow-[0_24px_60px_-20px_rgba(28,25,23,0.2)] ring-1 ring-stone-200/60 sm:rounded-[2rem] lg:rounded-[2.25rem]">
+                  <div className="relative min-h-0 overflow-hidden bg-neutral-950">
+                    <img
+                      src={HERO_IMAGE}
+                      alt="Local brand Việt Nam — lookbook streetwear"
+                      className="absolute inset-0 h-full w-full object-cover object-center"
+                      fetchPriority="high"
+                      loading="eager"
+                      decoding="async"
+                    />
                   </div>
-                </div>
+                  <figcaption className="flex min-h-0 flex-col justify-center border-t border-stone-100 bg-white px-5 py-4 text-center sm:px-6 sm:py-5">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-stone-500">
+                      Lookbook
+                    </p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-stone-600 sm:text-sm">
+                      Hình ảnh thương hiệu địa phương — chất riêng, phối đồ urban.
+                    </p>
+                  </figcaption>
+                </figure>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Collections */}
-      <section id="collection" className="py-16 sm:py-20 lg:py-24 bg-stone-50">
+      {/* Featured */}
+      <section
+        id="collection"
+        className="relative border-y border-stone-200/40 bg-white py-20 sm:py-24 lg:py-28"
+      >
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 mb-16">
-            <Badge className="inline-block rounded-full bg-amber-100 text-amber-900 hover:bg-amber-100 border-amber-200 border">
-              Bộ sưu tập nổi bật
-            </Badge>
-            <h2 className="font-heading text-4xl sm:text-5xl font-bold text-stone-950">
-              Những thiết kế tinh tế, được chọn lọc
+          <div className="mx-auto mb-14 max-w-3xl text-center sm:mb-20">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.35em] text-amber-800/80">
+              Curated edit
+            </p>
+            <h2 className="font-heading text-4xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
+              Những thiết kế khiến ánh nhìn dừng lại
             </h2>
-            <p className="text-lg text-stone-600 max-w-2xl mx-auto">
-              Mỗi bộ sưu tập là câu chuyện về văn hóa, cảm xúc và sự khéo léo trong từng chi tiết
+            <p className="mt-4 text-lg text-stone-600">
+              Tuyển chọn từ các nhà mốt địa phương — mỗi sản phẩm là một tuyên ngôn nhẹ nhàng về gu thẩm mỹ của bạn.
             </p>
           </div>
 
-          {/* Featured Products Grid */}
           {error ? (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 mb-8">
+            <div className="mb-10 rounded-2xl border border-red-200/80 bg-red-50/90 px-5 py-4 text-sm text-red-800 backdrop-blur-sm">
               {error}
             </div>
           ) : null}
 
-          <div className="grid gap-6 md:grid-cols-3 mb-12">
+          <div className="grid gap-6 sm:gap-8 md:grid-cols-3">
             {loading
               ? Array.from({ length: 3 }).map((_, index) => (
                   <div
                     key={index}
-                    className="h-96 rounded-2xl bg-gradient-to-br from-stone-200 to-stone-300 animate-pulse"
+                    className="aspect-[3/4] animate-pulse rounded-[1.75rem] bg-gradient-to-br from-stone-100 to-stone-200/80"
                   />
                 ))
               : featuredProducts.map((product) => (
@@ -241,47 +326,57 @@ export default function Home() {
                 ))}
           </div>
 
-          <div className="text-center">
-            <Button asChild size="lg" className="rounded-full bg-stone-950 hover:bg-stone-800">
-              <Link href="#trending">Xem thêm sản phẩm</Link>
+          <div className="mt-14 flex justify-center sm:mt-16">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="h-12 rounded-full border-stone-200 bg-[#faf9f7] px-8 text-[15px] font-medium text-stone-800 shadow-sm transition hover:border-stone-300 hover:bg-white"
+            >
+              <Link href="#trending" className="inline-flex items-center gap-2">
+                Xem toàn bộ xu hướng
+                <ArrowRightIcon className="size-4" />
+              </Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Search & Filter Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white">
+      {/* Search & filter */}
+      <section className="relative py-20 sm:py-24 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-stone-950">
-                Tìm kiếm sản phẩm yêu thích
+          <div className="rounded-[2rem] border border-stone-200/80 bg-gradient-to-br from-white via-[#fdfcfa] to-amber-50/30 p-8 shadow-[0_24px_60px_-28px_rgba(28,25,23,0.12)] sm:p-10 lg:p-12">
+            <div className="mb-8 max-w-2xl space-y-3">
+              <h2 className="font-heading text-3xl font-semibold tracking-tight text-stone-950 sm:text-4xl">
+                Tìm kiếm trong kho tàng phong cách
               </h2>
-              <p className="text-lg text-stone-600">
-                Lọc theo danh mục hoặc tìm kiếm từ khóa để khám phá sản phẩm phù hợp với phong cách của bạn
+              <p className="text-stone-600">
+                Gõ vài từ — chúng tôi lọc theo danh mục và thương hiệu để bạn chạm đúng món đồ trong tâm trí.
               </p>
             </div>
 
-            {/* Search Input */}
-            <div className="relative">
-              <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-stone-400" />
+            <div className="relative mb-8">
+              <SearchIcon className="pointer-events-none absolute left-5 top-1/2 size-5 -translate-y-1/2 text-stone-400" />
               <Input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Tìm theo tên sản phẩm, thương hiệu hoặc danh mục..."
-                className="h-14 rounded-full border-stone-200 bg-stone-50 pl-12 text-base"
+                placeholder="Tên sản phẩm, thương hiệu…"
+                className="h-14 rounded-2xl border-stone-200/90 bg-white/90 pl-14 pr-5 text-base shadow-inner shadow-stone-900/[0.03] transition focus-visible:border-amber-300/60 focus-visible:ring-amber-200/40"
               />
             </div>
 
-            {/* Category Buttons */}
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2.5">
               <Button
                 type="button"
                 variant={selectedCategory === null ? "default" : "outline"}
-                className="rounded-full px-6"
+                className={
+                  selectedCategory === null
+                    ? "rounded-full border-0 bg-stone-900 px-6 text-white shadow-md hover:bg-stone-800"
+                    : "rounded-full border-stone-200/90 bg-white/80 px-6 text-stone-700 shadow-sm hover:bg-white"
+                }
                 onClick={() => startTransition(() => setSelectedCategory(null))}
               >
-                Tất cả danh mục
+                Tất cả
               </Button>
               {categories.map((category) => (
                 <Button
@@ -292,7 +387,11 @@ export default function Home() {
                       ? "default"
                       : "outline"
                   }
-                  className="rounded-full px-6"
+                  className={
+                    selectedCategory === category.maDanhMuc
+                      ? "rounded-full border-0 bg-stone-900 px-6 text-white shadow-md hover:bg-stone-800"
+                      : "rounded-full border-stone-200/90 bg-white/80 px-6 text-stone-700 shadow-sm hover:bg-white"
+                  }
                   onClick={() =>
                     startTransition(() =>
                       setSelectedCategory(category.maDanhMuc),
@@ -307,27 +406,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trending Products */}
-      <section id="trending" className="py-16 sm:py-20 lg:py-24 bg-stone-50">
+      {/* Trending */}
+      <section
+        id="trending"
+        className="border-t border-stone-200/40 bg-[#f7f5f2] py-20 sm:py-24 lg:py-28"
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-12 gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <TrendingUpIcon className="h-5 w-5 text-amber-600" />
-                <span className="text-sm font-semibold text-amber-600 uppercase tracking-wide">Đang bán chạy</span>
+          <div className="mb-12 flex flex-col gap-4 sm:mb-16 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-amber-200/60 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-900 shadow-sm">
+                <TrendingUpIcon className="size-3.5" aria-hidden />
+                Được yêu thích
               </div>
-              <h2 className="font-heading text-4xl sm:text-5xl font-bold text-stone-950">
-                Những sản phẩm được yêu thích
+              <h2 className="font-heading text-4xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
+                Làn sóng mới nhất
               </h2>
+              <p className="mt-3 max-w-lg text-stone-600">
+                Những món đang được săn đón — chất liệu mềm, form dễ mặc, đủ sức gánh một buổi tối thảnh thơi.
+              </p>
             </div>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
             {loading
               ? Array.from({ length: 6 }).map((_, index) => (
                   <div
                     key={index}
-                    className="h-80 rounded-2xl bg-gradient-to-br from-stone-200 to-stone-300 animate-pulse"
+                    className="aspect-[3/4] animate-pulse rounded-[1.75rem] bg-gradient-to-br from-stone-100 to-stone-200/70"
                   />
                 ))
               : trendingProducts.map((product, index) => (
@@ -341,54 +446,60 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About Brand Section */}
-      <section id="about" className="py-16 sm:py-20 lg:py-24 bg-gradient-to-r from-stone-950 via-stone-900 to-amber-900 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 items-center">
-            {/* Left */}
-            <div className="space-y-6">
-              <Badge className="w-fit rounded-full bg-white/10 text-white border-white/20 border hover:bg-white/20">
+      {/* About — light premium panel */}
+      <section
+        id="about"
+        className="relative overflow-hidden py-20 sm:py-24 lg:py-28"
+      >
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(251,191,36,0.12),transparent),radial-gradient(ellipse_60%_50%_at_100%_50%,rgba(196,181,253,0.12),transparent)]"
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="overflow-hidden rounded-[2rem] border border-stone-200/60 bg-white/90 p-8 shadow-[0_28px_70px_-32px_rgba(28,25,23,0.15)] backdrop-blur-md sm:p-12 lg:grid lg:grid-cols-2 lg:gap-16 lg:p-16">
+            <div className="space-y-6 lg:space-y-8">
+              <Badge className="w-fit rounded-full border border-violet-200/80 bg-violet-50/80 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-violet-900 hover:bg-violet-50/80">
                 Về chúng tôi
               </Badge>
-
-              <h2 className="font-heading text-4xl sm:text-5xl font-bold leading-tight">
-                Thương hiệu thời trang của người Việt, cho người Việt
+              <h2 className="font-heading text-3xl font-semibold leading-tight tracking-tight text-stone-950 sm:text-4xl lg:text-[2.75rem]">
+                Thời trang Việt — tinh tế, hiện đại, chạm vào cảm xúc
               </h2>
-
-              <p className="text-lg text-white/80 leading-relaxed">
-                Chúng tôi tin rằng thời trang là một cách để thể hiện cá nhân và tôn vinh văn hóa truyền thống. Mỗi sản phẩm được tạo ra với tâm huyết, chất lượng cao và thiết kế tinh tế.
+              <p className="text-lg leading-relaxed text-stone-600">
+                Chúng tôi tin vào sự chậm rãi: chọn ít hơn nhưng đẹp hơn, ưu tiên thợ lành nghề và câu chuyện đằng sau mỗi đường may.
               </p>
-
-              <div className="space-y-4 pt-4">
+              <ul className="space-y-4 pt-2">
                 {[
-                  "Sản phẩm chất lượng cao từ các thương hiệu địa phương",
-                  "Thiết kế hiện đại kết hợp yếu tố truyền thống",
-                  "Dịch vụ chăm sóc khách hàng tuyệt vời",
-                ].map((feature, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <CheckCircle2Icon className="h-5 w-5 mt-0.5 text-amber-300 flex-shrink-0" />
-                    <span className="text-white/90">{feature}</span>
-                  </div>
+                  "Chất liệu và thương hiệu được kiểm duyệt kỹ lưỡng",
+                  "Cân bằng giữa nét truyền thống và nhịp sống đô thị",
+                  "Đồng hành cùng bạn trước và sau khi mua",
+                ].map((feature) => (
+                  <li key={feature} className="flex gap-3 text-stone-700">
+                    <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-800">
+                      <CheckCircle2Icon className="size-4" aria-hidden />
+                    </span>
+                    {feature}
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
 
-            {/* Right - Stats */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-5 lg:mt-0">
               {[
-                { number: "5K+", label: "Khách hàng hài lòng" },
-                { number: "150+", label: "Sản phẩm được yêu thích" },
-                { number: "50+", label: "Thương hiệu đối tác" },
-                { number: "24/7", label: "Hỗ trợ khách hàng" },
-              ].map((stat, index) => (
+                { number: "5K+", label: "Khách hàng tin chọn" },
+                { number: "150+", label: "Mẫu được yêu thích" },
+                { number: "50+", label: "Đối tác thương hiệu" },
+                { number: "24/7", label: "Hỗ trợ trực tuyến" },
+              ].map((stat) => (
                 <div
-                  key={index}
-                  className="rounded-2xl bg-white/10 border border-white/20 p-6 text-center backdrop-blur-sm"
+                  key={stat.label}
+                  className="flex flex-col justify-center rounded-2xl border border-stone-100 bg-gradient-to-br from-[#faf9f7] to-white p-6 text-center shadow-sm"
                 >
-                  <p className="text-3xl sm:text-4xl font-bold text-amber-200">
+                  <p className="font-heading text-3xl font-semibold text-transparent sm:text-4xl bg-gradient-to-r from-amber-700 to-rose-600 bg-clip-text">
                     {stat.number}
                   </p>
-                  <p className="text-sm text-white/70 mt-2">{stat.label}</p>
+                  <p className="mt-2 text-xs font-medium uppercase tracking-wider text-stone-500">
+                    {stat.label}
+                  </p>
                 </div>
               ))}
             </div>
@@ -396,90 +507,155 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-8">
-          <div className="space-y-4">
-            <h2 className="font-heading text-4xl sm:text-5xl font-bold text-stone-950">
-              Bạn đã sẵn sàng khám phá?
+      {/* CTA */}
+      <section className="py-20 sm:py-24 lg:py-28">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <div className="relative overflow-hidden rounded-[2rem] border border-stone-200/80 bg-gradient-to-b from-white to-amber-50/40 px-6 py-14 shadow-[0_32px_80px_-40px_rgba(28,25,23,0.2)] sm:px-12 sm:py-16">
+            <div
+              className="pointer-events-none absolute -right-20 -top-20 size-64 rounded-full bg-amber-200/25 blur-3xl"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute -bottom-16 -left-16 size-56 rounded-full bg-violet-200/20 blur-3xl"
+              aria-hidden
+            />
+            <h2 className="relative font-heading text-3xl font-semibold tracking-tight text-stone-950 sm:text-4xl lg:text-5xl">
+              Sẵn sàng để tủ đồ của bạn
+              <span className="mt-1 block text-stone-600">kể một câu chuyện mới?</span>
             </h2>
-            <p className="text-xl text-stone-600 max-w-2xl mx-auto">
-              Tham gia cộng đồng những người yêu thích thời trang cao cấp và nhận những đặc quyền độc quyền
+            <p className="relative mx-auto mt-5 max-w-xl text-lg text-stone-600">
+              Tham gia để nhận gợi ý phối đồ, ưu đãi dành riêng và quyền truy cập sớm vào các drop giới hạn.
             </p>
-          </div>
+            <div className="relative mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:justify-center">
+              <Button
+                asChild
+                size="lg"
+                className="h-12 rounded-full border-0 bg-stone-900 px-8 text-[15px] font-medium text-white shadow-lg hover:bg-stone-800"
+              >
+                <Link href="/signup">Đăng ký miễn phí</Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="h-12 rounded-full border-stone-200 bg-white/80 px-8 text-[15px] font-medium text-stone-800 hover:bg-white"
+              >
+                <Link href="#trending">Xem sản phẩm</Link>
+              </Button>
+            </div>
 
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Button asChild size="lg" className="rounded-full bg-stone-950 hover:bg-stone-800 px-8 h-12">
-              <Link href="/signup">Đăng ký miễn phí</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full border-stone-300 px-8 h-12">
-              <Link href="#trending">Xem sản phẩm</Link>
-            </Button>
-          </div>
-
-          <div className="pt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 border-t border-stone-200">
-            {[
-              { icon: ShoppingBagIcon, label: "Giao hàng nhanh" },
-              { icon: StarIcon, label: "Chất lượng đảm bảo" },
-              { icon: HeartIcon, label: "100% hài lòng" },
-            ].map((item, index) => (
-              <div key={index} className="space-y-2">
-                <item.icon className="h-6 w-6 mx-auto text-amber-600" />
-                <p className="font-medium text-stone-900">{item.label}</p>
-              </div>
-            ))}
+            <div className="relative mt-12 grid gap-6 border-t border-stone-200/60 pt-10 sm:grid-cols-3">
+              {[
+                { icon: ShoppingBagIcon, label: "Giao hàng linh hoạt" },
+                { icon: StarIcon, label: "Chất lượng được kiểm chứng" },
+                { icon: HeartIcon, label: "Cam kết hài lòng" },
+              ].map((item) => (
+                <div key={item.label} className="flex flex-col items-center gap-2">
+                  <item.icon
+                    className="size-6 text-amber-700/90"
+                    strokeWidth={1.5}
+                  />
+                  <p className="text-sm font-medium text-stone-800">{item.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-stone-950 text-white py-12">
+      <footer className="border-t border-stone-200/60 bg-white py-14 text-stone-700">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 via-rose-500 to-orange-500" />
-                <span className="font-heading text-xl font-semibold">THƯƠNG MẠI</span>
+          <div className="grid gap-10 md:grid-cols-4 md:gap-8">
+            <div className="space-y-4 md:col-span-1">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-200 via-rose-100 to-violet-200 ring-1 ring-white shadow-sm">
+                  <span className="font-heading text-sm font-bold text-stone-800">
+                    T
+                  </span>
+                </div>
+                <span className="font-heading text-lg font-semibold tracking-[0.15em] text-stone-900">
+                  THƯƠNG MẠI
+                </span>
               </div>
-              <p className="text-sm text-white/60">
-                Thương hiệu thời trang cao cấp của người Việt
+              <p className="max-w-xs text-sm leading-relaxed text-stone-500">
+                Không gian mua sắm dành cho người yêu cái đẹp có gu — nhẹ nhàng, sang trọng, luôn chào đón bạn.
               </p>
             </div>
 
-            <div className="space-y-3">
-              <h3 className="font-semibold text-white">Điều hướng</h3>
-              <ul className="space-y-2 text-sm text-white/60">
-                <li><a href="#collection" className="hover:text-white transition">Bộ sưu tập</a></li>
-                <li><a href="#trending" className="hover:text-white transition">Xu hướng</a></li>
-                <li><a href="#about" className="hover:text-white transition">Về chúng tôi</a></li>
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-400">
+                Điều hướng
+              </h3>
+              <ul className="mt-4 space-y-2.5 text-sm">
+                <li>
+                  <a
+                    href="#collection"
+                    className="text-stone-600 transition hover:text-stone-900"
+                  >
+                    Bộ sưu tập
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#trending"
+                    className="text-stone-600 transition hover:text-stone-900"
+                  >
+                    Xu hướng
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#about"
+                    className="text-stone-600 transition hover:text-stone-900"
+                  >
+                    Câu chuyện
+                  </a>
+                </li>
               </ul>
             </div>
 
-            <div className="space-y-3">
-              <h3 className="font-semibold text-white">Hỗ trợ</h3>
-              <ul className="space-y-2 text-sm text-white/60">
-                <li><a href="/login" className="hover:text-white transition">Đăng nhập</a></li>
-                <li><a href="/signup" className="hover:text-white transition">Đăng ký</a></li>
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-400">
+                Tài khoản
+              </h3>
+              <ul className="mt-4 space-y-2.5 text-sm">
+                <li>
+                  <Link
+                    href="/login"
+                    className="text-stone-600 transition hover:text-stone-900"
+                  >
+                    Đăng nhập
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/signup"
+                    className="text-stone-600 transition hover:text-stone-900"
+                  >
+                    Đăng ký
+                  </Link>
+                </li>
               </ul>
             </div>
 
-            <div className="space-y-3">
-              <h3 className="font-semibold text-white">Liên hệ</h3>
-              <div className="space-y-2 text-sm text-white/60">
-                <p className="flex items-center gap-2">
-                  <MapPinIcon className="h-4 w-4" />
-                  Hà Nội, Việt Nam
-                </p>
-              </div>
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-400">
+                Liên hệ
+              </h3>
+              <p className="mt-4 flex items-start gap-2 text-sm text-stone-600">
+                <MapPinIcon className="mt-0.5 size-4 shrink-0 text-stone-400" />
+                Hà Nội, Việt Nam
+              </p>
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-white/60">
-              © 2024 Thương Mại. Tất cả quyền được bảo lưu.
+          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-stone-200/80 pt-8 text-center sm:flex-row sm:text-left">
+            <p className="text-xs text-stone-500">
+              © {new Date().getFullYear()} Thương Mại. Giữ lại mọi vẻ đẹp bạn chọn.
             </p>
-            <p className="text-xs text-white/50">
-              Được xây dựng với ❤️ bằng Next.js + Spring Boot
+            <p className="text-xs text-stone-400">
+              Next.js · Spring Boot
             </p>
           </div>
         </div>
@@ -488,33 +664,48 @@ export default function Home() {
   )
 }
 
-// Featured Product Card Component
 function FeaturedProductCard({ product }: { product: SanPham }) {
+  const src = productImageSrc(product.hinhAnh)
   return (
-    <Card className="group overflow-hidden rounded-2xl border-stone-200 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-      <div className="relative h-48 bg-gradient-to-br from-amber-200/40 to-rose-200/40 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <Card className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-stone-200/70 bg-white shadow-[0_20px_50px_-28px_rgba(28,25,23,0.12)] transition duration-500 hover:-translate-y-1 hover:border-stone-300/80 hover:shadow-[0_28px_60px_-24px_rgba(28,25,23,0.18)]">
+      <div className="relative aspect-[4/5] overflow-hidden bg-stone-100">
+        {src ? (
+          <img
+            src={src}
+            alt={product.tenSanPham}
+            className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-amber-50 via-rose-50 to-violet-100">
+            <ShoppingBagIcon className="size-14 text-stone-300/80" strokeWidth={1} />
+          </div>
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-900/25 via-transparent to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
       </div>
-      <CardContent className="p-6 flex-1 flex flex-col">
-        <div className="mb-4">
-          <Badge className="rounded-full bg-amber-100 text-amber-900 border-amber-200 border">
-            {product.tenDanhMuc ?? "Danh mục"}
-          </Badge>
-        </div>
-        <h3 className="font-heading text-2xl font-semibold text-stone-950 mb-2 line-clamp-2">
+      <CardContent className="flex flex-1 flex-col p-6 sm:p-7">
+        <Badge className="mb-4 w-fit rounded-full border border-amber-200/70 bg-amber-50/90 px-3 py-0.5 text-[11px] font-medium uppercase tracking-wider text-amber-900">
+          {product.tenDanhMuc ?? "Danh mục"}
+        </Badge>
+        <h3 className="font-heading text-xl font-semibold leading-snug tracking-tight text-stone-950 line-clamp-2 sm:text-2xl">
           {product.tenSanPham}
         </h3>
-        <p className="text-sm text-stone-600 mb-4 flex-1">
-          {product.tenThuongHieu ?? "Thương hiệu cao cấp"}
+        <p className="mt-2 text-sm text-stone-500">
+          {product.tenThuongHieu ?? "Thương hiệu đồng hành"}
         </p>
-        <div className="flex items-end justify-between gap-2 pt-4 border-t border-stone-200">
+        <div className="mt-auto flex items-end justify-between gap-3 border-t border-stone-100 pt-6">
           <div>
-            <p className="text-xs text-stone-500 uppercase tracking-wide mb-1">Giá</p>
-            <p className="font-heading text-2xl font-bold text-amber-600">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-stone-400">
+              Giá niêm yết
+            </p>
+            <p className="font-heading text-xl font-semibold text-amber-800 sm:text-2xl">
               {formatCurrency(product.gia)}
             </p>
           </div>
-          <Button asChild size="sm" className="rounded-full bg-stone-950 hover:bg-stone-800">
+          <Button
+            asChild
+            size="sm"
+            className="rounded-full bg-stone-900 px-5 text-white hover:bg-stone-800"
+          >
             <Link href="/login">Xem</Link>
           </Button>
         </div>
@@ -523,7 +714,6 @@ function FeaturedProductCard({ product }: { product: SanPham }) {
   )
 }
 
-// Product Card Component
 function ProductCard({
   product,
   index,
@@ -531,61 +721,74 @@ function ProductCard({
   product: SanPham
   index: number
 }) {
+  const src = productImageSrc(product.hinhAnh)
+  const grad = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length]
+
   return (
-    <Card className="group overflow-hidden rounded-2xl border-stone-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
-      <div
-        className="relative h-52 overflow-hidden bg-gradient-to-br"
-        style={{
-          backgroundImage: `linear-gradient(135deg, rgba(${217 - index * 10}, ${180 - index * 8}, ${140 - index * 6}, 0.8) 0%, rgba(${245 - index * 12}, ${200 - index * 10}, ${150 - index * 8}, 0.6) 100%)`,
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-6xl opacity-30 group-hover:opacity-40 transition-opacity">
-            👔
+    <Card className="group flex flex-col overflow-hidden rounded-[1.75rem] border border-stone-200/60 bg-white shadow-[0_16px_44px_-28px_rgba(28,25,23,0.14)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_24px_50px_-22px_rgba(28,25,23,0.18)]">
+      <div className="relative aspect-[5/6] overflow-hidden bg-stone-50">
+        {src ? (
+          <img
+            src={src}
+            alt={product.tenSanPham}
+            className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.05]"
+          />
+        ) : (
+          <div
+            className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${grad}`}
+          >
+            <ShoppingBagIcon className="size-12 text-stone-400/70" strokeWidth={1} />
           </div>
-        </div>
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-900/20 via-transparent to-white/10 opacity-0 transition duration-500 group-hover:opacity-100" />
       </div>
 
-      <CardContent className="p-5 flex-1 flex flex-col">
-        <div className="mb-3">
-          <Badge variant="outline" className="rounded-full text-xs">
-            {product.tenDanhMuc ?? "Danh mục"}
-          </Badge>
-        </div>
+      <CardContent className="flex flex-1 flex-col p-5 sm:p-6">
+        <Badge
+          variant="outline"
+          className="mb-3 w-fit rounded-full border-stone-200/90 bg-stone-50/80 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-stone-600"
+        >
+          {product.tenDanhMuc ?? "Danh mục"}
+        </Badge>
 
-        <h3 className="font-heading text-xl font-semibold text-stone-950 mb-1 line-clamp-2">
+        <h3 className="font-heading text-lg font-semibold leading-snug tracking-tight text-stone-950 line-clamp-2">
           {product.tenSanPham}
         </h3>
 
-        <p className="text-xs text-stone-500 mb-3">
+        <p className="mt-1 text-xs font-medium uppercase tracking-wide text-stone-400">
           {product.tenThuongHieu ?? "Thương hiệu"}
         </p>
 
-        <p className="text-sm text-stone-600 mb-4 line-clamp-2 flex-1">
-          {product.moTa || "Sản phẩm chất lượng cao"}
+        <p className="mt-3 line-clamp-2 flex-1 text-sm leading-relaxed text-stone-600">
+          {product.moTa || "Thiết kế tinh giản, dễ phối cho nhiều dịp trong ngày."}
         </p>
 
-        <div className="space-y-3 pt-3 border-t border-stone-200">
-          <div className="flex items-center justify-between">
+        <div className="mt-5 space-y-4 border-t border-stone-100 pt-5">
+          <div className="flex items-end justify-between gap-3">
             <div>
-              <p className="text-xs text-stone-500 mb-1">Giá</p>
-              <p className="font-heading text-2xl font-bold text-amber-600">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-stone-400">
+                Giá
+              </p>
+              <p className="font-heading text-xl font-semibold text-amber-800">
                 {formatCurrency(product.gia)}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-stone-500 mb-1">Kho</p>
-              <p className="font-semibold text-stone-900">{product.soLuongTon}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-stone-400">
+                Tồn kho
+              </p>
+              <p className="text-sm font-semibold tabular-nums text-stone-800">
+                {product.soLuongTon}
+              </p>
             </div>
           </div>
 
           <Button
             asChild
-            className="w-full rounded-full bg-stone-950 hover:bg-stone-800 text-white"
+            className="h-11 w-full rounded-full border-0 bg-stone-900 text-[14px] font-medium text-white shadow-md transition hover:bg-stone-800"
           >
-            <Link href="/login" className="flex items-center justify-center gap-2">
-              <ShoppingBagIcon className="h-4 w-4" />
+            <Link href="/login" className="inline-flex items-center justify-center gap-2">
+              <ShoppingBagIcon className="size-4" />
               Xem chi tiết
             </Link>
           </Button>

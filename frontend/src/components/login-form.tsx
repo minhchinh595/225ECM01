@@ -1,5 +1,6 @@
- "use client"
+"use client"
 
+import { AuthGoogleContinue } from "@/components/auth-google-continue"
 import { cn } from "@/lib/utils"
 import { login } from "@/lib/api"
 import { saveUser } from "@/lib/auth"
@@ -9,7 +10,6 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
@@ -90,13 +90,8 @@ export function LoginForm({
             {isPending ? "Đang xử lý..." : "Đăng nhập"}
           </Button>
         </Field>
-        <FieldSeparator>Hoặc tiếp tục với</FieldSeparator>
+        <AuthGoogleContinue className="-mt-1" />
         <Field>
-          <Button variant="outline" type="button" asChild>
-            <Link href="/">
-              Xem giao diện cửa hàng
-            </Link>
-          </Button>
           <FieldDescription className="text-center">
             Chưa có tài khoản?{" "}
             <Link href="/signup" className="underline underline-offset-4">
