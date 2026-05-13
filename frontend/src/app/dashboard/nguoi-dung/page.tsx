@@ -55,8 +55,8 @@ export default function NguoiDungPage() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Tổng tài khoản", value: users.length, color: "text-stone-900" },
-          { label: "Khách hàng", value: users.filter(u => u.maVaiTro === 3).length, color: "text-emerald-700" },
-          { label: "Nhân viên & Admin", value: users.filter(u => (u.maVaiTro ?? 0) < 3).length, color: "text-violet-700" },
+          { label: "Nhân viên & Admin", value: users.filter(u => (u.maVaiTro ?? 3) < 3).length, color: "text-violet-700" },
+          { label: "Khách hàng", value: users.filter(u => u.maVaiTro === 3 || u.maVaiTro === null || u.maVaiTro === undefined).length, color: "text-emerald-700" },
         ].map((s) => (
           <Card key={s.label} className="rounded-[1.5rem] border-none bg-white/85 shadow-[0_8px_24px_rgba(96,74,44,0.07)]">
             <CardContent className="p-5">

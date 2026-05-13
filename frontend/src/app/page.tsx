@@ -170,7 +170,19 @@ export default function Home() {
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             {currentUser ? (
-              <UserMenu initialUser={currentUser} />
+              <>
+                {(currentUser.maVaiTro === 1 || currentUser.maVaiTro === 2) && (
+                  <Button
+                    asChild
+                    size="sm"
+                    className="rounded-full border border-amber-200/80 bg-amber-50 px-4 text-amber-800 shadow-sm hover:bg-amber-100 hover:text-amber-900"
+                    variant="outline"
+                  >
+                    <Link href="/dashboard">Quản trị</Link>
+                  </Button>
+                )}
+                <UserMenu initialUser={currentUser} />
+              </>
             ) : (
               <>
                 <Button
