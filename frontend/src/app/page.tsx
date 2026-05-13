@@ -43,9 +43,9 @@ function productImageSrc(hinhAnh?: string | null): string | null {
   return `${API_ORIGIN}${path.startsWith("/") ? path : `/${path}`}`
 }
 
-/** Hero lookbook — ảnh banner local brand (hiển thị trọn, không crop) */
+/** Hero lookbook — ảnh banner local brand */
 const HERO_IMAGE =
-  "https://cdn-media.sforum.vn/storage/app/media/wp-content/uploads/2024/01/local-brand-la-gi-thumb.jpg"
+  "https://file.hstatic.net/200000053174/file/local_brand_doi_dau__b3ac5e2387ae44be804655483f214679.png"
 
 const FALLBACK_GRADIENTS = [
   "from-rose-50 via-orange-50/90 to-amber-100/80",
@@ -182,109 +182,136 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-x-clip pb-20 pt-12 sm:pb-28 sm:pt-16 lg:pb-36 lg:pt-20">
-        <div
-          className="pointer-events-none absolute inset-0"
-          aria-hidden
-        >
-          <div className="absolute -left-32 top-20 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-amber-100/50 via-rose-100/40 to-transparent blur-3xl" />
-          <div className="absolute -right-24 bottom-0 h-[380px] w-[380px] rounded-full bg-gradient-to-tl from-violet-100/50 via-sky-50/40 to-transparent blur-3xl" />
-          <div className="absolute left-1/2 top-0 h-px w-[min(80%,48rem)] -translate-x-1/2 bg-gradient-to-r from-transparent via-stone-300/40 to-transparent" />
+      <section className="relative overflow-x-clip pb-16 pt-10 sm:pb-24 sm:pt-14 lg:min-h-[calc(100svh-72px)] lg:pb-0 lg:pt-0 lg:flex lg:items-center">
+        {/* Background blobs */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-amber-100/60 via-rose-100/40 to-transparent blur-3xl" />
+          <div className="absolute -right-32 bottom-10 h-[440px] w-[440px] rounded-full bg-gradient-to-tl from-violet-100/50 via-sky-50/30 to-transparent blur-3xl" />
+          <div className="absolute left-1/2 top-0 h-px w-[min(80%,52rem)] -translate-x-1/2 bg-gradient-to-r from-transparent via-stone-300/40 to-transparent" />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start lg:gap-10 xl:gap-12">
-            <div className="order-2 space-y-8 lg:order-1 lg:max-w-none lg:pr-2 xl:pr-4">
-              <Badge className="w-fit gap-1.5 rounded-full border border-amber-200/60 bg-white/90 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-900/90 shadow-sm shadow-amber-900/5 backdrop-blur-sm">
-                <SparklesIcon className="size-3.5" aria-hidden />
-                Thời trang tuyển chọn
-              </Badge>
+        <div className="relative mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
+          {/* ── Top: copy (centered) ── */}
+          <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-12">
+            <Badge className="mb-6 gap-1.5 rounded-full border border-amber-200/70 bg-white/90 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-900/90 shadow-sm backdrop-blur-sm">
+              <SparklesIcon className="size-3.5" aria-hidden />
+              Thời trang tuyển chọn
+            </Badge>
 
-              <div className="space-y-6">
-                <h1 className="font-heading text-[clamp(2.5rem,6vw,4.25rem)] font-semibold leading-[1.08] tracking-tight text-stone-950">
-                  Nơi phong cách
-                  <span className="mt-1 block bg-gradient-to-r from-amber-700 via-rose-600 to-violet-700 bg-clip-text font-semibold text-transparent">
-                    được thì thầm
-                  </span>
-                </h1>
-                <p className="max-w-xl text-lg leading-relaxed text-stone-600 sm:text-xl">
-                  Ánh sáng dịu, chất liệu chọn lọc và đường cắt tinh tế — mỗi món đồ là lời mời để bạn sống chậm và đẹp hơn mỗi ngày.
+            <h1 className="font-heading text-[clamp(2.75rem,5.5vw,4.5rem)] font-semibold leading-[1.06] tracking-tight text-stone-950">
+              Nơi phong cách
+              <span className="mt-2 block bg-gradient-to-r from-amber-700 via-rose-600 to-violet-700 bg-clip-text text-transparent">
+                được thì thầm
+              </span>
+            </h1>
+            <p className="mx-auto mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-stone-600 sm:text-lg">
+              Ánh sáng dịu, chất liệu chọn lọc và đường cắt tinh tế — mỗi món đồ là lời mời để bạn sống chậm và đẹp hơn mỗi ngày.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Button
+                asChild
+                size="lg"
+                className="h-12 rounded-full border-0 bg-stone-900 px-8 text-[15px] font-medium text-white shadow-xl shadow-stone-900/20 transition hover:bg-stone-800 hover:shadow-2xl"
+              >
+                <Link href="#collection" className="inline-flex items-center gap-2">
+                  Khám phá bộ sưu tập
+                  <ArrowRightIcon className="size-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="h-12 rounded-full border-stone-200/90 bg-white/70 px-8 text-[15px] font-medium text-stone-800 shadow-sm backdrop-blur-sm transition hover:border-stone-300 hover:bg-white"
+              >
+                <Link href="/signup">Trải nghiệm thành viên</Link>
+              </Button>
+            </div>
+          </div>
+
+          {/* ── Hero image — landscape card ── */}
+          <div className="relative mx-auto max-w-4xl xl:max-w-5xl">
+            {/* Glow halo */}
+            <div
+              className="pointer-events-none absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-amber-200/40 via-rose-200/20 to-violet-200/30 blur-3xl"
+              aria-hidden
+            />
+
+            <figure className="relative overflow-hidden rounded-[1.75rem] bg-stone-950 shadow-[0_32px_80px_-20px_rgba(28,25,23,0.30)] ring-1 ring-white/10 sm:rounded-[2rem]">
+              {/* Full image — no crop */}
+              <img
+                src={HERO_IMAGE}
+                alt="Local brand Việt Nam — lookbook streetwear"
+                className="block w-full object-contain transition duration-700 hover:scale-[1.02]"
+                fetchPriority="high"
+                loading="eager"
+                decoding="async"
+                onError={(e) => {
+                  const target = e.currentTarget
+                  target.style.display = "none"
+                  const parent = target.parentElement
+                  if (parent) {
+                    parent.style.background = "linear-gradient(135deg,#1c1917 0%,#292524 100%)"
+                    parent.style.minHeight = "320px"
+                  }
+                }}
+              />
+              {/* Bottom overlay with caption */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-stone-950/80 via-stone-950/30 to-transparent px-6 pb-6 pt-16 sm:px-8 sm:pb-8">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-white/55">
+                  Lookbook
+                </p>
+                <p className="mt-1.5 text-sm font-medium text-white/90 sm:text-base">
+                  Thương hiệu địa phương — chất riêng, phối đồ urban.
                 </p>
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button
-                  asChild
-                  size="lg"
-                  className="h-12 rounded-full border-0 bg-stone-900 px-8 text-[15px] font-medium text-white shadow-xl shadow-stone-900/20 transition hover:bg-stone-800 hover:shadow-2xl"
-                >
-                  <Link href="#collection" className="inline-flex items-center gap-2">
-                    Khám phá bộ sưu tập
-                    <ArrowRightIcon className="size-4" />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="h-12 rounded-full border-stone-200/90 bg-white/70 px-8 text-[15px] font-medium text-stone-800 shadow-sm backdrop-blur-sm transition hover:border-stone-300 hover:bg-white"
-                >
-                  <Link href="/signup">Trải nghiệm thành viên</Link>
-                </Button>
+              {/* Floating badge — top right */}
+              <div className="absolute right-5 top-5 z-10 flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-3.5 py-2 shadow-lg backdrop-blur-md sm:right-6 sm:top-6">
+                <span className="flex size-7 items-center justify-center rounded-full bg-amber-400/20">
+                  <SparklesIcon className="size-3.5 text-amber-300" />
+                </span>
+                <div className="leading-tight">
+                  <p className="text-[11px] font-semibold text-white">Local Brand</p>
+                  <p className="text-[10px] text-white/60">Việt Nam</p>
+                </div>
               </div>
+            </figure>
 
-              <dl className="grid max-w-md grid-cols-3 gap-4 border-t border-stone-200/60 pt-8">
-                {[
-                  { value: `${products.length || "—"}`, label: "Sản phẩm" },
-                  { value: `${brands.length || "—"}`, label: "Thương hiệu" },
-                  { value: `${categories.length || "—"}`, label: "Danh mục" },
-                ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-2xl border border-white/80 bg-white/50 px-3 py-3 text-center shadow-sm backdrop-blur-sm"
-                  >
-                    <dt className="sr-only">{stat.label}</dt>
-                    <dd className="font-heading text-2xl font-semibold tabular-nums text-stone-900 sm:text-3xl">
-                      {loading ? "…" : stat.value}
-                      {!loading && stat.label === "Sản phẩm" ? "+" : null}
-                    </dd>
-                    <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-stone-500">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
-              </dl>
-            </div>
-
-            <div className="order-1 w-full lg:order-2">
-              <div className="relative mx-auto w-[min(100%,20rem)] sm:w-[min(100%,22rem)] md:w-[min(100%,24rem)] lg:mx-0 lg:ms-auto lg:me-0 lg:w-[min(100%,28rem)] xl:w-[min(100%,32rem)]">
-                <div
-                  className="pointer-events-none absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-amber-200/30 via-rose-200/20 to-violet-200/25 blur-2xl"
-                  aria-hidden
-                />
-                <figure className="relative grid aspect-[3/4] w-full grid-rows-[3fr_1fr] overflow-hidden rounded-[1.75rem] bg-white shadow-[0_24px_60px_-20px_rgba(28,25,23,0.2)] ring-1 ring-stone-200/60 sm:rounded-[2rem] lg:rounded-[2.25rem]">
-                  <div className="relative min-h-0 overflow-hidden bg-neutral-950">
-                    <img
-                      src={HERO_IMAGE}
-                      alt="Local brand Việt Nam — lookbook streetwear"
-                      className="absolute inset-0 h-full w-full object-cover object-center"
-                      fetchPriority="high"
-                      loading="eager"
-                      decoding="async"
-                    />
-                  </div>
-                  <figcaption className="flex min-h-0 flex-col justify-center border-t border-stone-100 bg-white px-5 py-4 text-center sm:px-6 sm:py-5">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-stone-500">
-                      Lookbook
-                    </p>
-                    <p className="mt-1.5 text-xs leading-relaxed text-stone-600 sm:text-sm">
-                      Hình ảnh thương hiệu địa phương — chất riêng, phối đồ urban.
-                    </p>
-                  </figcaption>
-                </figure>
+            {/* Floating badge — bottom left (outside card) */}
+            <div className="absolute -bottom-5 left-6 z-10 flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white/95 px-4 py-2.5 shadow-xl shadow-stone-900/10 backdrop-blur-md sm:left-8">
+              <span className="flex size-8 items-center justify-center rounded-full bg-rose-100">
+                <HeartIcon className="size-4 text-rose-600" />
+              </span>
+              <div className="leading-tight">
+                <p className="text-[11px] font-semibold text-stone-900">5K+ khách hàng</p>
+                <p className="text-[10px] text-stone-500">tin chọn mỗi ngày</p>
               </div>
             </div>
           </div>
+
+          {/* ── Stats row ── */}
+          <dl className="mx-auto mt-12 grid max-w-lg grid-cols-3 gap-3 sm:gap-4">
+            {[
+              { value: `${products.length || "—"}`, suffix: "+", label: "Sản phẩm" },
+              { value: `${brands.length || "—"}`, suffix: "", label: "Thương hiệu" },
+              { value: `${categories.length || "—"}`, suffix: "", label: "Danh mục" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-2xl border border-white/80 bg-white/60 px-3 py-4 text-center shadow-sm backdrop-blur-sm"
+              >
+                <dt className="sr-only">{stat.label}</dt>
+                <dd className="font-heading text-2xl font-semibold tabular-nums text-stone-900 sm:text-3xl">
+                  {loading ? "…" : `${stat.value}${!loading && stat.suffix ? stat.suffix : ""}`}
+                </dd>
+                <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-stone-500">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 

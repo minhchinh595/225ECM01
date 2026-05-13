@@ -15,6 +15,15 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
+import {
+  UserIcon,
+  MailIcon,
+  PhoneIcon,
+  MapPinIcon,
+  LockKeyholeIcon,
+  ShieldCheckIcon,
+  ArrowRightIcon,
+} from "lucide-react"
 
 export function SignupForm({
   className,
@@ -31,6 +40,10 @@ export function SignupForm({
   })
   const [error, setError] = useState("")
   const [isPending, startTransition] = useTransition()
+
+  const patch = (key: keyof typeof form) =>
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setForm((current) => ({ ...current, [key]: event.target.value }))
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -62,135 +75,142 @@ export function SignupForm({
     })
   }
 
+  const inputClass =
+    "h-9 rounded-xl border-stone-200 bg-stone-50/80 pl-10 text-sm shadow-sm transition focus-visible:border-amber-300/70 focus-visible:bg-white focus-visible:ring-amber-200/40"
+
+  const fields = [
+    {
+      id: "username",
+      label: "Tên đăng nhập",
+      type: "text",
+      placeholder: "thuongmai_user",
+      icon: UserIcon,
+      key: "tenDangNhap" as const,
+      required: true,
+    },
+    {
+      id: "email",
+      label: "Email",
+      type: "email",
+      placeholder: "ban@example.com",
+      icon: MailIcon,
+      key: "email" as const,
+      required: true,
+    },
+    {
+      id: "phone",
+      label: "Số điện thoại",
+      type: "text",
+      placeholder: "0901 234 567",
+      icon: PhoneIcon,
+      key: "soDienThoai" as const,
+      required: true,
+    },
+    {
+      id: "address",
+      label: "Địa chỉ",
+      type: "text",
+      placeholder: "123 Nguyễn Trãi, Hà Nội",
+      icon: MapPinIcon,
+      key: "diaChi" as const,
+      required: false,
+    },
+    {
+      id: "password",
+      label: "Mật khẩu",
+      type: "password",
+      placeholder: "••••••••",
+      icon: LockKeyholeIcon,
+      key: "matKhau" as const,
+      required: true,
+    },
+    {
+      id: "confirm-password",
+      label: "Xác nhận mật khẩu",
+      type: "password",
+      placeholder: "••••••••",
+      icon: ShieldCheckIcon,
+      key: "confirmPassword" as const,
+      required: true,
+    },
+  ]
+
   return (
     <form
-      className={cn("flex flex-col gap-6", className)}
+      className={cn("flex flex-col gap-3", className)}
       onSubmit={onSubmit}
       {...props}
     >
-      <FieldGroup>
-        <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Tạo tài khoản</h1>
+      {/* Header */}
+      <div className="flex flex-col items-center gap-1.5 text-center">
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-200 via-rose-100 to-violet-200 shadow-md ring-1 ring-white/80">
+          <span className="font-heading text-lg font-bold tracking-tight text-stone-800">T</span>
         </div>
-        <Field>
-          <FieldLabel htmlFor="username">Tên đăng nhập</FieldLabel>
-          <Input
-            id="username"
-            type="text"
-            placeholder="thuongmai_admin"
-            required
-            className="bg-background"
-            value={form.tenDangNhap}
-            onChange={(event) =>
-              setForm((current) => ({
-                ...current,
-                tenDangNhap: event.target.value,
-              }))
-            }
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input
-            id="email"
-            type="email"
-            placeholder="m@example.com"
-            required
-            className="bg-background"
-            value={form.email}
-            onChange={(event) =>
-              setForm((current) => ({
-                ...current,
-                email: event.target.value,
-              }))
-            }
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="phone">Số điện thoại</FieldLabel>
-          <Input
-            id="phone"
-            type="text"
-            placeholder="0901234567"
-            required
-            className="bg-background"
-            value={form.soDienThoai}
-            onChange={(event) =>
-              setForm((current) => ({
-                ...current,
-                soDienThoai: event.target.value,
-              }))
-            }
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="address">Địa chỉ</FieldLabel>
-          <Input
-            id="address"
-            type="text"
-            placeholder="123 Nguyen Trai, Ha Noi"
-            className="bg-background"
-            value={form.diaChi}
-            onChange={(event) =>
-              setForm((current) => ({
-                ...current,
-                diaChi: event.target.value,
-              }))
-            }
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
-          <Input
-            id="password"
-            type="password"
-            required
-            className="bg-background"
-            value={form.matKhau}
-            onChange={(event) =>
-              setForm((current) => ({
-                ...current,
-                matKhau: event.target.value,
-              }))
-            }
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="confirm-password">Xác nhận mật khẩu</FieldLabel>
-          <Input
-            id="confirm-password"
-            type="password"
-            required
-            className="bg-background"
-            value={form.confirmPassword}
-            onChange={(event) =>
-              setForm((current) => ({
-                ...current,
-                confirmPassword: event.target.value,
-              }))
-            }
-          />
-          <FieldDescription>Nhập lại mật khẩu để xác nhận.</FieldDescription>
-        </Field>
+        <h1 className="font-heading text-xl font-semibold tracking-tight text-stone-900">
+          Tạo tài khoản
+        </h1>
+        <p className="text-xs text-stone-500">Tham gia cộng đồng thời trang Việt</p>
+      </div>
+
+      <FieldGroup className="gap-2.5">
+        {fields.map(({ id, label, type, placeholder, icon: Icon, key, required }) => (
+          <Field key={id}>
+            <FieldLabel htmlFor={id} className="text-xs font-medium text-stone-700">
+              {label}
+            </FieldLabel>
+            <div className="relative mt-0.5">
+              <Icon className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-stone-400" />
+              <Input
+                id={id}
+                type={type}
+                placeholder={placeholder}
+                required={required}
+                className={inputClass}
+                value={form[key]}
+                onChange={patch(key)}
+              />
+            </div>
+          </Field>
+        ))}
+
+        {/* Error */}
         {error ? (
-          <FieldDescription className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <FieldDescription className="rounded-xl border border-destructive/30 bg-destructive/8 px-3 py-2 text-xs text-destructive">
             {error}
           </FieldDescription>
         ) : null}
+
+        {/* Submit */}
         <Field>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="h-10 w-full rounded-xl border-0 bg-stone-900 text-sm font-semibold text-white shadow-lg shadow-stone-900/20 transition hover:bg-stone-800 hover:shadow-xl disabled:opacity-60"
+          >
+            {isPending ? (
+              <span className="flex items-center gap-2">
+                <span className="size-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                Đang tạo tài khoản...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                Tạo tài khoản
+                <ArrowRightIcon className="size-3.5" />
+              </span>
+            )}
           </Button>
         </Field>
-        <AuthGoogleContinue className="-mt-1" />
-        <Field>
-          <FieldDescription className="px-6 text-center">
-            Đã có tài khoản?{" "}
-            <Link href="/login" className="underline underline-offset-4">
-              Đăng nhập
-            </Link>
-          </FieldDescription>
-        </Field>
+
+        {/* Social */}
+        <AuthGoogleContinue className="-mt-0.5" />
+
+        {/* Footer link */}
+        <p className="text-center text-xs text-stone-500">
+          Đã có tài khoản?{" "}
+          <Link href="/login" className="font-semibold text-stone-900 underline-offset-4 hover:underline">
+            Đăng nhập
+          </Link>
+        </p>
       </FieldGroup>
     </form>
   )
