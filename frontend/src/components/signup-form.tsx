@@ -64,7 +64,8 @@ export function SignupForm({
           diaChi: form.diaChi,
         })
         saveUser(user)
-        router.push("/dashboard")
+        // Đăng ký tự động là khách hàng (maVaiTro = 3) → về trang chủ
+        router.push("/")
       } catch (submitError) {
         setError(
           submitError instanceof Error

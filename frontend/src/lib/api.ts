@@ -81,4 +81,37 @@ export async function getUsers(): Promise<NguoiDung[]> {
   return parseJson<NguoiDung[]>(response)
 }
 
+export async function updateProfile(
+  id: number,
+  payload: { email: string; soDienThoai: string; diaChi?: string },
+): Promise<NguoiDung> {
+  const response = await fetch(`${API_URL}/nguoi-dung/${id}/profile`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  return parseJson<NguoiDung>(response)
+}
+
+export async function changePassword(
+  id: number,
+  payload: { matKhauCu: string; matKhauMoi: string },
+): Promise<void> {
+  const response = await fetch(`${API_URL}/nguoi-dung/${id}/change-password`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  if (!response.ok) {
+    let errorMessage = "Đổi mật khẩu thất bại"
+    try {
+      const error = (await response.json()) as ApiErrorResponse
+      errorMessage = error.message || error.error || errorMessage
+    } catch {
+      errorMessage = await response.text()
+    }
+    throw new Error(errorMessage)
+  }
+}
+
 export { API_URL }

@@ -38,6 +38,7 @@ export type NguoiDung = {
   email: string
   soDienThoai: string
   diaChi?: string | null
+  hoTen?: string | null
   maVaiTro?: number | null
   tenVaiTro?: string | null
   trangThai?: boolean | null

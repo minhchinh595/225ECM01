@@ -8,6 +8,8 @@ import com.example.backend.dto.NguoiDungDTO;
 import com.example.backend.dto.RegisterRequest;
 import com.example.backend.dto.ThuongHieuDTO;
 import com.example.backend.dto.ThuongHieuRequest;
+import com.example.backend.dto.UpdateProfileRequest;
+import com.example.backend.dto.ChangePasswordRequest;
 import com.example.backend.entity.*;
 import com.example.backend.repository.*;
 import com.example.backend.service.CatalogService;
@@ -100,6 +102,21 @@ class NguoiDungController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(nguoiDungService.login(request));
+    }
+
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<NguoiDungDTO> updateProfile(
+            @PathVariable Integer id,
+            @Valid @RequestBody UpdateProfileRequest request) {
+        return ResponseEntity.ok(nguoiDungService.updateProfile(id, request));
+    }
+
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable Integer id,
+            @Valid @RequestBody ChangePasswordRequest request) {
+        nguoiDungService.changePassword(id, request);
+        return ResponseEntity.ok().build();
     }
 }
 

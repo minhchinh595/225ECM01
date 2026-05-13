@@ -35,7 +35,13 @@ export function LoginForm({
       try {
         const response = await login({ tenDangNhap, matKhau })
         saveUser(response.user)
-        router.push("/dashboard")
+        // maVaiTro: 1 = admin, 2 = nhân viên, 3 = khách hàng
+        const role = response.user.maVaiTro
+        if (role === 1 || role === 2) {
+          router.push("/dashboard")
+        } else {
+          router.push("/")
+        }
       } catch (submitError) {
         setError(
           submitError instanceof Error

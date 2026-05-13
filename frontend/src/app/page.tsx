@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { API_URL, getBrands, getCategories, getProducts } from "@/lib/api"
-import type { DanhMuc, SanPham, ThuongHieu } from "@/lib/types"
+import type { DanhMuc, NguoiDung, SanPham, ThuongHieu } from "@/lib/types"
 import Link from "next/link"
 import {
   ArrowRightIcon,
@@ -22,6 +22,8 @@ import {
   MapPinIcon,
 } from "lucide-react"
 import { startTransition, useDeferredValue, useEffect, useState } from "react"
+import { getStoredUser } from "@/lib/auth"
+import { UserMenu } from "@/components/user-menu"
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("vi-VN", {
@@ -64,7 +66,12 @@ export default function Home() {
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [currentUser, setCurrentUser] = useState<NguoiDung | null>(null)
   const deferredSearch = useDeferredValue(search)
+
+  useEffect(() => {
+    setCurrentUser(getStoredUser())
+  }, [])
 
   useEffect(() => {
     let active = true
@@ -162,21 +169,27 @@ export default function Home() {
           </div>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-            <Button
-              asChild
-              size="sm"
-              variant="ghost"
-              className="rounded-full px-4 text-stone-600 hover:bg-white/80 hover:text-stone-900"
-            >
-              <Link href="/login">Đăng nhập</Link>
-            </Button>
-            <Button
-              asChild
-              size="sm"
-              className="rounded-full border-0 bg-stone-900 px-5 text-white shadow-lg shadow-stone-900/15 transition hover:bg-stone-800 hover:shadow-xl"
-            >
-              <Link href="/signup">Tham gia</Link>
-            </Button>
+            {currentUser ? (
+              <UserMenu initialUser={currentUser} />
+            ) : (
+              <>
+                <Button
+                  asChild
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-full px-4 text-stone-600 hover:bg-white/80 hover:text-stone-900"
+                >
+                  <Link href="/login">Đăng nhập</Link>
+                </Button>
+                <Button
+                  asChild
+                  size="sm"
+                  className="rounded-full border-0 bg-stone-900 px-5 text-white shadow-lg shadow-stone-900/15 transition hover:bg-stone-800 hover:shadow-xl"
+                >
+                  <Link href="/signup">Tham gia</Link>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
       </header>
