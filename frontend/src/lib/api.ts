@@ -115,3 +115,58 @@ export async function changePassword(
 }
 
 export { API_URL }
+
+// ── Mã giảm giá ──────────────────────────────────────────────
+export type MaGiamGia = {
+  maGiamGia: number
+  maCode: string
+  tenChuongTrinh?: string | null
+  loaiGiam: string
+  giaTriGiam: number
+  giaTriDonHangToiThieu?: number | null
+  giamToiDa?: number | null
+  soLuong?: number | null
+  ngayBatDau: string
+  ngayKetThuc: string
+  trangThai?: boolean | null
+}
+
+export type MaGiamGiaRequest = {
+  maCode: string
+  tenChuongTrinh?: string
+  loaiGiam: string
+  giaTriGiam: number
+  giaTriDonHangToiThieu?: number
+  giamToiDa?: number
+  soLuong?: number
+  ngayBatDau: string
+  ngayKetThuc: string
+  trangThai?: boolean
+}
+
+export async function getMaGiamGia(): Promise<MaGiamGia[]> {
+  const response = await fetch(`${API_URL}/ma-giam-gia`, { cache: "no-store" })
+  return parseJson<MaGiamGia[]>(response)
+}
+
+export async function createMaGiamGia(payload: MaGiamGiaRequest): Promise<MaGiamGia> {
+  const response = await fetch(`${API_URL}/ma-giam-gia`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  return parseJson<MaGiamGia>(response)
+}
+
+export async function toggleMaGiamGia(id: number): Promise<MaGiamGia> {
+  const response = await fetch(`${API_URL}/ma-giam-gia/${id}/toggle`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+  })
+  return parseJson<MaGiamGia>(response)
+}
+
+export async function deleteMaGiamGia(id: number): Promise<void> {
+  const response = await fetch(`${API_URL}/ma-giam-gia/${id}`, { method: "DELETE" })
+  if (!response.ok) throw new Error("Xóa thất bại")
+}
