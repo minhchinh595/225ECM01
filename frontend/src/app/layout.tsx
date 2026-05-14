@@ -5,6 +5,7 @@ import {
   Playfair_Display,
 } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const bodyFont = Be_Vietnam_Pro({
@@ -41,6 +42,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <TooltipProvider>{children}</TooltipProvider>
+        <Toaster position="bottom-right" richColors />
       </body>
     </html>
   );
