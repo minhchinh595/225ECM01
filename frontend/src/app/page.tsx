@@ -758,7 +758,7 @@ function FeaturedProductCard({ product }: { product: SanPham }) {
             size="sm"
             className="rounded-full bg-stone-900 px-5 text-white hover:bg-stone-800"
           >
-            <Link href="/login">Xem</Link>
+            <Link href={`/san-pham/${product.maSanPham}`}>Xem</Link>
           </Button>
         </div>
       </CardContent>
@@ -839,7 +839,7 @@ function ProductCard({
             asChild
             className="h-11 w-full rounded-full border-0 bg-stone-900 text-[14px] font-medium text-white shadow-md transition hover:bg-stone-800"
           >
-            <Link href="/login" className="inline-flex items-center justify-center gap-2">
+            <Link href={`/san-pham/${product.maSanPham}`} className="inline-flex items-center justify-center gap-2">
               <ShoppingBagIcon className="size-4" />
               Xem chi tiết
             </Link>

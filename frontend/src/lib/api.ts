@@ -60,6 +60,13 @@ export async function getProducts(): Promise<SanPham[]> {
   return parseJson<SanPham[]>(response)
 }
 
+export async function getProductById(id: number): Promise<SanPham> {
+  const response = await fetch(`${API_URL}/san-pham/${id}`, {
+    cache: "no-store",
+  })
+  return parseJson<SanPham>(response)
+}
+
 export async function getCategories(): Promise<DanhMuc[]> {
   const response = await fetch(`${API_URL}/danh-muc`, {
     cache: "no-store",
