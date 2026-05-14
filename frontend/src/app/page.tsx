@@ -135,20 +135,12 @@ export default function Home() {
       {/* Navigation */}
       <header className="sticky top-0 z-50 border-b border-stone-200/50 bg-[#faf9f7]/80 backdrop-blur-xl backdrop-saturate-150">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="group flex items-center gap-3">
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-200 via-rose-100 to-violet-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] ring-1 ring-white/80">
-              <span className="font-heading text-lg font-bold tracking-tight text-stone-800">
-                T
-              </span>
-            </div>
-            <div className="leading-tight">
-              <span className="font-heading block text-lg font-semibold tracking-[0.12em] text-stone-900 sm:text-xl">
-                THƯƠNG MẠI
-              </span>
-              <span className="hidden text-[10px] font-medium uppercase tracking-[0.28em] text-stone-500 sm:block">
-                Maison locale
-              </span>
-            </div>
+          <Link href="/" className="group flex items-center">
+            <img
+              src="/visilk.png"
+              alt="Visilk"
+              className="h-10 w-auto object-contain"
+            />
           </Link>
 
           <div className="hidden items-center gap-10 md:flex">
