@@ -24,6 +24,7 @@ import {
 import { startTransition, useDeferredValue, useEffect, useState } from "react"
 import { getStoredUser } from "@/lib/auth"
 import { UserMenu } from "@/components/user-menu"
+import { HeroSlider } from "@/components/hero-slider"
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("vi-VN", {
@@ -255,33 +256,8 @@ export default function Home() {
             />
 
             <figure className="relative overflow-hidden rounded-[1.75rem] bg-stone-950 shadow-[0_32px_80px_-20px_rgba(28,25,23,0.30)] ring-1 ring-white/10 sm:rounded-[2rem]">
-              {/* Full image — no crop */}
-              <img
-                src={HERO_IMAGE}
-                alt="Local brand Việt Nam — lookbook streetwear"
-                className="block w-full object-contain transition duration-700 hover:scale-[1.02]"
-                fetchPriority="high"
-                loading="eager"
-                decoding="async"
-                onError={(e) => {
-                  const target = e.currentTarget
-                  target.style.display = "none"
-                  const parent = target.parentElement
-                  if (parent) {
-                    parent.style.background = "linear-gradient(135deg,#1c1917 0%,#292524 100%)"
-                    parent.style.minHeight = "320px"
-                  }
-                }}
-              />
-              {/* Bottom overlay with caption */}
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-stone-950/80 via-stone-950/30 to-transparent px-6 pb-6 pt-16 sm:px-8 sm:pb-8">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-white/55">
-                  Lookbook
-                </p>
-                <p className="mt-1.5 text-sm font-medium text-white/90 sm:text-base">
-                  Thương hiệu địa phương — chất riêng, phối đồ urban.
-                </p>
-              </div>
+              {/* Image Slider */}
+              <HeroSlider />
 
               {/* Floating badge — top right */}
               <div className="absolute right-5 top-5 z-10 flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-3.5 py-2 shadow-lg backdrop-blur-md sm:right-6 sm:top-6">
