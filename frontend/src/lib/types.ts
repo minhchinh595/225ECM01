@@ -55,6 +55,7 @@ export type RegisterRequest = {
   email: string
   soDienThoai: string
   diaChi?: string
+  maVaiTro?: number
 }
 
 export type LoginResponse = {

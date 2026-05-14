@@ -55,8 +55,10 @@ public class NguoiDungService {
         nguoiDung.setDiaChi(request.getDiaChi());
         nguoiDung.setTrangThai(true);
 
-        // Tự động gán vai trò Khách hàng (maVaiTro = 3)
-        vaiTroRepository.findById(3).ifPresent(nguoiDung::setVaiTro);
+        // Gán vai trò: nếu admin truyền maVaiTro thì dùng, không thì mặc định Khách hàng (3)
+        int roleId = (request.getMaVaiTro() != null && request.getMaVaiTro() > 0)
+                ? request.getMaVaiTro() : 3;
+        vaiTroRepository.findById(roleId).ifPresent(nguoiDung::setVaiTro);
 
         return toDTO(nguoiDungRepository.save(nguoiDung));
     }

@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from "react"
 import { getUsers } from "@/lib/api"
+import { getStoredUser } from "@/lib/auth"
 import type { NguoiDung } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { UsersIcon, PlusIcon, SearchIcon, ShieldCheckIcon } from "lucide-react"
+import { UsersIcon, PlusIcon, SearchIcon, ShieldOffIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { AddUserModal } from "@/components/add-user-modal"
+import { toast } from "sonner"
 
 const ROLE_LABELS: Record<number, { label: string; color: string }> = {
   1: { label: "Admin", color: "bg-rose-100 text-rose-700" },
@@ -18,10 +21,28 @@ export default function NguoiDungPage() {
   const [users, setUsers] = useState<NguoiDung[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
+  const [showAdd, setShowAdd] = useState(false)
+  const [currentUser, setCurrentUser] = useState<NguoiDung | null>(null)
 
   useEffect(() => {
+    setCurrentUser(getStoredUser())
     getUsers().then(setUsers).finally(() => setLoading(false))
   }, [])
+
+  const isAdmin = currentUser?.maVaiTro === 1
+
+  const reload = () => {
+    setLoading(true)
+    getUsers().then(setUsers).finally(() => setLoading(false))
+  }
+
+  const handleCreated = (user: NguoiDung) => {
+    setUsers(prev => [...prev, user])
+    toast.success("Tạo tài khoản thành công!", {
+      description: `@${user.tenDangNhap} đã được thêm vào hệ thống.`,
+      duration: 4000,
+    })
+  }
 
   const filtered = users.filter((u) =>
     u.tenDangNhap.toLowerCase().includes(search.toLowerCase()) ||
@@ -30,17 +51,29 @@ export default function NguoiDungPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-semibold text-stone-900">Tài khoản người dùng</h1>
           <p className="mt-1 text-sm text-stone-500">Quản lý tất cả tài khoản trong hệ thống.</p>
         </div>
-        <Button className="rounded-full bg-stone-900 px-5 text-white hover:bg-stone-800">
-          <PlusIcon className="mr-2 size-4" />
-          Thêm tài khoản
-        </Button>
+        {isAdmin ? (
+          <Button
+            onClick={() => setShowAdd(true)}
+            className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-5 text-white shadow-lg shadow-violet-500/20 transition hover:from-violet-700 hover:to-indigo-700 hover:shadow-xl"
+          >
+            <PlusIcon className="mr-2 size-4" />
+            Thêm tài khoản
+          </Button>
+        ) : (
+          <div className="flex items-center gap-2 rounded-full border border-stone-200 bg-stone-50 px-4 py-2 text-xs text-stone-400">
+            <ShieldOffIcon className="size-3.5" />
+            Chỉ admin mới có thể thêm tài khoản
+          </div>
+        )}
       </div>
 
+      {/* Search */}
       <div className="relative">
         <SearchIcon className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-stone-400" />
         <Input
@@ -69,11 +102,14 @@ export default function NguoiDungPage() {
         ))}
       </div>
 
+      {/* Table */}
       <Card className="rounded-[1.75rem] border-none bg-white/85 shadow-[0_12px_32px_rgba(96,74,44,0.08)]">
         <CardHeader className="pb-4">
           <CardTitle className="font-heading text-lg font-semibold text-stone-900">
             Danh sách tài khoản
-            {!loading && <span className="ml-2 text-sm font-normal text-stone-400">({filtered.length})</span>}
+            {!loading && (
+              <span className="ml-2 text-sm font-normal text-stone-400">({filtered.length})</span>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -110,7 +146,9 @@ export default function NguoiDungPage() {
                       <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${role.color}`}>
                         {role.label}
                       </span>
-                      <span className={`rounded-full px-2 py-1 text-[11px] font-medium ${user.trangThai ? "bg-emerald-50 text-emerald-600" : "bg-stone-100 text-stone-400"}`}>
+                      <span className={`rounded-full px-2 py-1 text-[11px] font-medium ${
+                        user.trangThai ? "bg-emerald-50 text-emerald-600" : "bg-stone-100 text-stone-400"
+                      }`}>
                         {user.trangThai ? "Hoạt động" : "Vô hiệu"}
                       </span>
                     </div>
@@ -121,6 +159,13 @@ export default function NguoiDungPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Modal */}
+      <AddUserModal
+        open={showAdd}
+        onClose={() => setShowAdd(false)}
+        onCreated={handleCreated}
+      />
     </div>
   )
 }

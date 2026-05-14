@@ -29,4 +29,6 @@ public class RegisterRequest {
 
     @Size(max = 255, message = "Dia chi toi da 255 ky tu")
     private String diaChi;
+
+    private Integer maVaiTro; // null = khach hang (3), admin co the truyen 2 = nhan vien
 }
