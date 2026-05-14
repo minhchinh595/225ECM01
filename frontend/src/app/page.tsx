@@ -199,111 +199,48 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-x-clip pb-16 pt-10 sm:pb-24 sm:pt-14 lg:min-h-[calc(100svh-72px)] lg:pb-0 lg:pt-0 lg:flex lg:items-center">
+      <section className="relative overflow-x-clip pb-10 pt-1 sm:pb-14 sm:pt-2">
         {/* Background blobs */}
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-amber-100/60 via-rose-100/40 to-transparent blur-3xl" />
           <div className="absolute -right-32 bottom-10 h-[440px] w-[440px] rounded-full bg-gradient-to-tl from-violet-100/50 via-sky-50/30 to-transparent blur-3xl" />
-          <div className="absolute left-1/2 top-0 h-px w-[min(80%,52rem)] -translate-x-1/2 bg-gradient-to-r from-transparent via-stone-300/40 to-transparent" />
         </div>
 
-        <div className="relative mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
-          {/* ── Top: copy (centered) ── */}
-          <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-12">
-            <Badge className="mb-6 gap-1.5 rounded-full border border-amber-200/70 bg-white/90 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-900/90 shadow-sm backdrop-blur-sm">
-              <SparklesIcon className="size-3.5" aria-hidden />
-              Thời trang tuyển chọn
-            </Badge>
 
-            <h1 className="font-heading text-[clamp(2.75rem,5.5vw,4.5rem)] font-semibold leading-[1.06] tracking-tight text-stone-950">
-              Nơi phong cách
-              <span className="mt-2 block bg-gradient-to-r from-amber-700 via-rose-600 to-violet-700 bg-clip-text text-transparent">
-                được thì thầm
-              </span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-stone-600 sm:text-lg">
-              Ánh sáng dịu, chất liệu chọn lọc và đường cắt tinh tế — mỗi món đồ là lời mời để bạn sống chậm và đẹp hơn mỗi ngày.
-            </p>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button
-                asChild
-                size="lg"
-                className="h-12 rounded-full border-0 bg-stone-900 px-8 text-[15px] font-medium text-white shadow-xl shadow-stone-900/20 transition hover:bg-stone-800 hover:shadow-2xl"
-              >
-                <Link href="#collection" className="inline-flex items-center gap-2">
-                  Khám phá bộ sưu tập
-                  <ArrowRightIcon className="size-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="h-12 rounded-full border-stone-200/90 bg-white/70 px-8 text-[15px] font-medium text-stone-800 shadow-sm backdrop-blur-sm transition hover:border-stone-300 hover:bg-white"
-              >
-                <Link href="/signup">Trải nghiệm thành viên</Link>
-              </Button>
-            </div>
-          </div>
+        {/* ── Hero slider — gần full màn hình ── */}
+        <div className="relative mx-auto w-full max-w-[99vw] px-1 sm:px-1.5">
+          {/* Glow halo */}
+          <div
+            className="pointer-events-none absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-amber-200/40 via-rose-200/20 to-violet-200/30 blur-3xl"
+            aria-hidden
+          />
 
-          {/* ── Hero image — landscape card ── */}
-          <div className="relative mx-auto max-w-4xl xl:max-w-5xl">
-            {/* Glow halo */}
-            <div
-              className="pointer-events-none absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-amber-200/40 via-rose-200/20 to-violet-200/30 blur-3xl"
-              aria-hidden
-            />
+          <figure className="relative overflow-hidden rounded-2xl bg-stone-950 shadow-[0_32px_80px_-20px_rgba(28,25,23,0.30)] ring-1 ring-white/10 sm:rounded-3xl">
+            <HeroSlider />
 
-            <figure className="relative overflow-hidden rounded-[1.75rem] bg-stone-950 shadow-[0_32px_80px_-20px_rgba(28,25,23,0.30)] ring-1 ring-white/10 sm:rounded-[2rem]">
-              {/* Image Slider */}
-              <HeroSlider />
-
-              {/* Floating badge — top right */}
-              <div className="absolute right-5 top-5 z-10 flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-3.5 py-2 shadow-lg backdrop-blur-md sm:right-6 sm:top-6">
-                <span className="flex size-7 items-center justify-center rounded-full bg-amber-400/20">
-                  <SparklesIcon className="size-3.5 text-amber-300" />
-                </span>
-                <div className="leading-tight">
-                  <p className="text-[11px] font-semibold text-white">Local Brand</p>
-                  <p className="text-[10px] text-white/60">Việt Nam</p>
-                </div>
-              </div>
-            </figure>
-
-            {/* Floating badge — bottom left (outside card) */}
-            <div className="absolute -bottom-5 left-6 z-10 flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white/95 px-4 py-2.5 shadow-xl shadow-stone-900/10 backdrop-blur-md sm:left-8">
-              <span className="flex size-8 items-center justify-center rounded-full bg-rose-100">
-                <HeartIcon className="size-4 text-rose-600" />
+            {/* Floating badge — top right */}
+            <div className="absolute right-5 top-5 z-10 flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-3.5 py-2 shadow-lg backdrop-blur-md sm:right-6 sm:top-6">
+              <span className="flex size-7 items-center justify-center rounded-full bg-amber-400/20">
+                <SparklesIcon className="size-3.5 text-amber-300" />
               </span>
               <div className="leading-tight">
-                <p className="text-[11px] font-semibold text-stone-900">5K+ khách hàng</p>
-                <p className="text-[10px] text-stone-500">tin chọn mỗi ngày</p>
+                <p className="text-[11px] font-semibold text-white">Local Brand</p>
+                <p className="text-[10px] text-white/60">Việt Nam</p>
               </div>
             </div>
-          </div>
+          </figure>
 
-          {/* ── Stats row ── */}
-          <dl className="mx-auto mt-12 grid max-w-lg grid-cols-3 gap-3 sm:gap-4">
-            {[
-              { value: `${products.length || "—"}`, suffix: "+", label: "Sản phẩm" },
-              { value: `${brands.length || "—"}`, suffix: "", label: "Thương hiệu" },
-              { value: `${categories.length || "—"}`, suffix: "", label: "Danh mục" },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-2xl border border-white/80 bg-white/60 px-3 py-4 text-center shadow-sm backdrop-blur-sm"
-              >
-                <dt className="sr-only">{stat.label}</dt>
-                <dd className="font-heading text-2xl font-semibold tabular-nums text-stone-900 sm:text-3xl">
-                  {loading ? "…" : `${stat.value}${!loading && stat.suffix ? stat.suffix : ""}`}
-                </dd>
-                <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-stone-500">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </dl>
+          {/* Floating badge — bottom left */}
+          <div className="absolute -bottom-5 left-6 z-10 flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white/95 px-4 py-2.5 shadow-xl shadow-stone-900/10 backdrop-blur-md sm:left-8">
+            <span className="flex size-8 items-center justify-center rounded-full bg-rose-100">
+              <HeartIcon className="size-4 text-rose-600" />
+            </span>
+            <div className="leading-tight">
+              <p className="text-[11px] font-semibold text-stone-900">5K+ khách hàng</p>
+              <p className="text-[10px] text-stone-500">tin chọn mỗi ngày</p>
+            </div>
+          </div>
         </div>
       </section>
 

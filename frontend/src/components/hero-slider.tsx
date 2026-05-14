@@ -39,7 +39,7 @@ export function HeroSlider() {
 
   return (
     <div
-      className="relative overflow-hidden rounded-[1.75rem] bg-stone-950 shadow-[0_32px_80px_-20px_rgba(28,25,23,0.30)] ring-1 ring-white/10 sm:rounded-[2rem]"
+      className="relative overflow-hidden bg-stone-950"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -49,14 +49,16 @@ export function HeroSlider() {
           <div
             key={slide.src}
             className={`transition-opacity duration-700 ${
-              i === current ? "opacity-100" : "pointer-events-none absolute inset-0 opacity-0"
+              i === current
+                ? "relative opacity-100"
+                : "pointer-events-none absolute inset-0 opacity-0"
             }`}
             aria-hidden={i !== current}
           >
             <img
               src={slide.src}
               alt={slide.alt}
-              className="block w-full object-contain"
+              className="block w-full"
               loading={i === 0 ? "eager" : "lazy"}
               fetchPriority={i === 0 ? "high" : "auto"}
             />
