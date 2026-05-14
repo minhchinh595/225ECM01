@@ -5,49 +5,52 @@ import Link from "next/link"
 import { ArrowLeftIcon, SparklesIcon, StarIcon, ShieldCheckIcon } from "lucide-react"
 
 const PANEL_IMAGE = "/Login.png"
+const BG_IMAGE = "/anhnenlogin.png"
 
 export default function SignupPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-[1fr_calc(100svh*9/16)]">
-      {/* ── Left: form panel ── */}
-      <div className="relative flex flex-col bg-[linear-gradient(150deg,#fdf8f2_0%,#f5ece0_55%,#ecdcc8_100%)]">
+
+      {/* ── Left: background ảnh + form đè lên ── */}
+      <div className="relative flex flex-col overflow-hidden">
+        {/* Ảnh nền cột trái */}
+        <img
+          src={BG_IMAGE}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        {/* Overlay nhẹ */}
+        <div className="absolute inset-0 bg-white/30 backdrop-blur-[1px]" aria-hidden />
+
         {/* Back button */}
-        <div className="p-6 md:p-8">
+        <div className="relative z-10 p-6 md:p-8">
           <Link
             href="/"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-stone-700 shadow-sm ring-1 ring-stone-200/80 backdrop-blur-sm transition hover:bg-white hover:shadow-md"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-stone-700 shadow-md ring-1 ring-stone-200/60 backdrop-blur-sm transition hover:bg-white hover:shadow-lg"
             aria-label="Về trang chủ"
           >
-            <ArrowLeftIcon className="h-4.5 w-4.5" />
+            <ArrowLeftIcon className="h-4 w-4" />
           </Link>
         </div>
 
-        {/* Form — scrollable on small screens */}
-        <div className="flex flex-1 items-center justify-center px-6 pb-6 pt-2 md:px-10">
+        {/* Form card — đè lên ảnh nền, scrollable */}
+        <div className="relative z-10 flex flex-1 items-start justify-center px-6 pb-12 md:items-center md:px-10">
           <div className="w-full max-w-[28rem]">
-            <div className="rounded-[1.75rem] border border-white/80 bg-white/85 px-7 py-5 shadow-[0_20px_70px_rgba(88,62,39,0.13)] backdrop-blur-md sm:px-8 sm:py-6">
+            <div className="rounded-[1.75rem] border border-white/70 bg-white/85 px-7 py-5 shadow-[0_24px_80px_rgba(88,62,39,0.16)] backdrop-blur-xl sm:px-8 sm:py-6">
               <SignupForm />
             </div>
           </div>
         </div>
-
-        {/* Decorative blobs */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-          <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-amber-200/30 blur-3xl" />
-          <div className="absolute -bottom-16 right-0 h-64 w-64 rounded-full bg-violet-200/20 blur-3xl" />
-        </div>
       </div>
 
-      {/* ── Right: image panel ── */}
+      {/* ── Right: image panel (giữ nguyên) ── */}
       <div className="relative hidden overflow-hidden bg-stone-950 lg:block">
-        {/* Full image */}
         <img
           src={PANEL_IMAGE}
           alt="Local brand Việt Nam — lookbook streetwear"
           className="absolute inset-0 h-full w-full object-contain object-center"
         />
-
-        {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/20 to-stone-950/40" />
 
         {/* Top badge — centered */}
@@ -63,23 +66,17 @@ export default function SignupPage() {
 
         {/* Bottom content */}
         <div className="absolute inset-x-0 bottom-0 p-8 lg:p-10">
-          {/* Trust badges */}
           <div className="mb-5 flex flex-wrap gap-2">
             {[
               { icon: StarIcon, label: "Chất lượng kiểm chứng" },
               { icon: ShieldCheckIcon, label: "Bảo mật tuyệt đối" },
             ].map(({ icon: Icon, label }) => (
-              <div
-                key={label}
-                className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur-sm"
-              >
+              <div key={label} className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur-sm">
                 <Icon className="size-3.5 text-amber-300" strokeWidth={2} />
                 <span className="text-[11px] font-medium text-white/80">{label}</span>
               </div>
             ))}
           </div>
-
-          {/* Caption card */}
           <div className="rounded-[1.5rem] border border-white/10 bg-stone-950/40 p-6 backdrop-blur-md">
             <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-white/55">
               Chào mừng đến với phong cách riêng
@@ -90,6 +87,7 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
+
     </div>
   )
 }
