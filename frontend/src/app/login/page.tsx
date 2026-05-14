@@ -4,7 +4,7 @@ import { LoginForm } from "@/components/login-form"
 import Link from "next/link"
 import { ArrowLeftIcon, SparklesIcon, StarIcon, ShieldCheckIcon } from "lucide-react"
 
-const PANEL_IMAGE = "/c7b0fa19-b169-461b-9246-78ce5bbc3794.jpg"
+const PANEL_IMAGE = "/Login.png"
 
 export default function LoginPage() {
   return (
@@ -50,8 +50,8 @@ export default function LoginPage() {
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/20 to-stone-950/40" />
 
-        {/* Top badge */}
-        <div className="absolute left-8 top-8 flex items-center gap-2.5 rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 backdrop-blur-md">
+        {/* Top badge — centered */}
+        <div className="absolute left-1/2 top-8 z-10 flex -translate-x-1/2 items-center gap-2.5 rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 backdrop-blur-md">
           <span className="flex size-7 items-center justify-center rounded-full bg-amber-400/20">
             <SparklesIcon className="size-3.5 text-amber-300" />
           </span>

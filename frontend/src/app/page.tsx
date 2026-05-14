@@ -46,8 +46,7 @@ function productImageSrc(hinhAnh?: string | null): string | null {
 }
 
 /** Hero lookbook — ảnh banner local brand */
-const HERO_IMAGE =
-  "https://file.hstatic.net/200000053174/file/local_brand_doi_dau__b3ac5e2387ae44be804655483f214679.png"
+const HERO_IMAGE = "/localbrand.png"
 
 const FALLBACK_GRADIENTS = [
   "from-rose-50 via-orange-50/90 to-amber-100/80",
