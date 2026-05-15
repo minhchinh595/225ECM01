@@ -155,7 +155,7 @@ export default function Home() {
             </span>
           </Link>
 
-          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3 -mr-2 sm:-mr-4">
             {currentUser ? (
               <>
                 {(currentUser.maVaiTro === 1 || currentUser.maVaiTro === 2) && (
