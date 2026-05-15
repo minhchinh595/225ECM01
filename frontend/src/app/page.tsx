@@ -362,7 +362,7 @@ function ProductCard({ product, index }: { product: SanPham; index: number }) {
   return (
     <Link href={`/san-pham/${product.maSanPham}`} className="group block">
       {/* Ảnh */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-stone-100">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-stone-100">
         {src ? (
           <img
             src={src}
