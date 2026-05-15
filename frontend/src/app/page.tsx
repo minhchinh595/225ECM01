@@ -43,6 +43,7 @@ const CATEGORY_SECTIONS = [
     keywords: ["áo dài", "ao dai"],
     accent: "from-rose-50 to-amber-50",
     badge: "bg-rose-100 text-rose-800 border-rose-200",
+    buttonLeft: "26.5%",
   },
   {
     key: "non-la",
@@ -51,6 +52,7 @@ const CATEGORY_SECTIONS = [
     keywords: ["nón lá", "non la", "nón"],
     accent: "from-amber-50 to-yellow-50",
     badge: "bg-amber-100 text-amber-800 border-amber-200",
+    buttonLeft: "23.5%",
   },
   {
     key: "tui",
@@ -59,6 +61,7 @@ const CATEGORY_SECTIONS = [
     keywords: ["túi", "tui", "bag"],
     accent: "from-violet-50 to-fuchsia-50",
     badge: "bg-violet-100 text-violet-800 border-violet-200",
+    buttonLeft: "24%",
   },
   {
     key: "giay",
@@ -67,6 +70,7 @@ const CATEGORY_SECTIONS = [
     keywords: ["giày", "giay", "dép", "dep"],
     accent: "from-sky-50 to-indigo-50",
     badge: "bg-sky-100 text-sky-800 border-sky-200",
+    buttonLeft: "24%",
   },
   {
     key: "trang-suc-khan-lua",
@@ -76,6 +80,7 @@ const CATEGORY_SECTIONS = [
     accent: "from-emerald-50 to-teal-50",
     badge: "bg-emerald-100 text-emerald-800 border-emerald-200",
     multi: true,
+    buttonLeft: "41%",
   },
 ]
 
@@ -224,14 +229,25 @@ export default function Home() {
 
           return (
             <section key={section.key} className="w-full">
-              {/* Banner image */}
-              <div className="overflow-hidden shadow-[0_20px_60px_-20px_rgba(28,25,23,0.20)]">
+              {/* Banner image + overlay button */}
+              <div className="relative overflow-hidden shadow-[0_20px_60px_-20px_rgba(28,25,23,0.20)]">
                 <img
                   src={section.image}
                   alt={section.label}
                   className="block w-full object-cover"
                   loading="lazy"
                 />
+                {/* Gradient dưới để nút dễ nhìn */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                {/* Nút mua ngay overlay phía dưới ảnh */}
+                <div className="absolute bottom-0 pb-24 sm:pb-28" style={{ left: section.buttonLeft }}>
+                  <a
+                    href={`#${section.key}`}
+                    className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-2.5 text-sm font-semibold tracking-wide text-stone-900 shadow-md transition hover:bg-stone-100"
+                  >
+                    Mua ngay
+                  </a>
+                </div>
               </div>
 
               {/* Label + products */}
