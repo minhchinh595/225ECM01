@@ -255,7 +255,7 @@ export default function Home() {
                 {/* Section heading */}
                 <div className="mb-6 flex items-center gap-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent via-stone-400 to-stone-400" />
-                  <h2 className="font-category text-4xl font-semibold italic uppercase tracking-[0.25em] text-stone-950 sm:text-5xl">
+                  <h2 className="font-sans text-4xl font-extrabold uppercase tracking-wide text-stone-950 sm:text-5xl">
                     {section.label}
                   </h2>
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent via-stone-400 to-stone-400" />

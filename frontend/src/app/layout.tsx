@@ -4,6 +4,7 @@ import {
   Geist_Mono,
   Playfair_Display,
   Cormorant_Garamond,
+  Bebas_Neue,
 } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
@@ -28,6 +29,12 @@ const categoryFont = Cormorant_Garamond({
   style: ["normal", "italic"],
 });
 
+const bebasFont = Bebas_Neue({
+  variable: "--font-bebas",
+  subsets: ["latin"],
+  weight: ["400"],
+});
+
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -46,7 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${bodyFont.variable} ${headingFont.variable} ${categoryFont.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${bodyFont.variable} ${headingFont.variable} ${categoryFont.variable} ${bebasFont.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <TooltipProvider>{children}</TooltipProvider>
