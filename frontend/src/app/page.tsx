@@ -136,12 +136,58 @@ export default function Home() {
       {/* Navigation */}
       <header className="sticky top-0 z-50 border-b border-stone-200/50 bg-[#faf9f7]/80 backdrop-blur-xl backdrop-saturate-150">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="group flex items-center">
-            <img
-              src="/visilk.png"
-              alt="Visilk"
-              className="h-10 w-auto object-contain"
-            />
+          <Link href="/" className="group flex items-center gap-2.5">
+            {/* Logo ViSilk — SVG inline */}
+            <svg
+              width="36"
+              height="36"
+              viewBox="0 0 36 36"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden
+            >
+              {/* Outer ring */}
+              <circle cx="18" cy="18" r="17" stroke="url(#logo-ring)" strokeWidth="1.2" />
+              {/* Inner diamond shape */}
+              <path
+                d="M18 7 L27 18 L18 29 L9 18 Z"
+                fill="url(#logo-diamond)"
+                opacity="0.15"
+              />
+              {/* V mark */}
+              <path
+                d="M11.5 13.5 L18 23 L24.5 13.5"
+                stroke="url(#logo-v)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+              {/* Center dot */}
+              <circle cx="18" cy="23" r="1.2" fill="url(#logo-dot)" />
+              <defs>
+                <linearGradient id="logo-ring" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#d97706" />
+                  <stop offset="100%" stopColor="#9333ea" />
+                </linearGradient>
+                <linearGradient id="logo-diamond" x1="9" y1="7" x2="27" y2="29" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#fbbf24" />
+                  <stop offset="100%" stopColor="#a855f7" />
+                </linearGradient>
+                <linearGradient id="logo-v" x1="11.5" y1="13.5" x2="24.5" y2="23" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#b45309" />
+                  <stop offset="100%" stopColor="#7c3aed" />
+                </linearGradient>
+                <linearGradient id="logo-dot" x1="16.8" y1="21.8" x2="19.2" y2="24.2" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#d97706" />
+                  <stop offset="100%" stopColor="#9333ea" />
+                </linearGradient>
+              </defs>
+            </svg>
+            {/* Wordmark */}
+            <span className="select-none font-heading text-[1.35rem] font-semibold tracking-[0.18em] text-stone-900 transition-colors group-hover:text-stone-700">
+              VI<span className="bg-gradient-to-r from-amber-700 to-violet-600 bg-clip-text text-transparent">SILK</span>
+            </span>
           </Link>
 
           <div className="hidden items-center gap-10 md:flex">
