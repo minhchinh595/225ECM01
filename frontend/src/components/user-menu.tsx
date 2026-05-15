@@ -59,14 +59,14 @@ export function UserMenu({ initialUser }: { initialUser: NguoiDung }) {
       {/* Trigger */}
       <button
         onClick={handleOpen}
-        className="flex items-center gap-2 rounded-full border border-stone-200/80 bg-white/80 py-1.5 pl-1.5 pr-3 shadow-sm backdrop-blur-sm transition hover:border-stone-300 hover:bg-white hover:shadow-md"
+        className="flex h-9 items-center gap-2 rounded-full border border-stone-200/80 bg-white/80 pl-2 pr-3 shadow-sm backdrop-blur-sm transition hover:border-stone-300 hover:bg-white hover:shadow-md"
         aria-expanded={open}
         aria-haspopup="true"
       >
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-amber-200 via-rose-100 to-violet-200 text-[11px] font-bold text-stone-800 shadow-sm ring-1 ring-white/80">
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-amber-200 via-rose-100 to-violet-200 text-[10px] font-bold text-stone-800 shadow-sm ring-1 ring-white/80">
           {initials}
         </div>
-        <span className="max-w-[120px] truncate text-sm font-medium text-stone-800">
+        <span className="max-w-[100px] truncate text-sm font-medium text-stone-800">
           {displayName}
         </span>
         <ChevronDownIcon

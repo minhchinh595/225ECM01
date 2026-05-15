@@ -2,7 +2,6 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { API_URL, getCategories, getProducts } from "@/lib/api"
 import type { DanhMuc, NguoiDung, SanPham } from "@/lib/types"
 import Link from "next/link"
@@ -160,7 +159,7 @@ export default function Home() {
             {currentUser ? (
               <>
                 {(currentUser.maVaiTro === 1 || currentUser.maVaiTro === 2) && (
-                  <Button asChild size="sm" className="rounded-full border border-amber-200/80 bg-amber-50 px-4 text-amber-800 shadow-sm hover:bg-amber-100 hover:text-amber-900" variant="outline">
+                  <Button asChild size="sm" className="h-9 rounded-full border border-amber-200/80 bg-amber-50 px-4 text-amber-800 shadow-sm hover:bg-amber-100 hover:text-amber-900" variant="outline">
                     <Link href="/dashboard">Quản trị</Link>
                   </Button>
                 )}
@@ -181,15 +180,15 @@ export default function Home() {
       </header>
 
       {/* Hero Slider */}
-      <section className="relative overflow-x-clip pb-10 pt-1 sm:pb-14 sm:pt-2">
+      <section className="relative overflow-x-clip pb-10 pt-0">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-amber-100/60 via-rose-100/40 to-transparent blur-3xl" />
           <div className="absolute -right-32 bottom-10 h-[440px] w-[440px] rounded-full bg-gradient-to-tl from-violet-100/50 via-sky-50/30 to-transparent blur-3xl" />
         </div>
 
-        <div className="relative mx-auto w-full max-w-[99vw] px-1 sm:px-1.5">
+        <div className="relative mx-auto w-full px-0">
           <div className="pointer-events-none absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-amber-200/40 via-rose-200/20 to-violet-200/30 blur-3xl" aria-hidden />
-          <figure className="relative overflow-hidden rounded-2xl bg-stone-950 shadow-[0_32px_80px_-20px_rgba(28,25,23,0.30)] ring-1 ring-white/10 sm:rounded-3xl">
+          <figure className="relative overflow-hidden bg-stone-950 shadow-[0_32px_80px_-20px_rgba(28,25,23,0.30)] ring-1 ring-white/10">
             <HeroSlider />
             <div className="absolute right-5 top-5 z-10 flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-3.5 py-2 shadow-lg backdrop-blur-md sm:right-6 sm:top-6">
               <span className="flex size-7 items-center justify-center rounded-full bg-amber-400/20">
@@ -224,9 +223,9 @@ export default function Home() {
           const hasMore = sectionProducts.length > ITEMS_PER_ROW
 
           return (
-            <section key={section.key} className="mx-auto max-w-[99vw] px-1 sm:px-1.5">
+            <section key={section.key} className="w-full">
               {/* Banner image */}
-              <div className="overflow-hidden rounded-2xl shadow-[0_20px_60px_-20px_rgba(28,25,23,0.20)] sm:rounded-3xl">
+              <div className="overflow-hidden shadow-[0_20px_60px_-20px_rgba(28,25,23,0.20)]">
                 <img
                   src={section.image}
                   alt={section.label}
@@ -236,11 +235,11 @@ export default function Home() {
               </div>
 
               {/* Label + products */}
-              <div className="mt-8 px-2 sm:px-4">
+              <div className="mt-8 px-4 sm:px-6 lg:px-8">
                 {/* Section heading */}
                 <div className="mb-6 flex items-center gap-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent via-stone-400 to-stone-400" />
-                  <h2 className="font-sans text-3xl font-black uppercase tracking-widest text-stone-950 sm:text-4xl">
+                  <h2 className="font-category text-4xl font-semibold italic uppercase tracking-[0.25em] text-stone-950 sm:text-5xl">
                     {section.label}
                   </h2>
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent via-stone-400 to-stone-400" />
@@ -361,41 +360,36 @@ function ProductCard({ product, index }: { product: SanPham; index: number }) {
   const grad = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length]
 
   return (
-    <Card className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200/60 bg-white shadow-[0_8px_30px_-12px_rgba(28,25,23,0.14)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_16px_40px_-12px_rgba(28,25,23,0.18)]">
-      <div className="relative aspect-[3/4] overflow-hidden bg-stone-50">
+    <Link href={`/san-pham/${product.maSanPham}`} className="group block">
+      {/* Ảnh */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-stone-100">
         {src ? (
           <img
             src={src}
             alt={product.tenSanPham}
-            className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.05]"
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
           />
         ) : (
           <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${grad}`}>
-            <ShoppingBagIcon className="size-10 text-stone-400/70" strokeWidth={1} />
+            <ShoppingBagIcon className="size-10 text-stone-300" strokeWidth={1} />
           </div>
         )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-900/20 via-transparent to-white/10 opacity-0 transition duration-500 group-hover:opacity-100" />
+        {/* Overlay mờ khi hover */}
+        <div className="pointer-events-none absolute inset-0 bg-black/0 transition duration-500 group-hover:bg-black/8" />
       </div>
 
-      <CardContent className="flex flex-1 flex-col p-4">
-        <h3 className="font-heading text-sm font-semibold leading-snug tracking-tight text-stone-950 line-clamp-2">
+      {/* Thông tin bên dưới ảnh */}
+      <div className="mt-3 px-0.5">
+        <p className="text-[11px] font-medium uppercase tracking-widest text-stone-400">
+          {product.tenThuongHieu ?? ""}
+        </p>
+        <h3 className="mt-0.5 line-clamp-2 text-sm font-medium leading-snug text-stone-900 group-hover:text-stone-600 transition-colors">
           {product.tenSanPham}
         </h3>
-        <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-stone-400">
-          {product.tenThuongHieu ?? "Thương hiệu"}
+        <p className="mt-1.5 font-semibold text-stone-950">
+          {formatCurrency(product.gia)}
         </p>
-        <div className="mt-auto space-y-3 border-t border-stone-100 pt-3">
-          <p className="font-heading text-base font-semibold text-amber-800">
-            {formatCurrency(product.gia)}
-          </p>
-          <Button asChild className="h-9 w-full rounded-full border-0 bg-stone-900 text-[13px] font-medium text-white shadow-sm transition hover:bg-stone-800">
-            <Link href={`/san-pham/${product.maSanPham}`} className="inline-flex items-center justify-center gap-1.5">
-              <ShoppingBagIcon className="size-3.5" />
-              Xem chi tiết
-            </Link>
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Link>
   )
 }

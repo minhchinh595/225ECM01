@@ -3,6 +3,7 @@ import {
   Be_Vietnam_Pro,
   Geist_Mono,
   Playfair_Display,
+  Cormorant_Garamond,
 } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
@@ -18,6 +19,13 @@ const headingFont = Playfair_Display({
   variable: "--font-heading-display",
   subsets: ["latin", "vietnamese"],
   weight: ["600", "700", "800"],
+});
+
+const categoryFont = Cormorant_Garamond({
+  variable: "--font-category",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 const geistMono = Geist_Mono({
@@ -38,7 +46,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${bodyFont.variable} ${headingFont.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${bodyFont.variable} ${headingFont.variable} ${categoryFont.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <TooltipProvider>{children}</TooltipProvider>
