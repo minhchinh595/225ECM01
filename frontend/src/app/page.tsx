@@ -125,10 +125,10 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-svh scroll-smooth bg-[#faf9f7] text-stone-900 antialiased selection:bg-amber-200/40 selection:text-stone-900">
+    <main className="min-h-svh scroll-smooth bg-white text-stone-900 antialiased selection:bg-amber-200/40 selection:text-stone-900">
 
       {/* Navigation */}
-      <header className="sticky top-0 z-50 border-b border-stone-200/50 bg-[#faf9f7]/80 backdrop-blur-xl backdrop-saturate-150">
+      <header className="sticky top-0 z-50 border-b border-stone-200/50 bg-white/80 backdrop-blur-xl backdrop-saturate-150">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="group flex items-center gap-2.5">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
@@ -238,12 +238,12 @@ export default function Home() {
               {/* Label + products */}
               <div className="mt-8 px-2 sm:px-4">
                 {/* Section heading */}
-                <div className="mb-6 flex items-center gap-3">
-                  <div className={`h-px flex-1 bg-gradient-to-r from-stone-200 to-transparent`} />
-                  <h2 className="font-heading text-2xl font-semibold tracking-tight text-stone-900 sm:text-3xl">
+                <div className="mb-6 flex items-center gap-4">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-stone-400 to-stone-400" />
+                  <h2 className="font-sans text-3xl font-black uppercase tracking-widest text-stone-950 sm:text-4xl">
                     {section.label}
                   </h2>
-                  <div className={`h-px flex-1 bg-gradient-to-l from-stone-200 to-transparent`} />
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent via-stone-400 to-stone-400" />
                 </div>
 
                 {/* Product grid */}
@@ -279,7 +279,7 @@ export default function Home() {
                           ) : (
                             <>
                               <ChevronDownIcon className="size-4" />
-                              Xem thêm ({sectionProducts.length - ITEMS_PER_ROW} sản phẩm)
+                              Xem thêm
                             </>
                           )}
                         </button>
