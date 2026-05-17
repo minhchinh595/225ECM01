@@ -2,8 +2,8 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { API_URL, getCategories, getProducts } from "@/lib/api"
-import type { DanhMuc, NguoiDung, SanPham } from "@/lib/types"
+import { API_URL, getProducts } from "@/lib/api"
+import type { NguoiDung, SanPham } from "@/lib/types"
 import Link from "next/link"
 import {
   SparklesIcon,
@@ -11,7 +11,6 @@ import {
   ShoppingBagIcon,
   MapPinIcon,
   ChevronDownIcon,
-  ChevronUpIcon,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { getStoredUser } from "@/lib/auth"
@@ -91,7 +90,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [currentUser, setCurrentUser] = useState<NguoiDung | null>(null)
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     setCurrentUser(getStoredUser())
@@ -117,16 +115,13 @@ export default function Home() {
     return () => { active = false }
   }, [])
 
-  function getProductsForSection(section: typeof CATEGORY_SECTIONS[0]): SanPham[] {
-    return products.filter((p) => {
+  function getProductsForSection(section: typeof CATEGORY_SECTIONS[0]): SanPham[] {    return products.filter((p) => {
       const name = (p.tenDanhMuc ?? "").toLowerCase()
       return section.keywords.some((kw) => name.includes(kw))
     })
   }
 
-  function toggleSection(key: string) {
-    setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }))
-  }
+
 
   return (
     <main className="min-h-svh scroll-smooth bg-white text-stone-900 antialiased selection:bg-amber-200/40 selection:text-stone-900">
@@ -221,10 +216,7 @@ export default function Home() {
       <div className="mt-8 space-y-20 pb-20 sm:mt-12 sm:space-y-24 sm:pb-24">
         {CATEGORY_SECTIONS.map((section) => {
           const sectionProducts = getProductsForSection(section)
-          const isExpanded = expandedSections[section.key] ?? false
-          const visibleProducts = isExpanded
-            ? sectionProducts
-            : sectionProducts.slice(0, ITEMS_PER_ROW)
+          const visibleProducts = sectionProducts.slice(0, ITEMS_PER_ROW)
           const hasMore = sectionProducts.length > ITEMS_PER_ROW
 
           return (
@@ -302,22 +294,13 @@ export default function Home() {
 
                     {hasMore && (
                       <div className="mt-6 flex justify-center">
-                        <button
-                          onClick={() => toggleSection(section.key)}
+                        <Link
+                          href={`/danh-muc/${section.key}`}
                           className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-6 py-2.5 text-sm font-medium text-stone-700 shadow-sm transition hover:border-stone-300 hover:bg-stone-50 hover:text-stone-900"
                         >
-                          {isExpanded ? (
-                            <>
-                              <ChevronUpIcon className="size-4" />
-                              Thu gọn
-                            </>
-                          ) : (
-                            <>
-                              <ChevronDownIcon className="size-4" />
-                              Xem thêm
-                            </>
-                          )}
-                        </button>
+                          <ChevronDownIcon className="size-4" />
+                          Xem thêm
+                        </Link>
                       </div>
                     )}
                   </>

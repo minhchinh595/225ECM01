@@ -10,7 +10,7 @@ const SLIDES = [
   { src: "/localbrand3.png", alt: "Local Brand Việt Nam — lookbook 4" },
 ]
 
-const AUTO_PLAY_MS = 4500
+const AUTO_PLAY_MS = 3000
 
 export function HeroSlider() {
   const [current, setCurrent] = useState(0)
