@@ -253,12 +253,32 @@ export default function Home() {
               {/* Label + products */}
               <div className="mt-8 px-4 sm:px-6 lg:px-8">
                 {/* Section heading */}
-                <div className="mb-6 flex items-center gap-4">
-                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-stone-400 to-stone-400" />
-                  <h2 className="font-sans text-4xl font-extrabold uppercase tracking-wide text-stone-950 sm:text-5xl">
+                <div className="mb-6 flex items-center gap-5">
+                  {/* Nét trang trí trái */}
+                  <svg className="flex-1" height="12" viewBox="0 0 200 12" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0,6 Q50,1 100,6 Q150,11 200,6" stroke="url(#grad-left)" strokeWidth="0.8" fill="none" opacity="0.6"/>
+                    <defs>
+                      <linearGradient id="grad-left" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#d6d3d1" stopOpacity="0"/>
+                        <stop offset="100%" stopColor="#a8a29e" stopOpacity="1"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+
+                  <h2 className="font-sans text-4xl font-[450] uppercase tracking-wide text-stone-950 sm:text-5xl">
                     {section.label}
                   </h2>
-                  <div className="h-px flex-1 bg-gradient-to-l from-transparent via-stone-400 to-stone-400" />
+
+                  {/* Nét trang trí phải */}
+                  <svg className="flex-1" height="12" viewBox="0 0 200 12" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0,6 Q50,11 100,6 Q150,1 200,6" stroke="url(#grad-right)" strokeWidth="0.8" fill="none" opacity="0.6"/>
+                    <defs>
+                      <linearGradient id="grad-right" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#a8a29e" stopOpacity="1"/>
+                        <stop offset="100%" stopColor="#d6d3d1" stopOpacity="0"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
                 </div>
 
                 {/* Product grid */}
