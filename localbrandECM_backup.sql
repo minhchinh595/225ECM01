@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict N4uIbtHPJq7MjMlhzJ8oh6VgpGJMOzaZFxdZ3RKOGUAnc9hqje2882RajVSorYv
+\restrict ddhlenhthZG39DycfYD74UC6DcT931YhjY37z5Bst3hGmTquJn4aWgS2PxoFoeX
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
@@ -369,6 +369,9 @@ CREATE TABLE public.sanpham (
     mo_ta character varying(255),
     ma_danh_muc integer,
     ma_thuong_hieu integer,
+    hinh_anh_2 character varying(255),
+    hinh_anh_3 character varying(255),
+    hinh_anh_4 character varying(255),
     CONSTRAINT sanpham_gia_check CHECK ((gia >= (0)::numeric)),
     CONSTRAINT sanpham_so_luong_ton_check CHECK ((so_luong_ton >= 0))
 );
@@ -606,12 +609,6 @@ COPY public.chitietdonhang (ma_chi_tiet_don_hang, ma_don_hang, ma_san_pham, so_l
 --
 
 COPY public.chitietgiohang (ma_gio_hang, ma_san_pham, so_luong) FROM stdin;
-1	1	1
-1	3	2
-1	7	1
-2	12	1
-2	18	1
-2	25	1
 3	9	1
 3	21	2
 3	33	1
@@ -663,9 +660,8 @@ COPY public.donhang (ma_don_hang, ma_nguoi_dung, ngay_dat, trang_thai, phuong_th
 --
 
 COPY public.giohang (ma_gio_hang, ma_nguoi_dung) FROM stdin;
-1	4
-2	5
 3	6
+4	5
 \.
 
 
@@ -713,50 +709,50 @@ COPY public.nguoidung (ma_nguoi_dung, ten_dang_nhap, mat_khau, email, so_dien_th
 -- Data for Name: sanpham; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.sanpham (ma_san_pham, ten_san_pham, gia, so_luong_ton, size, mau_sac, hinh_anh, mo_ta, ma_danh_muc, ma_thuong_hieu) FROM stdin;
-2	Áo dài trắng học sinh	650000.00	15	S,M,L	Trắng	aodai_trang.jpg	Áo dài trắng tinh khôi	1	1
-3	Áo dài cách tân hoa nhí	920000.00	8	M,L	Hồng	aodai_hoa.jpg	Áo dài cách tân trẻ trung	1	1
-4	Áo dài lụa xanh ngọc	1100000.00	6	S,M	Xanh ngọc	aodai_xanh.jpg	Áo dài lụa mềm mại	1	1
-5	Áo dài thêu cổ điển	1450000.00	5	M,L	Vàng kem	aodai_theu.jpg	Áo dài thêu phong cách Huế	1	1
-6	Áo dài nhung cổ cao	1700000.00	4	L,XL	Đen	aodai_nhung.jpg	Áo dài nhung sang trọng	1	1
-7	Áo dài công sở pastel	980000.00	7	S,M,L	Pastel	aodai_pastel.jpg	Áo dài công sở thanh lịch	1	1
-8	Áo dài minimal trắng kem	1050000.00	5	M,L	Kem	aodai_kem.jpg	Thiết kế tối giản hiện đại	1	1
-9	Áo dài cưới đính ngọc	3200000.00	3	M,L	Đỏ đô	aodai_cuoi.jpg	Áo dài cưới cao cấp	1	1
-10	Áo dài luxury phượng hoàng	4500000.00	2	L,XL	Vàng	aodai_luxury.jpg	Áo dài thêu phượng hoàng	1	1
-11	Nón lá truyền thống	120000.00	20	Free Size	Be	nonla_1.jpg	Nón lá thủ công	2	1
-12	Nón lá quai lụa	180000.00	10	Free Size	Kem	nonla_2.jpg	Nón lá phối quai lụa	2	1
-13	Nón lá thêu hoa	220000.00	8	Free Size	Trắng	nonla_3.jpg	Nón lá thêu họa tiết hoa	2	1
-14	Nón lá vintage	250000.00	6	Free Size	Nâu	nonla_4.jpg	Phong cách cổ điển	2	1
-15	Nón lá nghệ thuật	300000.00	5	Free Size	Vàng kem	nonla_5.jpg	Nón lá decor cao cấp	2	1
-16	Túi clutch ngọc trai	550000.00	8	Free Size	Trắng	tui_1.jpg	Clutch dự tiệc sang trọng	3	1
-17	Túi vintage gấm	480000.00	10	Free Size	Đỏ	tui_2.jpg	Túi phong cách cổ điển	3	1
-18	Túi lụa tối giản	390000.00	12	Free Size	Kem	tui_3.jpg	Túi thanh lịch hiện đại	3	1
-19	Túi cói truyền thống	350000.00	15	Free Size	Nâu	tui_4.jpg	Túi cói handmade	3	1
-20	Túi pastel hiện đại	520000.00	7	Free Size	Hồng pastel	tui_5.jpg	Túi thời trang trẻ trung	3	1
-21	Guốc gỗ truyền thống	450000.00	10	36,37,38	Nâu	guoc_1.jpg	Guốc gỗ cổ điển	4	1
-22	Guốc thêu hoa	520000.00	8	36,37,38	Đỏ	guoc_2.jpg	Guốc thêu thủ công	4	1
-23	Cao gót nude	680000.00	10	36,37,38,39	Be	giay_1.jpg	Cao gót phối áo dài	4	1
-24	Sandal ngọc trai	620000.00	9	36,37,38	Trắng	giay_2.jpg	Sandal nữ tính	4	1
-25	Giày búp bê trắng	480000.00	12	35,36,37	Trắng	giay_3.jpg	Giày nhẹ nhàng thanh lịch	4	1
-26	Sneaker trắng basic	700000.00	10	37,38,39	Trắng	giay_4.jpg	Sneaker mix áo dài hiện đại	4	1
-27	Guốc luxury đính đá	950000.00	5	36,37,38	Vàng	giay_5.jpg	Guốc cao cấp dự tiệc	4	1
-28	Sandal tối giản	540000.00	11	36,37,38	Đen	giay_6.jpg	Phong cách công sở	4	1
-29	Cài áo ngọc trai	250000.00	15	Free Size	Trắng	caiao_1.jpg	Cài áo sang trọng	5	1
-30	Cài áo hoa sen	220000.00	10	Free Size	Vàng	caiao_2.jpg	Cài áo phong cách Việt	5	1
-31	Cài áo vintage	280000.00	8	Free Size	Đồng	caiao_3.jpg	Trang sức cổ điển	5	1
-32	Cài áo tối giản	190000.00	12	Free Size	Bạc	caiao_4.jpg	Thiết kế minimal	5	1
-33	Cài áo luxury	350000.00	6	Free Size	Vàng	caiao_5.jpg	Đính đá cao cấp	5	1
-34	Vòng tay ngọc trai	320000.00	10	Free Size	Trắng	vongtay_1.jpg	Vòng tay thanh lịch	5	1
-35	Vòng tay lụa đỏ	180000.00	14	Free Size	Đỏ	vongtay_2.jpg	Vòng tay truyền thống	5	1
-36	Vòng tay bạc	290000.00	11	Free Size	Bạc	vongtay_3.jpg	Phong cách hiện đại	5	1
-37	Vòng tay vintage	310000.00	7	Free Size	Đồng	vongtay_4.jpg	Phong cách cổ điển	5	1
-38	Vòng tay tối giản	260000.00	9	Free Size	Đen	vongtay_5.jpg	Thiết kế thanh lịch	5	1
-39	Khăn lụa đỏ truyền thống	350000.00	10	Free Size	Đỏ	khan_1.jpg	Khăn lụa mềm mại	6	1
-40	Khăn lụa pastel	380000.00	9	Free Size	Hồng pastel	khan_2.jpg	Phong cách hiện đại	6	1
-41	Khăn lụa thêu hoa	450000.00	7	Free Size	Kem	khan_3.jpg	Khăn lụa cổ điển	6	1
-42	Khăn lụa công sở	320000.00	12	Free Size	Xám	khan_4.jpg	Thiết kế tối giản	6	1
-43	Khăn lụa luxury	550000.00	5	Free Size	Vàng	khan_5.jpg	Khăn lụa cao cấp	6	1
-1	Áo Dài Lụa Hoa Đào Truyền Thống	850000.00	10	S,M,L	Hồng nhạt	aodai_lua.jpg	Áo dài lụa hoa đào truyền thống màu hồng nhạt	1	1
+COPY public.sanpham (ma_san_pham, ten_san_pham, gia, so_luong_ton, size, mau_sac, hinh_anh, mo_ta, ma_danh_muc, ma_thuong_hieu, hinh_anh_2, hinh_anh_3, hinh_anh_4) FROM stdin;
+2	Áo dài trắng học sinh	650000.00	15	S,M,L	Trắng	aodai_trang.jpg	Áo dài trắng tinh khôi	1	1	aodai_trang2.jpg	aodai_trang3.jpg	\N
+4	Áo dài lụa xanh ngọc	1100000.00	6	S,M	Xanh ngọc	aodai_xanh.jpg	Áo dài lụa mềm mại	1	1	aodai_xanh2.jpg	aodai_xanh3.jpg	\N
+8	Áo dài minimal trắng kem	1050000.00	5	M,L	Kem	aodai_kem.jpg	Thiết kế tối giản hiện đại	1	1	aodai_kem2.jpg	aodai_kem3.jpg	\N
+3	Áo dài cách tân hoa nhí	920000.00	8	M,L	Hồng, Trắng, Xanh pastel	aodai_hoa.jpg	Áo dài cách tân trẻ trung	1	1	aodai_hoa2.jpg	aodai_hoa3.jpg	aodai_hoa4.jpg
+5	Áo dài thêu cổ điển	1450000.00	5	M,L	Vàng kem, Trắng ngà, Nâu nhạt	aodai_theu.jpg	Áo dài thêu phong cách Huế	1	1	aodai_theu2.jpg	aodai_theu3.jpg	aodai_theu4.jpg
+6	Áo dài nhung cổ cao	1700000.00	4	L,XL	Đen, Đỏ đô, Xanh navy	aodai_nhung.jpg	Áo dài nhung sang trọng	1	1	aodai_nhung2.jpg	aodai_nhung3.jpg	aodai_nhung4.jpg
+7	Áo dài công sở pastel	980000.00	7	S,M,L	Pastel, Hồng pastel, Xanh mint	aodai_pastel.jpg	Áo dài công sở thanh lịch	1	1	aodai_pastel2.jpg	aodai_pastel3.jpg	aodai_pastel4.jpg
+9	Áo dài cưới đính ngọc	3200000.00	3	M,L	Đỏ đô, Trắng ngà, Vàng ánh kim	aodai_cuoi.jpg	Áo dài cưới cao cấp	1	1	aodai_cuoi2.jpg	aodai_cuoi3.jpg	aodai_cuoi4.jpg
+10	Áo dài luxury phượng hoàng	4500000.00	2	L,XL	Vàng, Đỏ đô, Trắng ngà	aodai_luxury.jpg	Áo dài thêu phượng hoàng	1	1	aodai_luxury2.jpg	aodai_luxury3.jpg	aodai_luxury4.jpg
+11	Nón lá truyền thống	120000.00	20	Free Size	Be	nonla_1.jpg	Nón lá thủ công	2	1	nonla_12.jpg	\N	\N
+12	Nón lá quai lụa	180000.00	10	Free Size	Kem	nonla_2.jpg	Nón lá phối quai lụa	2	1	nonla_22.jpg	\N	\N
+13	Nón lá thêu hoa	220000.00	8	Free Size	Trắng	nonla_3.jpg	Nón lá thêu họa tiết hoa	2	1	nonla_32.jpg	\N	\N
+14	Nón lá vintage	250000.00	6	Free Size	Nâu	nonla_4.jpg	Phong cách cổ điển	2	1	nonla_42.jpg	\N	\N
+1	Áo Dài Lụa Hoa Đào Truyền Thống	850000.00	10	S,M,L	Hồng nhạt, Trắng, Đỏ đô	aodai_lua.jpg	Áo dài lụa hoa đào truyền thống màu hồng nhạt	1	1	aodai_lua2.jpg	aodai_lua3.jpg	aodai_lua4.jpg
+15	Nón lá nghệ thuật	300000.00	5	Free Size	Vàng kem	nonla_5.jpg	Nón lá decor cao cấp	2	1	nonla_52.jpg	\N	\N
+29	Cài áo ngọc trai	250000.00	15	Free Size	Trắng	caiao_1.jpg	Cài áo sang trọng	5	1	caiao_12.jpg	\N	\N
+30	Cài áo hoa sen	220000.00	10	Free Size	Vàng	caiao_2.jpg	Cài áo phong cách Việt	5	1	caiao_22.jpg	\N	\N
+31	Cài áo vintage	280000.00	8	Free Size	Đồng	caiao_3.jpg	Trang sức cổ điển	5	1	caiao_32.jpg	\N	\N
+32	Cài áo tối giản	190000.00	12	Free Size	Bạc	caiao_4.jpg	Thiết kế minimal	5	1	caiao_42.jpg	\N	\N
+33	Cài áo luxury	350000.00	6	Free Size	Vàng	caiao_5.jpg	Đính đá cao cấp	5	1	caiao_52.jpg	\N	\N
+16	Túi clutch ngọc trai	550000.00	8	Free Size	Trắng, Be	tui_1.jpg	Clutch dự tiệc sang trọng	3	1	tui_12.jpg	tui_13.jpg	tui_14.jpg
+17	Túi vintage gấm	480000.00	10	Free Size	Đỏ, Đen	tui_2.jpg	Túi phong cách cổ điển	3	1	tui_22.jpg	tui_23.jpg	tui_24.jpg
+18	Túi lụa tối giản	390000.00	12	Free Size	Kem, Nâu nhạt	tui_3.jpg	Túi thanh lịch hiện đại	3	1	tui_32.jpg	tui_33.jpg	tui_34.jpg
+19	Túi cói truyền thống	350000.00	15	Free Size	Nâu, Be	tui_4.jpg	Túi cói handmade	3	1	tui_42.jpg	tui_43.jpg	tui_44.jpg
+20	Túi pastel hiện đại	520000.00	7	Free Size	Hồng pastel, Xanh pastel	tui_5.jpg	Túi thời trang trẻ trung	3	1	tui_52.jpg	tui_53.jpg	tui_54.jpg
+21	Guốc gỗ truyền thống	450000.00	10	36,37,38	Nâu	guoc_1.jpg	Guốc gỗ cổ điển	4	1	guoc_12.jpg	\N	\N
+22	Guốc thêu hoa	520000.00	8	36,37,38	Đỏ	guoc_2.jpg	Guốc thêu thủ công	4	1	guoc_22.jpg	\N	\N
+23	Cao gót nude	680000.00	10	36,37,38,39	Be	giay_1.jpg	Cao gót phối áo dài	4	1	giay_12.jpg	\N	\N
+24	Sandal ngọc trai	620000.00	9	36,37,38	Trắng	giay_2.jpg	Sandal nữ tính	4	1	giay_22.jpg	\N	\N
+25	Giày búp bê trắng	480000.00	12	35,36,37	Trắng	giay_3.jpg	Giày nhẹ nhàng thanh lịch	4	1	giay_32.jpg	\N	\N
+26	Sneaker trắng basic	700000.00	10	37,38,39	Trắng	giay_4.jpg	Sneaker mix áo dài hiện đại	4	1	giay_42.jpg	\N	\N
+27	Guốc luxury đính đá	950000.00	5	36,37,38	Vàng	giay_5.jpg	Guốc cao cấp dự tiệc	4	1	giay_52.jpg	\N	\N
+28	Sandal tối giản	540000.00	11	36,37,38	Đen	giay_6.jpg	Phong cách công sở	4	1	giay_62.jpg	\N	\N
+34	Vòng tay ngọc trai	320000.00	10	Free Size	Trắng	vongtay_1.jpg	Vòng tay thanh lịch	5	1	vongtay_12.jpg	\N	\N
+35	Vòng tay lụa đỏ	180000.00	14	Free Size	Đỏ	vongtay_2.jpg	Vòng tay truyền thống	5	1	vongtay_22.jpg	\N	\N
+36	Vòng tay bạc	290000.00	11	Free Size	Bạc	vongtay_3.jpg	Phong cách hiện đại	5	1	vongtay_32.jpg	\N	\N
+37	Vòng tay vintage	310000.00	7	Free Size	Đồng	vongtay_4.jpg	Phong cách cổ điển	5	1	vongtay_42.jpg	\N	\N
+38	Vòng tay tối giản	260000.00	9	Free Size	Đen	vongtay_5.jpg	Thiết kế thanh lịch	5	1	vongtay_52.jpg	\N	\N
+39	Khăn lụa đỏ truyền thống	350000.00	10	Free Size	Đỏ, Đỏ đô	khan_1.jpg	Khăn lụa mềm mại	6	1	khan_12.jpg	khan_13.jpg	\N
+40	Khăn lụa pastel	380000.00	9	Free Size	Hồng pastel, Xanh pastel	khan_2.jpg	Phong cách hiện đại	6	1	khan_22.jpg	khan_23.jpg	\N
+41	Khăn lụa thêu hoa	450000.00	7	Free Size	Kem, Trắng ngà	khan_3.jpg	Khăn lụa cổ điển	6	1	khan_32.jpg	khan_33.jpg	\N
+42	Khăn lụa công sở	320000.00	12	Free Size	Xám, Đen	khan_4.jpg	Thiết kế tối giản	6	1	khan_42.jpg	khan_43.jpg	\N
+43	Khăn lụa luxury	550000.00	5	Free Size	Vàng, Trắng ngà	khan_5.jpg	Khăn lụa cao cấp	6	1	khan_52.jpg	khan_53.jpg	\N
 \.
 
 
@@ -825,7 +821,7 @@ SELECT pg_catalog.setval('public.donhang_ma_don_hang_seq', 5, true);
 -- Name: giohang_ma_gio_hang_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.giohang_ma_gio_hang_seq', 3, true);
+SELECT pg_catalog.setval('public.giohang_ma_gio_hang_seq', 9, true);
 
 
 --
@@ -1161,5 +1157,5 @@ ALTER TABLE ONLY public.thongtingiaohang
 -- PostgreSQL database dump complete
 --
 
-\unrestrict N4uIbtHPJq7MjMlhzJ8oh6VgpGJMOzaZFxdZ3RKOGUAnc9hqje2882RajVSorYv
+\unrestrict ddhlenhthZG39DycfYD74UC6DcT931YhjY37z5Bst3hGmTquJn4aWgS2PxoFoeX
 
