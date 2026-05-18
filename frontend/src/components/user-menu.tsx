@@ -7,6 +7,7 @@ import {
   LockKeyholeIcon,
   LogOutIcon,
   ChevronDownIcon,
+  ReceiptTextIcon,
 } from "lucide-react"
 import { clearStoredUser, getStoredUser } from "@/lib/auth"
 import type { NguoiDung } from "@/lib/types"
@@ -110,6 +111,16 @@ export function UserMenu({ initialUser }: { initialUser: NguoiDung }) {
                 <LockKeyholeIcon className="size-3.5" />
               </span>
               Đổi mật khẩu
+            </button>
+
+            <button
+              onClick={() => { setOpen(false); router.push("/lich-su-don-hang") }}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 hover:text-stone-900"
+            >
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                <ReceiptTextIcon className="size-3.5" />
+              </span>
+              Lịch sử đơn hàng
             </button>
 
             <div className="my-1 h-px bg-stone-100" />

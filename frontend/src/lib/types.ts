@@ -89,3 +89,32 @@ export type GioHangRequest = {
   maSanPham: number
   soLuong: number
 }
+
+export type ChiTietDonHang = {
+  maChiTietDonHang: number
+  maSanPham: number
+  tenSanPham?: string | null
+  hinhAnh?: string | null
+  soLuong: number
+  gia: number
+  thanhTien: number
+}
+
+export type DonHang = {
+  maDonHang: number
+  nguoiDung?: NguoiDung | null
+  maNguoiDung?: number | null
+  tenDangNhap?: string | null
+  email?: string | null
+  soDienThoai?: string | null
+  diaChi?: string | null
+  ngayDat: string
+  trangThai?: string | null
+  phuongThucThanhToan?: string | null
+  tongTien: number
+  phiVanChuyen?: number | null
+  maGiamGia?: number | null
+  maCode?: string | null
+  tienGiam?: number | null
+  chiTiet: ChiTietDonHang[]
+}

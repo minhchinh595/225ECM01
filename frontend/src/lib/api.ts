@@ -8,8 +8,8 @@ import type {
   SanPham,
   ThuongHieu,
   GioHang,
-  GioHangItem,
   GioHangRequest,
+  DonHang,
 } from "@/lib/types"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api"
@@ -172,6 +172,59 @@ export async function getCartCount(maNguoiDung: number): Promise<number> {
     cache: "no-store",
   })
   return parseJson<number>(response)
+}
+
+// Don hang
+export async function getOrders(): Promise<DonHang[]> {
+  const response = await fetch(`${API_URL}/don-hang`, { cache: "no-store" })
+  return parseJson<DonHang[]>(response)
+}
+
+export async function getOrdersByUser(maNguoiDung: number): Promise<DonHang[]> {
+  const response = await fetch(`${API_URL}/don-hang/nguoi-dung/${maNguoiDung}`, { cache: "no-store" })
+  return parseJson<DonHang[]>(response)
+}
+
+export async function updateOrderStatus(id: number, trangThai: string): Promise<Partial<DonHang>> {
+  const response = await fetch(`${API_URL}/don-hang/${id}/trang-thai`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ trangThai }),
+  })
+  if (!response.ok) {
+    let errorMessage = "Cap nhat trang thai don hang that bai"
+    try {
+      const error = (await response.json()) as ApiErrorResponse
+      errorMessage = error.message || error.error || errorMessage
+    } catch {
+      errorMessage = await response.text()
+    }
+    throw new Error(errorMessage)
+  }
+
+  const text = await response.text()
+  if (!text) return { maDonHang: id, trangThai }
+  return JSON.parse(text) as Partial<DonHang>
+}
+
+export async function checkoutCart(
+  maNguoiDung: number,
+  payload: {
+    maSanPham: number[]
+    phuongThucThanhToan?: string
+    tenNguoiNhan?: string
+    soDienThoai?: string
+    diaChi?: string
+    maGiamGia?: number
+    tienGiam?: number
+  },
+): Promise<DonHang> {
+  const response = await fetch(`${API_URL}/gio-hang/${maNguoiDung}/checkout`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  return parseJson<DonHang>(response)
 }
 
 // ── Mã giảm giá ──────────────────────────────────────────────

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { getStoredUser } from "@/lib/auth"
@@ -9,12 +9,10 @@ import {
   removeFromCart as removeLocalCart,
   updateCartQty as updateLocalCartQty,
   clearCart as clearLocalCart,
-  type CartItem as LocalCartItem,
 } from "@/lib/cart"
 import {
   API_URL,
   getCart as getServerCart,
-  addToCart as addToServerCart,
   updateCartItem as updateServerCartItem,
   removeFromCart as removeFromServerCart,
   clearCart as clearServerCart,
@@ -31,6 +29,8 @@ import {
   ShoppingBagIcon,
   TagIcon,
   Loader2Icon,
+  CheckCircle2Icon,
+  AlertCircleIcon,
 } from "lucide-react"
 
 const API_ORIGIN = API_URL.replace(/\/api\/?$/, "")
@@ -52,8 +52,13 @@ export default function GioHangPage() {
   const [cart, setCart] = useState<GioHangItem[]>([])
   const [mounted, setMounted] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [coupon, setCoupon] = useState("")
   const [couponApplied, setCouponApplied] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState("COD")
+  const [message, setMessage] = useState("")
+  const [error, setError] = useState("")
 
   useEffect(() => {
     const user = getStoredUser()
@@ -61,9 +66,11 @@ export default function GioHangPage() {
       router.replace("/login")
       return
     }
-    setCurrentUser(user)
-    loadCart(user)
-    setMounted(true)
+    queueMicrotask(() => {
+      setCurrentUser(user)
+      void loadCart(user)
+      setMounted(true)
+    })
   }, [router])
 
   async function loadCart(user: NguoiDung) {
@@ -71,9 +78,10 @@ export default function GioHangPage() {
       setLoading(true)
       const serverCart = await getServerCart(user.maNguoiDung)
       setCart(serverCart.chiTiet)
+      setSelectedIds(serverCart.chiTiet.map((item) => item.maSanPham))
     } catch {
       // Fallback to local cart
-      setCart(getLocalCart().map(item => ({
+      const localItems = getLocalCart().map(item => ({
         maSanPham: item.maSanPham,
         tenSanPham: item.tenSanPham,
         gia: item.gia,
@@ -83,7 +91,9 @@ export default function GioHangPage() {
         size: null,
         soLuong: item.soLuong,
         thanhTien: item.gia * item.soLuong,
-      })))
+      }))
+      setCart(localItems)
+      setSelectedIds(localItems.map((item) => item.maSanPham))
     } finally {
       setLoading(false)
     }
@@ -97,7 +107,12 @@ export default function GioHangPage() {
     }
     try {
       const updated = await updateServerCartItem(currentUser.maNguoiDung, { maSanPham, soLuong })
-      setCart(updated.chiTiet)
+      const updatedItem = updated.chiTiet.find((item) => item.maSanPham === maSanPham)
+      setCart((items) => items.map((item) => (
+        item.maSanPham === maSanPham
+          ? updatedItem ?? { ...item, soLuong, thanhTien: item.gia * soLuong }
+          : item
+      )))
       window.dispatchEvent(new Event("cart-updated"))
     } catch {
       updateLocalCartQty(maSanPham, soLuong)
@@ -119,10 +134,12 @@ export default function GioHangPage() {
     try {
       const updated = await removeFromServerCart(currentUser.maNguoiDung, maSanPham)
       setCart(updated.chiTiet)
+      setSelectedIds((ids) => ids.filter((id) => id !== maSanPham))
       window.dispatchEvent(new Event("cart-updated"))
     } catch {
       removeLocalCart(maSanPham)
       setCart(prev => prev.filter(c => c.maSanPham !== maSanPham))
+      setSelectedIds((ids) => ids.filter((id) => id !== maSanPham))
     }
   }
 
@@ -131,19 +148,53 @@ export default function GioHangPage() {
     try {
       await clearServerCart(currentUser.maNguoiDung)
       setCart([])
+      setSelectedIds([])
       window.dispatchEvent(new Event("cart-updated"))
     } catch {
       clearLocalCart()
       setCart([])
+      setSelectedIds([])
     }
+  }
+
+  function toggleSelected(maSanPham: number) {
+    setMessage("")
+    setError("")
+    setSelectedIds((ids) => (
+      ids.includes(maSanPham)
+        ? ids.filter((id) => id !== maSanPham)
+        : [...ids, maSanPham]
+    ))
+  }
+
+  function toggleSelectAll() {
+    setMessage("")
+    setError("")
+    setSelectedIds((ids) => ids.length === cart.length ? [] : cart.map((item) => item.maSanPham))
+  }
+
+  function handleCheckout() {
+    if (!currentUser || checkoutLoading) return
+    if (selectedIds.length === 0) {
+      setError("Vui lòng chọn ít nhất một sản phẩm để đặt hàng.")
+      return
+    }
+    setCheckoutLoading(true)
+    setError("")
+    setMessage("")
+    sessionStorage.setItem("visilk_checkout_ids", JSON.stringify(selectedIds))
+    router.push("/dat-hang")
   }
 
   if (!mounted) return null
 
-  const subtotal = cart.reduce((sum, item) => sum + item.gia * item.soLuong, 0)
-  const itemCount = cart.reduce((sum, item) => sum + item.soLuong, 0)
+  const selectedItems = cart.filter((item) => selectedIds.includes(item.maSanPham))
+  const subtotal = selectedItems.reduce((sum, item) => sum + item.gia * item.soLuong, 0)
+  const itemCount = selectedItems.reduce((sum, item) => sum + item.soLuong, 0)
+  const cartItemCount = cart.reduce((sum, item) => sum + item.soLuong, 0)
   const discount = couponApplied ? subtotal * 0.1 : 0
   const total = subtotal - discount
+  const allSelected = cart.length > 0 && selectedIds.length === cart.length
 
   return (
     <main className="min-h-svh bg-[#fafaf9] text-stone-900 antialiased">
@@ -174,9 +225,9 @@ export default function GioHangPage() {
           <div className="flex items-center gap-2">
             <ShoppingCartIcon className="size-5 text-stone-400" />
             <span className="text-sm font-medium text-stone-700">Giỏ hàng</span>
-            {itemCount > 0 && (
+            {cartItemCount > 0 && (
               <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-stone-900 px-1.5 text-[10px] font-bold text-white">
-                {itemCount}
+                {cartItemCount}
               </span>
             )}
           </div>
@@ -233,7 +284,17 @@ export default function GioHangPage() {
             {/* Danh sách sản phẩm */}
             <div className="space-y-0">
               {/* Header cột */}
-              <div className="mb-4 hidden grid-cols-[1fr_120px_120px_40px] gap-4 border-b border-stone-100 pb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400 sm:grid">
+              <div className="mb-4 hidden grid-cols-[36px_1fr_120px_120px_40px] gap-4 border-b border-stone-100 pb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400 sm:grid">
+                <button
+                  type="button"
+                  onClick={toggleSelectAll}
+                  className={`flex h-5 w-5 items-center justify-center rounded border transition ${
+                    allSelected ? "border-stone-900 bg-stone-900 text-white" : "border-stone-300 bg-white text-transparent hover:border-stone-600"
+                  }`}
+                  aria-label={allSelected ? "Bỏ chọn tất cả" : "Chọn tất cả"}
+                >
+                  <CheckCircle2Icon className="size-3.5" />
+                </button>
                 <span>Sản phẩm</span>
                 <span className="text-center">Số lượng</span>
                 <span className="text-right">Thành tiền</span>
@@ -242,14 +303,26 @@ export default function GioHangPage() {
 
               {cart.map((item, idx) => {
                 const src = productImageSrc(item.hinhAnh)
+                const selected = selectedIds.includes(item.maSanPham)
                 return (
                   <div
                     key={item.maSanPham}
-                    className={`grid grid-cols-[80px_1fr] gap-4 py-6 sm:grid-cols-[100px_1fr_120px_120px_40px] sm:items-center ${
+                    className={`grid grid-cols-[32px_80px_1fr] gap-4 py-6 sm:grid-cols-[36px_100px_1fr_120px_120px_40px] sm:items-center ${
                       idx < cart.length - 1 ? "border-b border-stone-100" : ""
                     }`}
                   >
                     {/* Ảnh */}
+                    <button
+                      type="button"
+                      onClick={() => toggleSelected(item.maSanPham)}
+                      className={`mt-8 flex h-6 w-6 items-center justify-center rounded-md border transition sm:mt-0 ${
+                        selected ? "border-stone-900 bg-stone-900 text-white" : "border-stone-300 bg-white text-transparent hover:border-stone-600"
+                      }`}
+                      aria-label={selected ? `Bỏ chọn ${item.tenSanPham}` : `Chọn ${item.tenSanPham}`}
+                    >
+                      <CheckCircle2Icon className="size-4" />
+                    </button>
+
                     <Link href={`/san-pham/${item.maSanPham}`} className="block shrink-0">
                       <div className="aspect-[4/5] w-full overflow-hidden rounded-lg bg-stone-100">
                         {src ? (
@@ -276,7 +349,7 @@ export default function GioHangPage() {
                     </div>
 
                     {/* Số lượng */}
-                    <div className="col-span-2 flex items-center justify-start gap-0 sm:col-span-1 sm:justify-center">
+                    <div className="col-span-3 flex items-center justify-start gap-0 sm:col-span-1 sm:justify-center">
                       <button
                         onClick={() => handleUpdateQty(item.maSanPham, item.soLuong - 1)}
                         className="flex h-8 w-8 items-center justify-center border border-stone-200 text-stone-500 transition hover:border-stone-400 hover:text-stone-900"
@@ -360,6 +433,20 @@ export default function GioHangPage() {
 
                 <div className="h-px bg-stone-100" />
 
+                <div className="my-5">
+                  <label className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400">
+                    Phương thức thanh toán
+                  </label>
+                  <select
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
+                  >
+                    <option value="COD">Thanh toán khi nhận hàng</option>
+                    <option value="Banking">Chuyển khoản</option>
+                  </select>
+                </div>
+
                 {/* Chi tiết giá */}
                 <div className="my-5 space-y-3">
                   <div className="flex justify-between text-sm text-stone-600">
@@ -387,8 +474,32 @@ export default function GioHangPage() {
                   </span>
                 </div>
 
-                <Button className="h-12 w-full rounded-full bg-stone-900 text-[13px] font-semibold uppercase tracking-widest text-white shadow-md transition hover:bg-stone-700">
-                  Tiến hành thanh toán
+                {message && (
+                  <div className="mb-3 flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-xs text-emerald-700">
+                    <CheckCircle2Icon className="mt-0.5 size-4 shrink-0" />
+                    <span>{message}</span>
+                  </div>
+                )}
+                {error && (
+                  <div className="mb-3 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs text-red-700">
+                    <AlertCircleIcon className="mt-0.5 size-4 shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                <Button
+                  disabled={selectedIds.length === 0 || checkoutLoading}
+                  onClick={handleCheckout}
+                  className="h-12 w-full rounded-full bg-stone-900 text-[13px] font-semibold uppercase tracking-widest text-white shadow-md transition hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {checkoutLoading ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2Icon className="size-4 animate-spin" />
+                      Đang đặt hàng
+                    </span>
+                  ) : (
+                    "Đặt hàng"
+                  )}
                 </Button>
               </div>
             </div>
