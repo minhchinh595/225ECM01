@@ -62,3 +62,27 @@ export type LoginResponse = {
   message: string
   user: NguoiDung
 }
+
+export type GioHangItem = {
+  maSanPham: number
+  tenSanPham: string
+  gia: number
+  hinhAnh?: string | null
+  mauSac?: string | null
+  size?: string | null
+  tenThuongHieu?: string | null
+  soLuong: number
+  thanhTien: number
+}
+
+export type GioHang = {
+  maGioHang: number
+  maNguoiDung: number
+  chiTiet: GioHangItem[]
+  tongTien: number
+}
+
+export type GioHangRequest = {
+  maSanPham: number
+  soLuong: number
+}

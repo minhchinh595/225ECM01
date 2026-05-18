@@ -7,6 +7,9 @@ import type {
   RegisterRequest,
   SanPham,
   ThuongHieu,
+  GioHang,
+  GioHangItem,
+  GioHangRequest,
 } from "@/lib/types"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api"
@@ -122,6 +125,54 @@ export async function changePassword(
 }
 
 export { API_URL }
+
+// ── Giỏ hàng ─────────────────────────────────────────────────
+
+export async function getCart(maNguoiDung: number): Promise<GioHang> {
+  const response = await fetch(`${API_URL}/gio-hang/${maNguoiDung}`, {
+    cache: "no-store",
+  })
+  return parseJson<GioHang>(response)
+}
+
+export async function addToCart(maNguoiDung: number, payload: GioHangRequest): Promise<GioHang> {
+  const response = await fetch(`${API_URL}/gio-hang/${maNguoiDung}/add`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  return parseJson<GioHang>(response)
+}
+
+export async function updateCartItem(maNguoiDung: number, payload: GioHangRequest): Promise<GioHang> {
+  const response = await fetch(`${API_URL}/gio-hang/${maNguoiDung}/update`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  return parseJson<GioHang>(response)
+}
+
+export async function removeFromCart(maNguoiDung: number, maSanPham: number): Promise<GioHang> {
+  const response = await fetch(`${API_URL}/gio-hang/${maNguoiDung}/remove/${maSanPham}`, {
+    method: "DELETE",
+  })
+  return parseJson<GioHang>(response)
+}
+
+export async function clearCart(maNguoiDung: number): Promise<void> {
+  const response = await fetch(`${API_URL}/gio-hang/${maNguoiDung}/clear`, {
+    method: "DELETE",
+  })
+  if (!response.ok) throw new Error("Xóa giỏ hàng thất bại")
+}
+
+export async function getCartCount(maNguoiDung: number): Promise<number> {
+  const response = await fetch(`${API_URL}/gio-hang/${maNguoiDung}/count`, {
+    cache: "no-store",
+  })
+  return parseJson<number>(response)
+}
 
 // ── Mã giảm giá ──────────────────────────────────────────────
 export type MaGiamGia = {

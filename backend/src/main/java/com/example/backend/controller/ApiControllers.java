@@ -12,9 +12,12 @@ import com.example.backend.dto.ThuongHieuDTO;
 import com.example.backend.dto.ThuongHieuRequest;
 import com.example.backend.dto.UpdateProfileRequest;
 import com.example.backend.dto.ChangePasswordRequest;
+import com.example.backend.dto.GioHangDTO;
+import com.example.backend.dto.GioHangRequest;
 import com.example.backend.entity.*;
 import com.example.backend.repository.*;
 import com.example.backend.service.CatalogService;
+import com.example.backend.service.GioHangService;
 import com.example.backend.service.NguoiDungService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -168,16 +171,44 @@ class DanhGiaController {
 @RequestMapping("/api/gio-hang")
 @CrossOrigin(origins = {"http://localhost:3000", "http://127.0.0.1:3000"})
 class GioHangController {
-    private final GioHangRepository gioHangRepository;
+    private final GioHangService gioHangService;
 
-    GioHangController(GioHangRepository gioHangRepository) {
-        this.gioHangRepository = gioHangRepository;
+    GioHangController(GioHangService gioHangService) {
+        this.gioHangService = gioHangService;
     }
 
     @GetMapping("/{maNguoiDung}")
-    public ResponseEntity<GioHang> getByUser(@PathVariable Integer maNguoiDung) {
-        Optional<GioHang> gioHang = gioHangRepository.findByNguoiDung_MaNguoiDung(maNguoiDung);
-        return gioHang.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<GioHangDTO> getByUser(@PathVariable Integer maNguoiDung) {
+        return ResponseEntity.ok(gioHangService.getCartByUser(maNguoiDung));
+    }
+
+    @PostMapping("/{maNguoiDung}/add")
+    public ResponseEntity<GioHangDTO> add(@PathVariable Integer maNguoiDung,
+                                           @Valid @RequestBody GioHangRequest request) {
+        return ResponseEntity.ok(gioHangService.addToCart(maNguoiDung, request));
+    }
+
+    @PutMapping("/{maNguoiDung}/update")
+    public ResponseEntity<GioHangDTO> update(@PathVariable Integer maNguoiDung,
+                                              @Valid @RequestBody GioHangRequest request) {
+        return ResponseEntity.ok(gioHangService.updateCartItem(maNguoiDung, request));
+    }
+
+    @DeleteMapping("/{maNguoiDung}/remove/{maSanPham}")
+    public ResponseEntity<GioHangDTO> remove(@PathVariable Integer maNguoiDung,
+                                              @PathVariable Integer maSanPham) {
+        return ResponseEntity.ok(gioHangService.removeFromCart(maNguoiDung, maSanPham));
+    }
+
+    @DeleteMapping("/{maNguoiDung}/clear")
+    public ResponseEntity<Void> clear(@PathVariable Integer maNguoiDung) {
+        gioHangService.clearCart(maNguoiDung);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{maNguoiDung}/count")
+    public ResponseEntity<Integer> count(@PathVariable Integer maNguoiDung) {
+        return ResponseEntity.ok(gioHangService.getCartCount(maNguoiDung));
     }
 }
 

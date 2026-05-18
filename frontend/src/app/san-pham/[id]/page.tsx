@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
-import { API_URL, getProductById, getProducts } from "@/lib/api"
+import { API_URL, getProductById, getProducts, addToCart } from "@/lib/api"
 import { getStoredUser } from "@/lib/auth"
 import type { NguoiDung, SanPham } from "@/lib/types"
 import { UserMenu } from "@/components/user-menu"
@@ -358,10 +358,16 @@ export default function SanPhamDetailPage() {
 
                   <div className="flex gap-3">
                     <Button
-                      onClick={() => {
+                      onClick={async () => {
                         if (!currentUser) { router.push("/login"); return }
-                        setAddedToCart(true)
-                        setTimeout(() => setAddedToCart(false), 2500)
+                        try {
+                          setAddedToCart(true)
+                          await addToCart(currentUser.maNguoiDung, { maSanPham: product.maSanPham, soLuong: qty })
+                          window.dispatchEvent(new Event("cart-updated"))
+                          router.push("/gio-hang")
+                        } catch {
+                          setAddedToCart(false)
+                        }
                       }}
                       disabled={!inStock}
                       className={`h-12 flex-1 rounded-2xl border-0 text-[15px] font-semibold shadow-lg transition-all duration-300 ${

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ShoppingCartIcon } from "lucide-react"
-import { getCartCount } from "@/lib/cart"
+import { getCartCount as getLocalCartCount } from "@/lib/cart"
+import { getCartCount as getServerCartCount } from "@/lib/api"
 import { getStoredUser } from "@/lib/auth"
 
 export function CartIcon() {
@@ -11,11 +12,25 @@ export function CartIcon() {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
-    setCount(getCartCount())
-    const handler = () => setCount(getCartCount())
+    updateCount()
+    const handler = () => updateCount()
     window.addEventListener("cart-updated", handler)
     return () => window.removeEventListener("cart-updated", handler)
   }, [])
+
+  async function updateCount() {
+    const user = getStoredUser()
+    if (user) {
+      try {
+        const serverCount = await getServerCartCount(user.maNguoiDung)
+        setCount(serverCount)
+        return
+      } catch {
+        // fallback to local
+      }
+    }
+    setCount(getLocalCartCount())
+  }
 
   function handleClick() {
     const user = getStoredUser()

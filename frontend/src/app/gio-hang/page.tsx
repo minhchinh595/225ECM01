@@ -1,17 +1,25 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { getStoredUser } from "@/lib/auth"
 import {
-  getCart,
-  removeFromCart,
-  updateCartQty,
-  clearCart,
-  type CartItem,
+  getCart as getLocalCart,
+  removeFromCart as removeLocalCart,
+  updateCartQty as updateLocalCartQty,
+  clearCart as clearLocalCart,
+  type CartItem as LocalCartItem,
 } from "@/lib/cart"
-import { API_URL } from "@/lib/api"
+import {
+  API_URL,
+  getCart as getServerCart,
+  addToCart as addToServerCart,
+  updateCartItem as updateServerCartItem,
+  removeFromCart as removeFromServerCart,
+  clearCart as clearServerCart,
+} from "@/lib/api"
+import type { NguoiDung, GioHangItem } from "@/lib/types"
 import { UserMenu } from "@/components/user-menu"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,8 +30,8 @@ import {
   ArrowLeftIcon,
   ShoppingBagIcon,
   TagIcon,
+  Loader2Icon,
 } from "lucide-react"
-import type { NguoiDung } from "@/lib/types"
 
 const API_ORIGIN = API_URL.replace(/\/api\/?$/, "")
 
@@ -41,8 +49,9 @@ function formatCurrency(value: number) {
 export default function GioHangPage() {
   const router = useRouter()
   const [currentUser, setCurrentUser] = useState<NguoiDung | null>(null)
-  const [cart, setCart] = useState<CartItem[]>([])
+  const [cart, setCart] = useState<GioHangItem[]>([])
   const [mounted, setMounted] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [coupon, setCoupon] = useState("")
   const [couponApplied, setCouponApplied] = useState(false)
 
@@ -53,20 +62,88 @@ export default function GioHangPage() {
       return
     }
     setCurrentUser(user)
-    setCart(getCart())
+    loadCart(user)
     setMounted(true)
-
-    const handler = () => setCart(getCart())
-    window.addEventListener("cart-updated", handler)
-    return () => window.removeEventListener("cart-updated", handler)
   }, [router])
+
+  async function loadCart(user: NguoiDung) {
+    try {
+      setLoading(true)
+      const serverCart = await getServerCart(user.maNguoiDung)
+      setCart(serverCart.chiTiet)
+    } catch {
+      // Fallback to local cart
+      setCart(getLocalCart().map(item => ({
+        maSanPham: item.maSanPham,
+        tenSanPham: item.tenSanPham,
+        gia: item.gia,
+        hinhAnh: item.hinhAnh,
+        tenThuongHieu: item.tenThuongHieu,
+        mauSac: null,
+        size: null,
+        soLuong: item.soLuong,
+        thanhTien: item.gia * item.soLuong,
+      })))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleUpdateQty(maSanPham: number, soLuong: number) {
+    if (!currentUser) return
+    if (soLuong <= 0) {
+      await handleRemove(maSanPham)
+      return
+    }
+    try {
+      const updated = await updateServerCartItem(currentUser.maNguoiDung, { maSanPham, soLuong })
+      setCart(updated.chiTiet)
+      window.dispatchEvent(new Event("cart-updated"))
+    } catch {
+      updateLocalCartQty(maSanPham, soLuong)
+      setCart(getLocalCart().map(item => ({
+        maSanPham: item.maSanPham,
+        tenSanPham: item.tenSanPham,
+        gia: item.gia,
+        hinhAnh: item.hinhAnh,
+        tenThuongHieu: item.tenThuongHieu,
+        mauSac: null, size: null,
+        soLuong: item.soLuong,
+        thanhTien: item.gia * item.soLuong,
+      })))
+    }
+  }
+
+  async function handleRemove(maSanPham: number) {
+    if (!currentUser) return
+    try {
+      const updated = await removeFromServerCart(currentUser.maNguoiDung, maSanPham)
+      setCart(updated.chiTiet)
+      window.dispatchEvent(new Event("cart-updated"))
+    } catch {
+      removeLocalCart(maSanPham)
+      setCart(prev => prev.filter(c => c.maSanPham !== maSanPham))
+    }
+  }
+
+  async function handleClear() {
+    if (!currentUser) return
+    try {
+      await clearServerCart(currentUser.maNguoiDung)
+      setCart([])
+      window.dispatchEvent(new Event("cart-updated"))
+    } catch {
+      clearLocalCart()
+      setCart([])
+    }
+  }
 
   if (!mounted) return null
 
   const subtotal = cart.reduce((sum, item) => sum + item.gia * item.soLuong, 0)
+  const itemCount = cart.reduce((sum, item) => sum + item.soLuong, 0)
   const discount = couponApplied ? subtotal * 0.1 : 0
   const total = subtotal - discount
-  const itemCount = cart.reduce((sum, item) => sum + item.soLuong, 0)
 
   return (
     <main className="min-h-svh bg-[#fafaf9] text-stone-900 antialiased">
@@ -127,7 +204,11 @@ export default function GioHangPage() {
           </Link>
         </div>
 
-        {cart.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-24">
+            <Loader2Icon className="size-8 animate-spin text-stone-400" />
+          </div>
+        ) : cart.length === 0 ? (
           /* Empty state */
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-stone-100">
@@ -197,7 +278,7 @@ export default function GioHangPage() {
                     {/* Số lượng */}
                     <div className="col-span-2 flex items-center justify-start gap-0 sm:col-span-1 sm:justify-center">
                       <button
-                        onClick={() => updateCartQty(item.maSanPham, item.soLuong - 1)}
+                        onClick={() => handleUpdateQty(item.maSanPham, item.soLuong - 1)}
                         className="flex h-8 w-8 items-center justify-center border border-stone-200 text-stone-500 transition hover:border-stone-400 hover:text-stone-900"
                       >
                         <MinusIcon className="size-3" />
@@ -206,7 +287,7 @@ export default function GioHangPage() {
                         {item.soLuong}
                       </span>
                       <button
-                        onClick={() => updateCartQty(item.maSanPham, item.soLuong + 1)}
+                        onClick={() => handleUpdateQty(item.maSanPham, item.soLuong + 1)}
                         className="flex h-8 w-8 items-center justify-center border border-stone-200 text-stone-500 transition hover:border-stone-400 hover:text-stone-900"
                       >
                         <PlusIcon className="size-3" />
@@ -224,7 +305,7 @@ export default function GioHangPage() {
                     {/* Xóa */}
                     <div className="hidden items-center justify-end sm:flex">
                       <button
-                        onClick={() => removeFromCart(item.maSanPham)}
+                        onClick={() => handleRemove(item.maSanPham)}
                         className="flex h-8 w-8 items-center justify-center rounded-full text-stone-300 transition hover:bg-red-50 hover:text-red-500"
                       >
                         <TrashIcon className="size-4" />
@@ -236,8 +317,8 @@ export default function GioHangPage() {
 
               {/* Xóa tất cả */}
               <div className="flex justify-end pt-4">
-                <button
-                  onClick={clearCart}
+                  <button
+                    onClick={handleClear}
                   className="text-xs text-stone-400 underline underline-offset-2 transition hover:text-red-500"
                 >
                   Xóa tất cả
