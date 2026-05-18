@@ -130,11 +130,9 @@ export default function Home() {
     <main className="min-h-svh scroll-smooth bg-white text-stone-900 antialiased selection:bg-amber-200/40 selection:text-stone-900">
 
       {/* Navigation */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl backdrop-saturate-150">
-
-        {/* ── Top bar ── */}
-        <div className="border-b border-stone-200 bg-stone-100">
-          <div className="flex w-full items-center justify-between py-[2px] px-20">
+      {/* Top bar — cuộn theo trang, không sticky */}
+      <div className="border-b border-stone-200 bg-stone-100">
+        <div className="flex w-full items-center justify-between py-[2px] px-20">
             {/* Trái — nav links phong cách */}
             <div className="hidden items-center gap-0 sm:flex">
               {[
@@ -184,8 +182,10 @@ export default function Home() {
               )}
             </div>
           </div>
-        </div>
+      </div>
 
+      {/* Navigation — sticky */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl backdrop-saturate-150">
         {/* ── Main navbar ── */}
         <div className="border-b border-stone-200/50">
           <nav className="relative flex w-full items-center py-3.5 px-20">
