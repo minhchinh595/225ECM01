@@ -134,7 +134,7 @@ export default function Home() {
 
         {/* ── Top bar ── */}
         <div className="border-b border-stone-200 bg-stone-100">
-          <div className="mx-auto flex max-w-7xl items-center justify-between py-2 pr-0">
+          <div className="flex w-full items-center justify-between py-[2px] px-20">
             {/* Trái — nav links phong cách */}
             <div className="hidden items-center gap-0 sm:flex">
               {[
@@ -157,14 +157,18 @@ export default function Home() {
             {/* Phải — đăng nhập / tài khoản */}
             <div className="ml-auto flex items-center gap-4">
               {currentUser ? (
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   {(currentUser.maVaiTro === 1 || currentUser.maVaiTro === 2) && (
-                    <Link href="/dashboard" className="text-[11px] font-semibold tracking-[0.18em] text-stone-500 transition hover:text-stone-800">
-                      QUẢN TRỊ
-                    </Link>
+                    <>
+                      <Link href="/dashboard" className="text-[11px] font-semibold tracking-[0.18em] text-stone-500 transition hover:text-stone-800">
+                        QUẢN TRỊ
+                      </Link>
+                      <span className="text-stone-300">|</span>
+                    </>
                   )}
-                  <span className="text-stone-300">|</span>
-                  <UserMenu initialUser={currentUser} />
+                  <span className="text-[11px] font-semibold tracking-[0.18em] text-stone-500">
+                    {currentUser.hoTen?.trim() || currentUser.tenDangNhap}
+                  </span>
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
@@ -184,9 +188,9 @@ export default function Home() {
 
         {/* ── Main navbar ── */}
         <div className="border-b border-stone-200/50">
-          <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 py-3.5 pr-0">
-            {/* Logo */}
-            <Link href="/" className="group flex items-center gap-2.5">
+          <nav className="relative flex w-full items-center py-3.5 px-20">
+            {/* Logo — trái */}
+            <Link href="/" className="group flex items-center gap-2.5 shrink-0">
               <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                 <circle cx="18" cy="18" r="17" stroke="url(#logo-ring)" strokeWidth="1.2" />
                 <path d="M18 7 L27 18 L18 29 L9 18 Z" fill="url(#logo-diamond)" opacity="0.15" />
@@ -212,8 +216,8 @@ export default function Home() {
               </span>
             </Link>
 
-            {/* Nav links giữa */}
-            <div className="hidden items-center gap-1 md:flex">
+            {/* Nav links — tuyệt đối căn giữa */}
+            <div className="absolute left-1/2 -translate-x-1/2 hidden items-center gap-1 md:flex">
               {[
                 { href: "/danh-muc/ao-dai", label: "Áo Dài" },
                 { href: "/danh-muc/non-la", label: "Nón Lá" },
@@ -232,10 +236,11 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Phải — tìm kiếm + giỏ hàng */}
-            <div className="flex items-center gap-1">
+            {/* Phải — tìm kiếm + giỏ hàng + user */}
+            <div className="ml-auto flex items-center gap-1 shrink-0">
               <SearchBar />
               <CartIcon />
+              {currentUser && <UserMenu initialUser={currentUser} />}
             </div>
           </nav>
         </div>
