@@ -16,6 +16,9 @@ public class SanPhamDTO {
     private String size;
     private String mauSac;
     private String hinhAnh;
+    private String hinhAnh2;
+    private String hinhAnh3;
+    private String hinhAnh4;
     private String moTa;
     private Integer maDanhMuc;
     private String tenDanhMuc;

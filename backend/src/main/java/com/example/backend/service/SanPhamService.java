@@ -71,6 +71,9 @@ public class SanPhamService {
         sanPham.setSize(request.getSize());
         sanPham.setMauSac(request.getMauSac());
         sanPham.setHinhAnh(request.getHinhAnh());
+        sanPham.setHinhAnh2(request.getHinhAnh2());
+        sanPham.setHinhAnh3(request.getHinhAnh3());
+        sanPham.setHinhAnh4(request.getHinhAnh4());
         sanPham.setMoTa(request.getMoTa());
         sanPham.setDanhMuc(danhMuc);
         sanPham.setThuongHieu(thuongHieu);
@@ -85,6 +88,9 @@ public class SanPhamService {
                 sanPham.getSize(),
                 sanPham.getMauSac(),
                 sanPham.getHinhAnh(),
+                sanPham.getHinhAnh2(),
+                sanPham.getHinhAnh3(),
+                sanPham.getHinhAnh4(),
                 sanPham.getMoTa(),
                 sanPham.getDanhMuc() != null ? sanPham.getDanhMuc().getMaDanhMuc() : null,
                 sanPham.getDanhMuc() != null ? sanPham.getDanhMuc().getTenDanhMuc() : null,

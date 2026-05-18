@@ -29,6 +29,15 @@ public class SanPham {
     @Column(name = "hinh_anh", length = 255)
     private String hinhAnh;
 
+    @Column(name = "hinh_anh_2", length = 255)
+    private String hinhAnh2;
+
+    @Column(name = "hinh_anh_3", length = 255)
+    private String hinhAnh3;
+
+    @Column(name = "hinh_anh_4", length = 255)
+    private String hinhAnh4;
+
     @Column(name = "mo_ta", length = 255)
     private String moTa;
 

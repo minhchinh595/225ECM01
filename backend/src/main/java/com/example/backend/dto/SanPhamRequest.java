@@ -34,6 +34,15 @@ public class SanPhamRequest {
     @Size(max = 255, message = "Hinh anh toi da 255 ky tu")
     private String hinhAnh;
 
+    @Size(max = 255, message = "Hinh anh 2 toi da 255 ky tu")
+    private String hinhAnh2;
+
+    @Size(max = 255, message = "Hinh anh 3 toi da 255 ky tu")
+    private String hinhAnh3;
+
+    @Size(max = 255, message = "Hinh anh 4 toi da 255 ky tu")
+    private String hinhAnh4;
+
     @Size(max = 255, message = "Mo ta toi da 255 ky tu")
     private String moTa;
 

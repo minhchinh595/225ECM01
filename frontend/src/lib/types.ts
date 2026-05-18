@@ -25,6 +25,9 @@ export type SanPham = {
   size?: string | null
   mauSac?: string | null
   hinhAnh?: string | null
+  hinhAnh2?: string | null
+  hinhAnh3?: string | null
+  hinhAnh4?: string | null
   moTa?: string | null
   maDanhMuc: number
   tenDanhMuc?: string | null
