@@ -56,15 +56,17 @@ public class GioHangService {
         ChiTietGioHang chiTiet = chiTietGioHangRepository.findById(id).orElse(null);
         if (chiTiet != null) {
             chiTiet.setSoLuong(chiTiet.getSoLuong() + request.getSoLuong());
+            chiTietGioHangRepository.save(chiTiet);
         } else {
             chiTiet = new ChiTietGioHang();
-            chiTiet.setId(id);
+            chiTiet.setId(new ChiTietGioHang.ChiTietGioHangId(gioHang.getMaGioHang(), sanPham.getMaSanPham()));
             chiTiet.setGioHang(gioHang);
             chiTiet.setSanPham(sanPham);
             chiTiet.setSoLuong(request.getSoLuong());
+            chiTietGioHangRepository.save(chiTiet);
         }
 
-        chiTietGioHangRepository.save(chiTiet);
+        chiTietGioHangRepository.flush();
         return toDTO(gioHang);
     }
 
@@ -76,13 +78,24 @@ public class GioHangService {
         ChiTietGioHang chiTiet = chiTietGioHangRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không có trong giỏ hàng"));
 
+        boolean cartDeleted = false;
         if (request.getSoLuong() <= 0) {
             chiTietGioHangRepository.delete(chiTiet);
+            chiTietGioHangRepository.flush();
+            cartDeleted = deleteCartIfEmpty(gioHang);
         } else {
             chiTiet.setSoLuong(request.getSoLuong());
             chiTietGioHangRepository.save(chiTiet);
+            chiTietGioHangRepository.flush();
         }
 
+        if (cartDeleted) {
+            GioHangDTO empty = new GioHangDTO();
+            empty.setMaNguoiDung(maNguoiDung);
+            empty.setChiTiet(new ArrayList<>());
+            empty.setTongTien(BigDecimal.ZERO);
+            return empty;
+        }
         return toDTO(gioHang);
     }
 
@@ -91,25 +104,50 @@ public class GioHangService {
         GioHang gioHang = getOrCreateCart(maNguoiDung);
 
         ChiTietGioHangId id = new ChiTietGioHangId(gioHang.getMaGioHang(), maSanPham);
-        if (chiTietGioHangRepository.existsById(id)) {
-            chiTietGioHangRepository.deleteById(id);
-        }
+        chiTietGioHangRepository.findById(id).ifPresent(chiTiet -> {
+            chiTietGioHangRepository.delete(chiTiet);
+            chiTietGioHangRepository.flush();
+        });
 
+        boolean cartDeleted = deleteCartIfEmpty(gioHang);
+        if (cartDeleted) {
+            GioHangDTO empty = new GioHangDTO();
+            empty.setMaNguoiDung(maNguoiDung);
+            empty.setChiTiet(new ArrayList<>());
+            empty.setTongTien(BigDecimal.ZERO);
+            return empty;
+        }
+        chiTietGioHangRepository.flush();
         return toDTO(gioHang);
     }
 
     @Transactional
     public void clearCart(Integer maNguoiDung) {
-        GioHang gioHang = getOrCreateCart(maNguoiDung);
+        GioHang gioHang = gioHangRepository.findByNguoiDung_MaNguoiDung(maNguoiDung).orElse(null);
+        if (gioHang == null) return;
         chiTietGioHangRepository.deleteByGioHang_MaGioHang(gioHang.getMaGioHang());
+        chiTietGioHangRepository.flush();
+        gioHangRepository.delete(gioHang);
+        gioHangRepository.flush();
     }
 
     public Integer getCartCount(Integer maNguoiDung) {
         GioHang gioHang = getOrCreateCart(maNguoiDung);
-        return chiTietGioHangRepository.findByGioHang_MaGioHang(gioHang.getMaGioHang())
-                .stream()
+        chiTietGioHangRepository.flush();
+        List<ChiTietGioHang> items = chiTietGioHangRepository.findByGioHang_MaGioHang(gioHang.getMaGioHang());
+        return items.stream()
                 .mapToInt(ChiTietGioHang::getSoLuong)
                 .sum();
+    }
+
+    private boolean deleteCartIfEmpty(GioHang gioHang) {
+        chiTietGioHangRepository.flush();
+        if (chiTietGioHangRepository.findByGioHang_MaGioHang(gioHang.getMaGioHang()).isEmpty()) {
+            gioHangRepository.delete(gioHang);
+            gioHangRepository.flush();
+            return true;
+        }
+        return false;
     }
 
     private GioHang getOrCreateCart(Integer maNguoiDung) {
