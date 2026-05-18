@@ -11,11 +11,14 @@ import {
   ShoppingBagIcon,
   MapPinIcon,
   ChevronDownIcon,
+  UserIcon,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { getStoredUser } from "@/lib/auth"
 import { UserMenu } from "@/components/user-menu"
 import { HeroSlider } from "@/components/hero-slider"
+import { SearchBar } from "@/components/search-bar"
+import { CartIcon } from "@/components/cart-icon"
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("vi-VN", {
@@ -127,56 +130,115 @@ export default function Home() {
     <main className="min-h-svh scroll-smooth bg-white text-stone-900 antialiased selection:bg-amber-200/40 selection:text-stone-900">
 
       {/* Navigation */}
-      <header className="sticky top-0 z-50 border-b border-stone-200/50 bg-white/80 backdrop-blur-xl backdrop-saturate-150">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="group flex items-center gap-2.5">
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-              <circle cx="18" cy="18" r="17" stroke="url(#logo-ring)" strokeWidth="1.2" />
-              <path d="M18 7 L27 18 L18 29 L9 18 Z" fill="url(#logo-diamond)" opacity="0.15" />
-              <path d="M11.5 13.5 L18 23 L24.5 13.5" stroke="url(#logo-v)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-              <circle cx="18" cy="23" r="1.2" fill="url(#logo-dot)" />
-              <defs>
-                <linearGradient id="logo-ring" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#d97706" /><stop offset="100%" stopColor="#9333ea" />
-                </linearGradient>
-                <linearGradient id="logo-diamond" x1="9" y1="7" x2="27" y2="29" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#fbbf24" /><stop offset="100%" stopColor="#a855f7" />
-                </linearGradient>
-                <linearGradient id="logo-v" x1="11.5" y1="13.5" x2="24.5" y2="23" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#b45309" /><stop offset="100%" stopColor="#7c3aed" />
-                </linearGradient>
-                <linearGradient id="logo-dot" x1="16.8" y1="21.8" x2="19.2" y2="24.2" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#d97706" /><stop offset="100%" stopColor="#9333ea" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <span className="select-none font-heading text-[1.35rem] font-semibold tracking-[0.18em] text-stone-900 transition-colors group-hover:text-stone-700">
-              VI<span className="bg-gradient-to-r from-amber-700 to-violet-600 bg-clip-text text-transparent">SILK</span>
-            </span>
-          </Link>
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl backdrop-saturate-150">
 
-          <div className="flex shrink-0 items-center gap-2 sm:gap-3 -mr-2 sm:-mr-4">
-            {currentUser ? (
-              <>
-                {(currentUser.maVaiTro === 1 || currentUser.maVaiTro === 2) && (
-                  <Button asChild size="sm" className="h-9 rounded-full border border-amber-200/80 bg-amber-50 px-4 text-amber-800 shadow-sm hover:bg-amber-100 hover:text-amber-900" variant="outline">
-                    <Link href="/dashboard">Quản trị</Link>
-                  </Button>
-                )}
-                <UserMenu initialUser={currentUser} />
-              </>
-            ) : (
-              <>
-                <Button asChild size="sm" variant="ghost" className="rounded-full px-4 text-stone-600 hover:bg-white/80 hover:text-stone-900">
-                  <Link href="/login">Đăng nhập</Link>
-                </Button>
-                <Button asChild size="sm" className="rounded-full border-0 bg-stone-900 px-5 text-white shadow-lg shadow-stone-900/15 transition hover:bg-stone-800 hover:shadow-xl">
-                  <Link href="/signup">Tham gia</Link>
-                </Button>
-              </>
-            )}
+        {/* ── Top bar ── */}
+        <div className="border-b border-stone-200 bg-stone-100">
+          <div className="mx-auto flex max-w-7xl items-center justify-between py-2 pr-0">
+            {/* Trái — nav links phong cách */}
+            <div className="hidden items-center gap-0 sm:flex">
+              {[
+                { label: "VỀ VISILK", href: "#about" },
+                { label: "LOCAL BRAND", href: "#collection" },
+                { label: "CÂU CHUYỆN VẢI LỤAVIET", href: "#about" },
+              ].map((item, i) => (
+                <span key={item.label} className="flex items-center">
+                  {i > 0 && <span className="mx-3 text-stone-300">|</span>}
+                  <a
+                    href={item.href}
+                    className="text-[11px] font-semibold tracking-[0.18em] text-stone-500 transition hover:text-stone-800"
+                  >
+                    {item.label}
+                  </a>
+                </span>
+              ))}
+            </div>
+
+            {/* Phải — đăng nhập / tài khoản */}
+            <div className="ml-auto flex items-center gap-4">
+              {currentUser ? (
+                <div className="flex items-center gap-4">
+                  {(currentUser.maVaiTro === 1 || currentUser.maVaiTro === 2) && (
+                    <Link href="/dashboard" className="text-[11px] font-semibold tracking-[0.18em] text-stone-500 transition hover:text-stone-800">
+                      QUẢN TRỊ
+                    </Link>
+                  )}
+                  <span className="text-stone-300">|</span>
+                  <UserMenu initialUser={currentUser} />
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Link href="/login" className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.18em] text-stone-500 transition hover:text-stone-800">
+                    <UserIcon className="size-3" />
+                    ĐĂNG NHẬP
+                  </Link>
+                  <span className="text-stone-300">|</span>
+                  <Link href="/signup" className="text-[11px] font-semibold tracking-[0.18em] text-stone-500 transition hover:text-stone-800">
+                    ĐĂNG KÝ
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
-        </nav>
+        </div>
+
+        {/* ── Main navbar ── */}
+        <div className="border-b border-stone-200/50">
+          <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 py-3.5 pr-0">
+            {/* Logo */}
+            <Link href="/" className="group flex items-center gap-2.5">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <circle cx="18" cy="18" r="17" stroke="url(#logo-ring)" strokeWidth="1.2" />
+                <path d="M18 7 L27 18 L18 29 L9 18 Z" fill="url(#logo-diamond)" opacity="0.15" />
+                <path d="M11.5 13.5 L18 23 L24.5 13.5" stroke="url(#logo-v)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                <circle cx="18" cy="23" r="1.2" fill="url(#logo-dot)" />
+                <defs>
+                  <linearGradient id="logo-ring" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#d97706" /><stop offset="100%" stopColor="#9333ea" />
+                  </linearGradient>
+                  <linearGradient id="logo-diamond" x1="9" y1="7" x2="27" y2="29" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#fbbf24" /><stop offset="100%" stopColor="#a855f7" />
+                  </linearGradient>
+                  <linearGradient id="logo-v" x1="11.5" y1="13.5" x2="24.5" y2="23" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#b45309" /><stop offset="100%" stopColor="#7c3aed" />
+                  </linearGradient>
+                  <linearGradient id="logo-dot" x1="16.8" y1="21.8" x2="19.2" y2="24.2" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#d97706" /><stop offset="100%" stopColor="#9333ea" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <span className="select-none font-heading text-[1.35rem] font-semibold tracking-[0.18em] text-stone-900 transition-colors group-hover:text-stone-700">
+                VI<span className="bg-gradient-to-r from-amber-700 to-violet-600 bg-clip-text text-transparent">SILK</span>
+              </span>
+            </Link>
+
+            {/* Nav links giữa */}
+            <div className="hidden items-center gap-1 md:flex">
+              {[
+                { href: "/danh-muc/ao-dai", label: "Áo Dài" },
+                { href: "/danh-muc/non-la", label: "Nón Lá" },
+                { href: "/danh-muc/tui", label: "Túi" },
+                { href: "/danh-muc/giay", label: "Giày" },
+                { href: "/danh-muc/trang-suc-khan-lua", label: "Trang Sức" },
+                { href: "/danh-muc/trang-suc-khan-lua", label: "Khăn Lụa" },
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="relative px-3 py-1.5 text-sm font-medium text-stone-500 transition-colors hover:text-stone-900 after:absolute after:bottom-0 after:left-3 after:right-3 after:h-[1.5px] after:origin-left after:scale-x-0 after:bg-stone-900 after:transition-transform after:duration-300 hover:after:scale-x-100"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Phải — tìm kiếm + giỏ hàng */}
+            <div className="flex items-center gap-1">
+              <SearchBar />
+              <CartIcon />
+            </div>
+          </nav>
+        </div>
       </header>
 
       {/* Hero Slider */}
