@@ -12,8 +12,12 @@ import com.example.backend.dto.ThuongHieuDTO;
 import com.example.backend.dto.ThuongHieuRequest;
 import com.example.backend.dto.UpdateProfileRequest;
 import com.example.backend.dto.ChangePasswordRequest;
+import com.example.backend.dto.ChiTietDonHangDTO;
+import com.example.backend.dto.CheckoutRequest;
+import com.example.backend.dto.DonHangDTO;
 import com.example.backend.dto.GioHangDTO;
 import com.example.backend.dto.GioHangRequest;
+import com.example.backend.dto.UpdateDonHangStatusRequest;
 import com.example.backend.entity.*;
 import com.example.backend.repository.*;
 import com.example.backend.service.CatalogService;
@@ -21,10 +25,11 @@ import com.example.backend.service.GioHangService;
 import com.example.backend.service.NguoiDungService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/danh-muc")
@@ -130,19 +135,92 @@ class NguoiDungController {
 @CrossOrigin(origins = {"http://localhost:3000", "http://127.0.0.1:3000"})
 class DonHangController {
     private final DonHangRepository donHangRepository;
+    private final ChiTietDonHangRepository chiTietDonHangRepository;
 
-    DonHangController(DonHangRepository donHangRepository) {
+    DonHangController(DonHangRepository donHangRepository, ChiTietDonHangRepository chiTietDonHangRepository) {
         this.donHangRepository = donHangRepository;
+        this.chiTietDonHangRepository = chiTietDonHangRepository;
     }
 
     @GetMapping
-    public ResponseEntity<List<DonHang>> getAll() {
-        return ResponseEntity.ok(donHangRepository.findAll());
+    public ResponseEntity<List<DonHangDTO>> getAll() {
+        return ResponseEntity.ok(donHangRepository.findAll().stream().map(this::toDto).toList());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DonHangDTO> getById(@PathVariable Integer id) {
+        DonHang donHang = donHangRepository.findById(id)
+                .orElseThrow(() -> new com.example.backend.exception.ResourceNotFoundException("Khong tim thay don hang"));
+        return ResponseEntity.ok(toDto(donHang));
+    }
+
+    @GetMapping("/nguoi-dung/{maNguoiDung}")
+    public ResponseEntity<List<DonHangDTO>> getByUser(@PathVariable Integer maNguoiDung) {
+        return ResponseEntity.ok(donHangRepository
+                .findByNguoiDung_MaNguoiDungOrderByNgayDatDesc(maNguoiDung)
+                .stream()
+                .map(this::toDto)
+                .toList());
     }
 
     @PostMapping
     public ResponseEntity<DonHang> create(@RequestBody DonHang donHang) {
         return ResponseEntity.ok(donHangRepository.save(donHang));
+    }
+
+    @PutMapping("/{id}/trang-thai")
+    @Transactional
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable Integer id,
+            @Valid @RequestBody UpdateDonHangStatusRequest request) {
+        int updated = donHangRepository.updateTrangThai(id, request.getTrangThai().trim());
+        if (updated == 0) {
+            throw new com.example.backend.exception.ResourceNotFoundException("Khong tim thay don hang");
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    private DonHangDTO toDto(DonHang donHang) {
+        NguoiDung nguoiDung = donHang.getNguoiDung();
+        MaGiamGia maGiamGia = donHang.getMaGiamGia();
+        List<ChiTietDonHangDTO> chiTiet = chiTietDonHangRepository
+                .findByDonHang_MaDonHang(donHang.getMaDonHang())
+                .stream()
+                .map(this::toChiTietDto)
+                .toList();
+
+        return new DonHangDTO(
+                donHang.getMaDonHang(),
+                nguoiDung != null ? nguoiDung.getMaNguoiDung() : null,
+                nguoiDung != null ? nguoiDung.getTenDangNhap() : null,
+                nguoiDung != null ? nguoiDung.getEmail() : null,
+                nguoiDung != null ? nguoiDung.getSoDienThoai() : null,
+                nguoiDung != null ? nguoiDung.getDiaChi() : null,
+                donHang.getNgayDat(),
+                donHang.getTrangThai(),
+                donHang.getPhuongThucThanhToan(),
+                donHang.getTongTien(),
+                donHang.getPhiVanChuyen(),
+                maGiamGia != null ? maGiamGia.getMaGiamGia() : null,
+                maGiamGia != null ? maGiamGia.getMaCode() : null,
+                donHang.getTienGiam(),
+                chiTiet
+        );
+    }
+
+    private ChiTietDonHangDTO toChiTietDto(ChiTietDonHang chiTiet) {
+        SanPham sanPham = chiTiet.getSanPham();
+        BigDecimal gia = chiTiet.getGia() != null ? chiTiet.getGia() : BigDecimal.ZERO;
+        int soLuong = chiTiet.getSoLuong() != null ? chiTiet.getSoLuong() : 0;
+        return new ChiTietDonHangDTO(
+                chiTiet.getMaChiTietDonHang(),
+                sanPham != null ? sanPham.getMaSanPham() : null,
+                sanPham != null ? sanPham.getTenSanPham() : null,
+                sanPham != null ? sanPham.getHinhAnh() : null,
+                chiTiet.getSoLuong(),
+                chiTiet.getGia(),
+                gia.multiply(BigDecimal.valueOf(soLuong))
+        );
     }
 }
 
@@ -209,6 +287,12 @@ class GioHangController {
     @GetMapping("/{maNguoiDung}/count")
     public ResponseEntity<Integer> count(@PathVariable Integer maNguoiDung) {
         return ResponseEntity.ok(gioHangService.getCartCount(maNguoiDung));
+    }
+
+    @PostMapping("/{maNguoiDung}/checkout")
+    public ResponseEntity<DonHangDTO> checkout(@PathVariable Integer maNguoiDung,
+                                               @Valid @RequestBody CheckoutRequest request) {
+        return ResponseEntity.ok(gioHangService.checkout(maNguoiDung, request));
     }
 }
 
