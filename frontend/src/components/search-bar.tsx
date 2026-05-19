@@ -101,7 +101,6 @@ export function SearchBar() {
                     key={product.maSanPham}
                     onClick={() => {
                       router.push(`/san-pham/${product.maSanPham}`)
-                      setOpen(false)
                       setQuery("")
                     }}
                     className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-stone-50"
