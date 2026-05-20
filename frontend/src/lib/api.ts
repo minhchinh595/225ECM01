@@ -70,6 +70,35 @@ export async function getProductById(id: number): Promise<SanPham> {
   return parseJson<SanPham>(response)
 }
 
+export async function createProduct(payload: Record<string, unknown>): Promise<SanPham> {
+  const response = await fetch(`${API_URL}/san-pham`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  return parseJson<SanPham>(response)
+}
+
+export async function updateProduct(id: number, payload: Record<string, unknown>): Promise<SanPham> {
+  const response = await fetch(`${API_URL}/san-pham/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  return parseJson<SanPham>(response)
+}
+
+export async function deleteProduct(id: number): Promise<void> {
+  const response = await fetch(`${API_URL}/san-pham/${id}`, {
+    method: "DELETE",
+  })
+  if (!response.ok) {
+    let msg = "Xoa san pham that bai"
+    try { const err = await response.json() as ApiErrorResponse; msg = err.message || msg } catch { msg = await response.text() }
+    throw new Error(msg)
+  }
+}
+
 export async function getCategories(): Promise<DanhMuc[]> {
   const response = await fetch(`${API_URL}/danh-muc`, {
     cache: "no-store",
