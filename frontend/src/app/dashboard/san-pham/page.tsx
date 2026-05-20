@@ -31,7 +31,6 @@ import {
   EditIcon,
   XIcon,
   ImageIcon,
-  SparklesIcon,
   TagIcon,
   LayersIcon,
   StoreIcon,
@@ -41,10 +40,8 @@ import {
   FileTextIcon,
   PackageCheckIcon,
   AlertCircleIcon,
-  CheckCircle2Icon,
 } from "lucide-react"
 
-// ── helpers ─────────────────────────────────────────────────────
 function formatCurrency(v: number) {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(v)
 }
@@ -79,23 +76,26 @@ interface SanPhamForm {
   maThuongHieu: number
 }
 
-// ── Stat card ───────────────────────────────────────────────────
-function StatCard({ icon: Icon, label, value, accent }: {
+// ── Glass Stat Card ─────────────────────────────────────────────
+function GlassStatCard({ icon: Icon, label, value, gradient }: {
   icon: React.ElementType
   label: string
   value: string | number
-  accent: string
+  gradient: string
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-stone-100 bg-white p-5 shadow-[0_4px_16px_-6px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_28px_-8px_rgba(0,0,0,0.08)] hover:-translate-y-0.5">
-      <div className={`absolute inset-y-0 left-0 w-1 rounded-r-full ${accent} transition-all duration-300 group-hover:w-1.5`} />
-      <div className="flex items-center justify-between">
-        <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${accent} bg-opacity-15`}>
-          <Icon className={`size-4.5 ${accent.replace("bg-", "text-")}`} strokeWidth={1.8} />
+    <div className="group relative overflow-hidden rounded-2xl border border-stone-200 bg-gradient-to-br p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
+      <div className={`absolute inset-0 ${gradient} opacity-80`} />
+      <div className="absolute inset-0 bg-white/60 opacity-0 transition-opacity group-hover:opacity-100" />
+      <div className="relative flex items-start justify-between">
+        <div className="flex-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-stone-400">{label}</p>
+          <p className="mt-2 font-heading text-3xl font-semibold tracking-tight text-stone-900">{value}</p>
+        </div>
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-stone-100 backdrop-blur-sm">
+          <Icon className="size-4.5 text-stone-600" strokeWidth={1.8} />
         </div>
       </div>
-      <p className="mt-4 text-2xl font-semibold tracking-tight text-stone-900">{value}</p>
-      <p className="mt-0.5 text-xs font-medium uppercase tracking-wider text-stone-400">{label}</p>
     </div>
   )
 }
@@ -162,22 +162,22 @@ function ProductFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-3xl border-stone-200 bg-[#fcfbf9] p-0 shadow-[0_40px_80px_-16px_rgba(0,0,0,0.15)]">
-        <DialogHeader className="sticky top-0 z-10 border-b border-stone-100 bg-[#fcfbf9]/90 px-7 py-5 backdrop-blur-lg">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-3xl border border-stone-200 bg-white/95 p-0 shadow-[0_40px_80px_-16px_rgba(0,0,0,0.6)] backdrop-blur-2xl">
+        <DialogHeader className="sticky top-0 z-10 border-b border-stone-100 bg-white/90 px-7 py-5 backdrop-blur-lg">
           <DialogTitle className="flex items-center gap-3 text-lg font-semibold text-stone-900">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-200 via-amber-100 to-orange-100 shadow-sm">
-              {editing ? <EditIcon className="size-4 text-amber-700" /> : <PlusIcon className="size-4 text-amber-700" />}
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 ring-1 ring-stone-200">
+              {editing ? <EditIcon className="size-4 text-emerald-400" /> : <PlusIcon className="size-4 text-emerald-400" />}
             </div>
             {editing ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới"}
           </DialogTitle>
-          <DialogClose className="absolute right-5 top-5 flex h-7 w-7 items-center justify-center rounded-full text-stone-400 transition hover:bg-stone-100 hover:text-stone-700">
+          <DialogClose className="absolute right-5 top-5 flex h-7 w-7 items-center justify-center rounded-full text-stone-400 transition hover:bg-stone-100 hover:text-stone-900">
             <XIcon className="size-4" />
           </DialogClose>
         </DialogHeader>
 
         <div className="space-y-5 px-7 py-6">
           {error && (
-            <div className="flex items-start gap-2.5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="flex items-start gap-2.5 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
               <AlertCircleIcon className="mt-0.5 size-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -185,21 +185,21 @@ function ProductFormDialog({
 
           {/* Tên sản phẩm */}
           <div>
-            <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500">
+            <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-400">
               <TagIcon className="size-3.5" /> Tên sản phẩm
             </label>
             <Input
               value={form.tenSanPham}
               onChange={(e) => update("tenSanPham", e.target.value)}
               placeholder="VD: Áo thun nam cổ tròn"
-              className="h-11 rounded-xl border-stone-200 bg-white text-sm"
+              className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-300 focus:ring-0"
             />
           </div>
 
           {/* Giá & Tồn kho */}
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500">
+              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-400">
                 <CircleDollarSignIcon className="size-3.5" /> Giá bán
               </label>
               <Input
@@ -208,11 +208,11 @@ function ProductFormDialog({
                 value={form.gia || ""}
                 onChange={(e) => update("gia", Number(e.target.value))}
                 placeholder="0"
-                className="h-11 rounded-xl border-stone-200 bg-white text-sm"
+                className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-300"
               />
             </div>
             <div>
-              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500">
+              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-400">
                 <PackageCheckIcon className="size-3.5" /> Số lượng tồn
               </label>
               <Input
@@ -221,7 +221,7 @@ function ProductFormDialog({
                 value={form.soLuongTon ?? ""}
                 onChange={(e) => update("soLuongTon", Number(e.target.value))}
                 placeholder="0"
-                className="h-11 rounded-xl border-stone-200 bg-white text-sm"
+                className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-300"
               />
             </div>
           </div>
@@ -229,19 +229,19 @@ function ProductFormDialog({
           {/* Danh mục & Thương hiệu */}
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500">
+              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-400">
                 <LayersIcon className="size-3.5" /> Danh mục
               </label>
               <Select
                 value={String(form.maDanhMuc)}
                 onValueChange={(v) => update("maDanhMuc", Number(v))}
               >
-                <SelectTrigger className="h-11 rounded-xl border-stone-200 bg-white text-sm">
+                <SelectTrigger className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900">
                   <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-stone-200">
+                <SelectContent className="rounded-xl border-stone-200 bg-white/95 backdrop-blur-2xl text-stone-900">
                   {categories.map((c) => (
-                    <SelectItem key={c.maDanhMuc} value={String(c.maDanhMuc)} className="text-sm">
+                    <SelectItem key={c.maDanhMuc} value={String(c.maDanhMuc)} className="text-sm text-stone-900/80 hover:text-stone-900 hover:bg-white/70">
                       {c.tenDanhMuc}
                     </SelectItem>
                   ))}
@@ -249,19 +249,19 @@ function ProductFormDialog({
               </Select>
             </div>
             <div>
-              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500">
+              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-400">
                 <StoreIcon className="size-3.5" /> Thương hiệu
               </label>
               <Select
                 value={String(form.maThuongHieu)}
                 onValueChange={(v) => update("maThuongHieu", Number(v))}
               >
-                <SelectTrigger className="h-11 rounded-xl border-stone-200 bg-white text-sm">
+                <SelectTrigger className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900">
                   <SelectValue placeholder="Chọn thương hiệu" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-stone-200">
+                <SelectContent className="rounded-xl border-stone-200 bg-white/95 backdrop-blur-2xl text-stone-900">
                   {brands.map((b) => (
-                    <SelectItem key={b.maThuongHieu} value={String(b.maThuongHieu)} className="text-sm">
+                    <SelectItem key={b.maThuongHieu} value={String(b.maThuongHieu)} className="text-sm text-stone-900/80 hover:text-stone-900 hover:bg-white/70">
                       {b.tenThuongHieu}
                     </SelectItem>
                   ))}
@@ -273,63 +273,63 @@ function ProductFormDialog({
           {/* Màu sắc & Size */}
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500">
+              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-400">
                 <PaletteIcon className="size-3.5" /> Màu sắc
               </label>
               <Input
                 value={form.mauSac}
                 onChange={(e) => update("mauSac", e.target.value)}
                 placeholder="VD: Trắng, Đen, Xanh"
-                className="h-11 rounded-xl border-stone-200 bg-white text-sm"
+                className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-300"
               />
             </div>
             <div>
-              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500">
+              <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-400">
                 <RulerIcon className="size-3.5" /> Kích cỡ
               </label>
               <Input
                 value={form.size}
                 onChange={(e) => update("size", e.target.value)}
                 placeholder="VD: S, M, L, XL"
-                className="h-11 rounded-xl border-stone-200 bg-white text-sm"
+                className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-300"
               />
             </div>
           </div>
 
           {/* Hình ảnh */}
           <div>
-            <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500">
+            <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-400">
               <ImageIcon className="size-3.5" /> Hình ảnh
             </label>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Input value={form.hinhAnh} onChange={(e) => update("hinhAnh", e.target.value)} placeholder="URL ảnh chính" className="h-11 rounded-xl border-stone-200 bg-white text-sm" />
-              <Input value={form.hinhAnh2} onChange={(e) => update("hinhAnh2", e.target.value)} placeholder="URL ảnh phụ 2" className="h-11 rounded-xl border-stone-200 bg-white text-sm" />
-              <Input value={form.hinhAnh3} onChange={(e) => update("hinhAnh3", e.target.value)} placeholder="URL ảnh phụ 3" className="h-11 rounded-xl border-stone-200 bg-white text-sm" />
-              <Input value={form.hinhAnh4} onChange={(e) => update("hinhAnh4", e.target.value)} placeholder="URL ảnh phụ 4" className="h-11 rounded-xl border-stone-200 bg-white text-sm" />
+              <Input value={form.hinhAnh} onChange={(e) => update("hinhAnh", e.target.value)} placeholder="URL ảnh chính" className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-300" />
+              <Input value={form.hinhAnh2} onChange={(e) => update("hinhAnh2", e.target.value)} placeholder="URL ảnh phụ 2" className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-300" />
+              <Input value={form.hinhAnh3} onChange={(e) => update("hinhAnh3", e.target.value)} placeholder="URL ảnh phụ 3" className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-300" />
+              <Input value={form.hinhAnh4} onChange={(e) => update("hinhAnh4", e.target.value)} placeholder="URL ảnh phụ 4" className="h-11 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-300" />
             </div>
           </div>
 
           {/* Mô tả */}
           <div>
-            <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-500">
+            <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-stone-400">
               <FileTextIcon className="size-3.5" /> Mô tả
             </label>
             <Textarea
               value={form.moTa}
               onChange={(e) => update("moTa", e.target.value)}
               placeholder="Mô tả ngắn về sản phẩm..."
-              className="min-h-24 rounded-xl border-stone-200 bg-white text-sm"
+              className="min-h-24 rounded-xl border-stone-200 bg-white/70 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-300"
             />
           </div>
         </div>
 
-        <DialogFooter className="sticky bottom-0 border-t border-stone-100 bg-[#fcfbf9]/90 px-7 py-4 backdrop-blur-lg">
+        <DialogFooter className="sticky bottom-0 border-t border-stone-100 bg-white/90 px-7 py-4 backdrop-blur-lg">
           <div className="flex w-full items-center justify-end gap-3">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="h-10 rounded-xl border-stone-200 bg-white px-5 text-stone-700 hover:bg-stone-50"
+              className="h-10 rounded-xl border-stone-200 bg-white/70 px-5 text-stone-900/60 hover:bg-stone-100 hover:text-stone-900"
             >
               Hủy
             </Button>
@@ -337,7 +337,7 @@ function ProductFormDialog({
               type="button"
               disabled={saving || !form.tenSanPham.trim() || !form.maDanhMuc || !form.maThuongHieu}
               onClick={handleSubmit}
-              className="h-10 rounded-xl bg-stone-900 px-6 text-white hover:bg-stone-800 disabled:opacity-50"
+              className="h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-6 text-stone-900 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-50"
             >
               {saving ? "Đang lưu..." : editing ? "Cập nhật" : "Thêm sản phẩm"}
             </Button>
@@ -378,20 +378,20 @@ function DeleteConfirmDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-3xl border-stone-200 bg-[#fcfbf9] p-0 shadow-[0_40px_80px_-16px_rgba(0,0,0,0.15)]">
+      <DialogContent className="max-w-md rounded-3xl border border-stone-200 bg-white/95 p-0 shadow-[0_40px_80px_-16px_rgba(0,0,0,0.6)] backdrop-blur-2xl">
         <DialogHeader className="px-7 pt-7">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 ring-1 ring-red-100">
-            <TrashIcon className="size-6 text-red-500" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 ring-1 ring-red-500/20">
+            <TrashIcon className="size-6 text-red-400" />
           </div>
           <DialogTitle className="text-center text-lg font-semibold text-stone-900">Xóa sản phẩm</DialogTitle>
           <DialogDescription className="text-center text-sm text-stone-500">
-            Bạn có chắc muốn xóa <span className="font-semibold text-stone-700">{product?.tenSanPham}</span>?
+            Bạn có chắc muốn xóa <span className="font-semibold text-stone-900/80">{product?.tenSanPham}</span>?
             <br />Hành động này không thể hoàn tác.
           </DialogDescription>
         </DialogHeader>
 
         {error && (
-          <div className="mx-7 flex items-start gap-2.5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="mx-7 flex items-start gap-2.5 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
             <AlertCircleIcon className="mt-0.5 size-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -402,7 +402,7 @@ function DeleteConfirmDialog({
             type="button"
             disabled={deleting}
             onClick={handleDelete}
-            className="h-10 flex-1 rounded-xl bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+            className="h-10 flex-1 rounded-xl bg-red-500/80 text-stone-900 hover:bg-red-500 disabled:opacity-50"
           >
             {deleting ? "Đang xóa..." : "Xóa"}
           </Button>
@@ -410,7 +410,7 @@ function DeleteConfirmDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="h-10 flex-1 rounded-xl border-stone-200 bg-white text-stone-700 hover:bg-stone-50"
+            className="h-10 flex-1 rounded-xl border-stone-200 bg-white/70 text-stone-900/60 hover:bg-stone-100 hover:text-stone-900"
           >
             Giữ lại
           </Button>
@@ -434,13 +434,13 @@ function ProductRow({
   const lowStock = product.soLuongTon <= 5
 
   return (
-    <div className="group grid grid-cols-[48px_1fr_auto] gap-4 rounded-2xl border border-stone-100 bg-white/80 px-4 py-3.5 shadow-[0_1px_3px_-1px_rgba(0,0,0,0.03)] transition-all duration-200 hover:border-stone-200 hover:bg-white hover:shadow-[0_4px_16px_-6px_rgba(0,0,0,0.06)] sm:grid-cols-[48px_1fr_140px_100px_100px_80px] sm:items-center">
+    <div className="group grid grid-cols-[48px_1fr_auto] gap-4 rounded-2xl border border-stone-100 bg-white/60 px-4 py-3.5 backdrop-blur-sm transition-all duration-200 hover:border-stone-200 hover:bg-white/80 sm:grid-cols-[48px_1fr_140px_100px_100px_80px] sm:items-center">
       {/* Ảnh */}
       <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-stone-100">
         {src ? (
           <img src={src} alt={product.tenSanPham} className="h-full w-full object-cover" />
         ) : (
-          <PackageIcon className="size-5 text-stone-300" strokeWidth={1.5} />
+          <PackageIcon className="size-5 text-stone-400" strokeWidth={1.5} />
         )}
       </div>
 
@@ -449,7 +449,7 @@ function ProductRow({
         <div className="flex items-center gap-2">
           <p className="truncate text-sm font-semibold text-stone-900">{product.tenSanPham}</p>
           {lowStock && (
-            <Badge className="shrink-0 rounded-full border-amber-200 bg-amber-50 px-2 py-0 text-[10px] font-semibold text-amber-700">
+            <Badge className="shrink-0 rounded-full border-amber-500/30 bg-amber-500/10 px-2 py-0 text-[10px] font-semibold text-amber-400">
               Sắp hết
             </Badge>
           )}
@@ -463,22 +463,20 @@ function ProductRow({
 
       {/* Giá */}
       <div className="hidden text-right sm:block">
-        <p className="text-sm font-semibold text-rose-700">{formatCurrency(product.gia)}</p>
+        <p className="text-sm font-semibold text-rose-400">{formatCurrency(product.gia)}</p>
       </div>
 
       {/* Tồn kho */}
       <div className="hidden text-center sm:block">
         <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
-          lowStock
-            ? "bg-amber-50 text-amber-700"
-            : "bg-emerald-50 text-emerald-700"
+          lowStock ? "bg-amber-500/10 text-amber-400" : "bg-emerald-500/10 text-emerald-400"
         }`}>
           <span className={`h-1.5 w-1.5 rounded-full ${lowStock ? "bg-amber-500" : "bg-emerald-500"}`} />
           {product.soLuongTon}
         </span>
       </div>
 
-      {/* Số lượng tồn (label cố định) */}
+      {/* Trạng thái */}
       <div className="hidden text-xs text-stone-400 sm:block">
         {product.soLuongTon > 20 ? "Dồi dào" : lowStock ? "Cần nhập" : "Trung bình"}
       </div>
@@ -487,14 +485,14 @@ function ProductRow({
       <div className="flex items-center justify-end gap-1">
         <button
           onClick={onEdit}
-          className="flex h-8 w-8 items-center justify-center rounded-xl text-stone-400 transition hover:bg-stone-100 hover:text-stone-700"
+          className="flex h-8 w-8 items-center justify-center rounded-xl text-stone-400 transition hover:bg-stone-100 hover:text-stone-900"
           title="Sửa"
         >
           <EditIcon className="size-3.5" />
         </button>
         <button
           onClick={onDelete}
-          className="flex h-8 w-8 items-center justify-center rounded-xl text-stone-400 transition hover:bg-red-50 hover:text-red-500"
+          className="flex h-8 w-8 items-center justify-center rounded-xl text-stone-400 transition hover:bg-red-500/10 hover:text-red-400"
           title="Xóa"
         >
           <TrashIcon className="size-3.5" />
@@ -512,7 +510,6 @@ export default function SanPhamPage() {
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
 
-  // Dialog state
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<SanPham | null>(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -552,7 +549,6 @@ export default function SanPhamPage() {
       maDanhMuc: Number(data.maDanhMuc),
       maThuongHieu: Number(data.maThuongHieu),
     }
-
     if (editing) {
       await updateProduct(editing.maSanPham, payload)
     } else {
@@ -567,32 +563,9 @@ export default function SanPhamPage() {
     await load()
   }
 
-  const openEdit = (product: SanPham) => {
-    setEditing(product)
-    setFormOpen(true)
-  }
-
-  const openCreate = () => {
-    setEditing(null)
-    setFormOpen(true)
-  }
-
-  const openDelete = (product: SanPham) => {
-    setDeletingProduct(product)
-    setDeleteOpen(true)
-  }
-
-  const stats = [
-    { icon: PackageIcon, label: "Tổng sản phẩm", value: products.length, accent: "bg-stone-900" },
-    { icon: LayersIcon, label: "Danh mục", value: categories.length, accent: "bg-amber-600" },
-    { icon: StoreIcon, label: "Thương hiệu", value: brands.length, accent: "bg-emerald-600" },
-    {
-      icon: AlertCircleIcon,
-      label: "Sắp hết hàng",
-      value: products.filter((p) => p.soLuongTon <= 5).length,
-      accent: "bg-red-500",
-    },
-  ]
+  const openEdit = (product: SanPham) => { setEditing(product); setFormOpen(true) }
+  const openCreate = () => { setEditing(null); setFormOpen(true) }
+  const openDelete = (product: SanPham) => { setDeletingProduct(product); setDeleteOpen(true) }
 
   const lowStockCount = products.filter((p) => p.soLuongTon <= 5).length
 
@@ -602,9 +575,9 @@ export default function SanPhamPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-200 via-amber-100 to-orange-100 shadow-sm ring-1 ring-white/80">
-                <PackageIcon className="size-5 text-amber-700" strokeWidth={1.8} />
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 shadow-lg shadow-emerald-500/5 ring-1 ring-stone-200 backdrop-blur-sm">
+                <PackageIcon className="size-5 text-emerald-400" strokeWidth={1.8} />
               </div>
               <div>
                 <h1 className="font-heading text-xl font-semibold tracking-tight text-stone-900">Sản phẩm</h1>
@@ -614,7 +587,7 @@ export default function SanPhamPage() {
           </div>
           <Button
             onClick={openCreate}
-            className="h-10 rounded-xl bg-stone-900 px-5 text-sm font-semibold text-white shadow-lg shadow-stone-900/15 transition-all hover:bg-stone-800 hover:shadow-xl"
+            className="h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-5 text-sm font-semibold text-stone-900 shadow-lg shadow-emerald-500/15 transition-all hover:from-emerald-400 hover:to-cyan-400 hover:shadow-xl"
           >
             <PlusIcon className="mr-2 size-4" />
             Thêm sản phẩm
@@ -623,12 +596,13 @@ export default function SanPhamPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {stats.map((s) => (
-            <StatCard key={s.label} {...s} />
-          ))}
+          <GlassStatCard icon={PackageIcon} label="Tổng sản phẩm" value={products.length} gradient="bg-gradient-to-br from-blue-900/40 to-indigo-900/20" />
+          <GlassStatCard icon={LayersIcon} label="Danh mục" value={categories.length} gradient="bg-gradient-to-br from-amber-900/40 to-orange-900/20" />
+          <GlassStatCard icon={StoreIcon} label="Thương hiệu" value={brands.length} gradient="bg-gradient-to-br from-emerald-900/40 to-teal-900/20" />
+          <GlassStatCard icon={AlertCircleIcon} label="Sắp hết hàng" value={lowStockCount} gradient="bg-gradient-to-br from-red-900/40 to-rose-900/20" />
         </div>
 
-        {/* Search + Filter row */}
+        {/* Search */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative flex-1">
             <SearchIcon className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-stone-400" />
@@ -636,15 +610,15 @@ export default function SanPhamPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Tìm theo tên, danh mục, thương hiệu..."
-              className="h-11 rounded-2xl border-stone-200 bg-white pl-11 text-sm shadow-sm transition-all focus:border-stone-400 focus:shadow-md"
+              className="h-11 rounded-2xl border-stone-200 bg-white/70 pl-11 text-sm text-stone-900 placeholder:text-stone-400 shadow-sm transition-all focus:border-stone-300 focus:shadow-md"
             />
           </div>
           <div className="flex items-center gap-3 text-sm text-stone-400">
             <span className="hidden sm:inline">
-              {loading ? "…" : <span><strong className="text-stone-700">{filtered.length}</strong> / {products.length} sản phẩm</span>}
+              {loading ? "…" : <span><strong className="text-stone-600">{filtered.length}</strong> / {products.length} sản phẩm</span>}
             </span>
             {lowStockCount > 0 && (
-              <Badge className="rounded-full border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+              <Badge className="rounded-full border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400">
                 <AlertCircleIcon className="mr-1.5 size-3" />
                 {lowStockCount} sản phẩm sắp hết
               </Badge>
@@ -653,20 +627,20 @@ export default function SanPhamPage() {
         </div>
 
         {/* List */}
-        <div className="rounded-2xl border border-stone-100 bg-white/70 p-1 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.04)]">
+        <div className="rounded-2xl border border-stone-100 bg-white/60 p-1 shadow-sm backdrop-blur-sm">
           {loading ? (
             <div className="space-y-2 p-4">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-[68px] animate-pulse rounded-2xl bg-stone-50" />
+                <div key={i} className="h-[68px] animate-pulse rounded-2xl bg-white/70" />
               ))}
             </div>
           ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center gap-4 py-20 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-stone-50">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/70">
                 <PackageIcon className="size-8 text-stone-300" strokeWidth={1} />
               </div>
               <div>
-                <p className="text-base font-semibold text-stone-700">
+                <p className="text-base font-semibold text-stone-600">
                   {search ? "Không tìm thấy sản phẩm" : "Chưa có sản phẩm nào"}
                 </p>
                 <p className="mt-0.5 text-sm text-stone-400">
@@ -674,7 +648,7 @@ export default function SanPhamPage() {
                 </p>
               </div>
               {!search && (
-                <Button onClick={openCreate} className="mt-2 rounded-xl bg-stone-900 px-5 text-white hover:bg-stone-800">
+                <Button onClick={openCreate} className="mt-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-5 text-stone-900 hover:from-emerald-400 hover:to-cyan-400">
                   <PlusIcon className="mr-2 size-4" />
                   Thêm sản phẩm đầu tiên
                 </Button>
@@ -704,7 +678,6 @@ export default function SanPhamPage() {
         </div>
       </div>
 
-      {/* Dialogs */}
       <ProductFormDialog
         open={formOpen}
         onOpenChange={setFormOpen}

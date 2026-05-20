@@ -39,42 +39,54 @@ export default function DashboardLayout({
 
   return (
     <SidebarProvider>
+      {/* Background full màn hình — dưới cả sidebar lẫn content */}
+      <div
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: `url(/bg_admin.png)`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
       <AppSidebar />
-      <SidebarInset className="bg-[linear-gradient(180deg,#fcfaf6_0%,#f5ede0_100%)] min-h-svh">
-        <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-stone-200/70 bg-white/80 backdrop-blur-md transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-vertical:h-4 data-vertical:self-auto" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink asChild>
-                    <Link href="/" className="text-stone-500 hover:text-stone-800">
-                      Trang chủ
-                    </Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink asChild>
-                    <Link href="/dashboard" className="text-stone-500 hover:text-stone-800">
-                      Dashboard
-                    </Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                {pathname !== "/dashboard" && (
-                  <>
-                    <BreadcrumbSeparator className="hidden md:block" />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{pageTitle}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </>
-                )}
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col">{children}</div>
+      <SidebarInset className="relative min-h-svh bg-transparent">
+        <div className="relative z-10 flex flex-1 flex-col">
+          <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-white/20 bg-white/40 backdrop-blur-md transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1 text-stone-400 hover:text-stone-900" />
+              <Separator orientation="vertical" className="mr-2 h-4 bg-stone-200" />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem className="hidden md:block">
+                    <BreadcrumbLink asChild>
+                      <Link href="/" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">
+                        Trang chủ
+                      </Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="hidden text-stone-300 md:block" />
+                  <BreadcrumbItem className="hidden md:block">
+                    <BreadcrumbLink asChild>
+                      <Link href="/dashboard" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">
+                        Dashboard
+                      </Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  {pathname !== "/dashboard" && (
+                    <>
+                      <BreadcrumbSeparator className="hidden text-stone-300 md:block" />
+                      <BreadcrumbItem>
+                        <BreadcrumbPage className="text-sm font-medium text-stone-700">{pageTitle}</BreadcrumbPage>
+                      </BreadcrumbItem>
+                    </>
+                  )}
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+          </header>
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   )
