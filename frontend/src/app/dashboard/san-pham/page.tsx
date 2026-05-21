@@ -281,6 +281,7 @@ export default function SanPhamPage() {
   const [brands, setBrands] = useState<ThuongHieu[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
+  const [selectedCat, setSelectedCat] = useState<number | null>(null)
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<SanPham | null>(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -298,13 +299,17 @@ export default function SanPhamPage() {
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim()
-    if (!q) return products
-    return products.filter((p) =>
+    let result = products
+    if (selectedCat !== null) {
+      result = result.filter((p) => p.maDanhMuc === selectedCat)
+    }
+    if (!q) return result
+    return result.filter((p) =>
       p.tenSanPham.toLowerCase().includes(q) ||
       (p.tenDanhMuc ?? "").toLowerCase().includes(q) ||
       (p.tenThuongHieu ?? "").toLowerCase().includes(q)
     )
-  }, [products, search])
+  }, [products, search, selectedCat])
 
   const handleSave = async (data: SanPhamForm) => {
     const payload = { ...data, gia: Number(data.gia), soLuongTon: Number(data.soLuongTon), maDanhMuc: Number(data.maDanhMuc), maThuongHieu: Number(data.maThuongHieu) }
@@ -346,6 +351,38 @@ export default function SanPhamPage() {
           <StatCard icon={LayersIcon} label="Danh mục" value={categories.length} gradient="bg-white/70 border border-stone-100" />
           <StatCard icon={StoreIcon} label="Thương hiệu" value={brands.length} gradient="bg-white/70 border border-stone-100" />
           <StatCard icon={AlertCircleIcon} label="Sắp hết hàng" value={lowStockCount} gradient="bg-white/70 border border-stone-100" />
+        </div>
+
+        {/* Tabs danh mục */}
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setSelectedCat(null)}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+              selectedCat === null
+                ? "bg-stone-900 text-white shadow-sm"
+                : "border border-stone-200 bg-white/80 text-stone-600 hover:bg-white hover:text-stone-900"
+            }`}
+          >
+            Tất cả
+            <span className="ml-1.5 text-xs opacity-60">({products.length})</span>
+          </button>
+          {categories.map((cat) => {
+            const count = products.filter((p) => p.maDanhMuc === cat.maDanhMuc).length
+            return (
+              <button
+                key={cat.maDanhMuc}
+                onClick={() => setSelectedCat(cat.maDanhMuc)}
+                className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                  selectedCat === cat.maDanhMuc
+                    ? "bg-stone-900 text-white shadow-sm"
+                    : "border border-stone-200 bg-white/80 text-stone-600 hover:bg-white hover:text-stone-900"
+                }`}
+              >
+                {cat.tenDanhMuc}
+                <span className="ml-1.5 text-xs opacity-60">({count})</span>
+              </button>
+            )
+          })}
         </div>
 
         {/* Search */}
