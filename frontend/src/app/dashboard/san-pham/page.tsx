@@ -18,6 +18,7 @@ import {
   PackageIcon, PlusIcon, SearchIcon, TrashIcon, EditIcon, XIcon,
   ImageIcon, LayersIcon, StoreIcon, CircleDollarSignIcon, PaletteIcon,
   RulerIcon, FileTextIcon, PackageCheckIcon, AlertCircleIcon, TagIcon,
+  ArrowLeftIcon, LayoutGridIcon, ChevronRightIcon,
 } from "lucide-react"
 
 function formatCurrency(v: number) {
@@ -35,24 +36,40 @@ const emptyForm: SanPhamForm = {
   hinhAnh: "", hinhAnh2: "", hinhAnh3: "", hinhAnh4: "", moTa: "", maDanhMuc: 0, maThuongHieu: 0,
 }
 
-function StatCard({ icon: Icon, label, value, gradient }: {
-  icon: React.ElementType; label: string; value: string | number; gradient: string
+function getStockLevel(qty: number) {
+  if (qty <= 5) return { label: "Sắp hết", color: "text-amber-600 bg-amber-50 border-amber-200" }
+  if (qty <= 20) return { label: "Trung bình", color: "text-blue-600 bg-blue-50 border-blue-200" }
+  return { label: "Dồi dào", color: "text-emerald-600 bg-emerald-50 border-emerald-200" }
+}
+
+// ── Category Card ──────────────────────────────────────────────
+function CategoryCard({ cat, count, onClick }: {
+  cat: DanhMuc; count: number; onClick: () => void
 }) {
   return (
-    <div className={`relative overflow-hidden rounded-2xl p-5 shadow-sm ${gradient}`}>
+    <div
+      onClick={onClick}
+      className="group cursor-pointer rounded-2xl border border-stone-100 bg-white p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:border-stone-200 hover:shadow-[0_8px_24px_-8px_rgba(0,0,0,0.08)]"
+    >
       <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-stone-500">{label}</p>
-          <p className="mt-2 font-heading text-3xl font-semibold tracking-tight text-stone-900">{value}</p>
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 ring-1 ring-amber-200/50">
+          <LayersIcon className="size-5 text-amber-600" strokeWidth={1.8} />
         </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/60">
-          <Icon className="size-4.5 text-stone-600" strokeWidth={1.8} />
-        </div>
+        <ChevronRightIcon className="size-5 text-stone-300 transition-all group-hover:translate-x-0.5 group-hover:text-stone-500" />
+      </div>
+      <div className="mt-5">
+        <h3 className="text-base font-semibold text-stone-900">{cat.tenDanhMuc}</h3>
+        <p className="mt-1 text-sm text-stone-400">{count} sản phẩm</p>
+      </div>
+      <div className="mt-4 flex items-center gap-1.5 text-xs font-medium text-stone-500 transition-colors group-hover:text-stone-800">
+        Xem chi tiết
+        <ChevronRightIcon className="size-3" />
       </div>
     </div>
   )
 }
 
+// ── Product Form Dialog ────────────────────────────────────────
 function ProductFormDialog({ open, onOpenChange, editing, categories, brands, onSave }: {
   open: boolean; onOpenChange: (v: boolean) => void; editing: SanPham | null
   categories: DanhMuc[]; brands: ThuongHieu[]; onSave: (data: SanPhamForm) => Promise<void>
@@ -103,10 +120,7 @@ function ProductFormDialog({ open, onOpenChange, editing, categories, brands, on
             </div>
           )}
 
-          {/* 2 cột ngang */}
           <div className="grid grid-cols-2 gap-x-8 gap-y-3">
-
-            {/* Cột trái */}
             <div className="space-y-3">
               <div>
                 <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-stone-400">Tên sản phẩm</label>
@@ -153,8 +167,6 @@ function ProductFormDialog({ open, onOpenChange, editing, categories, brands, on
                 </div>
               </div>
             </div>
-
-            {/* Cột phải */}
             <div className="space-y-3">
               <div>
                 <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-stone-400">Hình ảnh (URL)</label>
@@ -170,11 +182,10 @@ function ProductFormDialog({ open, onOpenChange, editing, categories, brands, on
                 <Textarea value={form.moTa} onChange={(e) => update("moTa", e.target.value)} placeholder="Mô tả ngắn về sản phẩm..." className="min-h-[72px] rounded-lg border-stone-200 bg-stone-50 text-sm" />
               </div>
             </div>
-
           </div>
         </div>
 
-        <DialogFooter className="border-t border-stone-100 bg-white px-8 py-4 mb-1">
+        <DialogFooter className="border-t border-stone-100 bg-white px-8 py-5 pb-8">
           <div className="flex w-full items-center justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-9 rounded-lg border-stone-200 px-5 text-sm text-stone-600 hover:bg-stone-50">Hủy</Button>
             <Button type="button" disabled={saving || !form.tenSanPham.trim() || !form.maDanhMuc || !form.maThuongHieu} onClick={handleSubmit} className="h-9 rounded-lg bg-stone-900 px-6 text-sm text-white hover:bg-stone-800 disabled:opacity-50">
@@ -187,6 +198,7 @@ function ProductFormDialog({ open, onOpenChange, editing, categories, brands, on
   )
 }
 
+// ── Delete Confirm Dialog ──────────────────────────────────────
 function DeleteConfirmDialog({ open, onOpenChange, product, onConfirm }: {
   open: boolean; onOpenChange: (v: boolean) => void
   product: SanPham | null; onConfirm: () => Promise<void>
@@ -223,20 +235,19 @@ function DeleteConfirmDialog({ open, onOpenChange, product, onConfirm }: {
           <Button type="button" disabled={deleting} onClick={handleDelete} className="h-10 flex-1 rounded-xl bg-red-500 text-white hover:bg-red-600 disabled:opacity-50">
             {deleting ? "Đang xóa..." : "Xóa"}
           </Button>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-10 flex-1 rounded-xl border-stone-200 text-stone-600 hover:bg-stone-50">
-            Giữ lại
-          </Button>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-10 flex-1 rounded-xl border-stone-200 text-stone-600 hover:bg-stone-50">Giữ lại</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   )
 }
 
+// ── Product Row (dùng trong view chi tiết danh mục) ────────────
 function ProductRow({ product, onEdit, onDelete }: {
   product: SanPham; onEdit: () => void; onDelete: () => void
 }) {
   const src = product.hinhAnh?.trim()
-  const lowStock = product.soLuongTon <= 5
+  const stock = getStockLevel(product.soLuongTon)
   return (
     <div className="group grid grid-cols-[48px_1fr_auto] gap-4 rounded-xl border border-stone-100 bg-white/70 px-4 py-3 transition hover:border-stone-200 hover:bg-white sm:grid-cols-[48px_1fr_140px_100px_100px_80px] sm:items-center">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-stone-100">
@@ -245,7 +256,7 @@ function ProductRow({ product, onEdit, onDelete }: {
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <p className="truncate text-sm font-semibold text-stone-900">{product.tenSanPham}</p>
-          {lowStock && <Badge className="shrink-0 rounded-full border-amber-200 bg-amber-50 px-2 py-0 text-[10px] font-semibold text-amber-700">Sắp hết</Badge>}
+          {product.soLuongTon <= 5 && <Badge className="shrink-0 rounded-full border-amber-200 bg-amber-50 px-2 py-0 text-[10px] font-semibold text-amber-700">Sắp hết</Badge>}
         </div>
         <p className="mt-0.5 truncate text-xs text-stone-400">
           {product.tenDanhMuc ?? "—"} · {product.tenThuongHieu ?? "—"}
@@ -256,25 +267,20 @@ function ProductRow({ product, onEdit, onDelete }: {
         <p className="text-sm font-semibold text-rose-600">{formatCurrency(product.gia)}</p>
       </div>
       <div className="hidden text-center sm:block">
-        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${lowStock ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"}`}>
-          <span className={`h-1.5 w-1.5 rounded-full ${lowStock ? "bg-amber-500" : "bg-emerald-500"}`} />{product.soLuongTon}
+        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${stock.color}`}>
+          <span className={`h-1.5 w-1.5 rounded-full ${stock.color.split(" ")[0].replace("text-", "bg-")}`} />{product.soLuongTon}
         </span>
       </div>
-      <div className="hidden text-xs text-stone-400 sm:block">
-        {product.soLuongTon > 20 ? "Dồi dào" : lowStock ? "Cần nhập" : "Trung bình"}
-      </div>
+      <div className="hidden text-xs text-stone-400 sm:block">{stock.label}</div>
       <div className="flex items-center justify-end gap-1">
-        <button onClick={onEdit} className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-400 transition hover:bg-stone-100 hover:text-stone-900" title="Sửa">
-          <EditIcon className="size-3.5" />
-        </button>
-        <button onClick={onDelete} className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-400 transition hover:bg-red-50 hover:text-red-500" title="Xóa">
-          <TrashIcon className="size-3.5" />
-        </button>
+        <button onClick={onEdit} className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-400 transition hover:bg-stone-100 hover:text-stone-900" title="Sửa"><EditIcon className="size-3.5" /></button>
+        <button onClick={onDelete} className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-400 transition hover:bg-red-50 hover:text-red-500" title="Xóa"><TrashIcon className="size-3.5" /></button>
       </div>
     </div>
   )
 }
 
+// ── Main Page ──────────────────────────────────────────────────
 export default function SanPhamPage() {
   const [products, setProducts] = useState<SanPham[]>([])
   const [categories, setCategories] = useState<DanhMuc[]>([])
@@ -282,6 +288,7 @@ export default function SanPhamPage() {
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
   const [selectedCat, setSelectedCat] = useState<number | null>(null)
+  const [showCategoryView, setShowCategoryView] = useState(true)
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<SanPham | null>(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -299,10 +306,9 @@ export default function SanPhamPage() {
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim()
-    let result = products
-    if (selectedCat !== null) {
-      result = result.filter((p) => p.maDanhMuc === selectedCat)
-    }
+    let result = selectedCat !== null
+      ? products.filter((p) => p.maDanhMuc === selectedCat)
+      : products
     if (!q) return result
     return result.filter((p) =>
       p.tenSanPham.toLowerCase().includes(q) ||
@@ -324,109 +330,173 @@ export default function SanPhamPage() {
     await load()
   }
 
+  const enterCategory = (catId: number) => {
+    setSelectedCat(catId)
+    setShowCategoryView(false)
+    setSearch("")
+  }
+
+  const backToCategories = () => {
+    setSelectedCat(null)
+    setShowCategoryView(true)
+    setSearch("")
+  }
+
+  const selectedCatName = selectedCat !== null
+    ? categories.find((c) => c.maDanhMuc === selectedCat)?.tenDanhMuc ?? ""
+    : ""
+
   const lowStockCount = products.filter((p) => p.soLuongTon <= 5).length
+
+  if (loading) {
+    return (
+      <div className="flex flex-1 items-center justify-center p-12">
+        <div className="space-y-3 text-center">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-stone-200 border-t-stone-900" />
+          <p className="text-sm text-stone-400">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
       <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 shadow-sm ring-1 ring-stone-200">
-              <PackageIcon className="size-5 text-stone-600" strokeWidth={1.8} />
+
+        {showCategoryView ? (
+          // ── VIEW 1: HIỂN THỊ DANH MỤC ──────────────────────
+          <>
+            {/* Header */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 shadow-sm ring-1 ring-stone-200">
+                  <LayoutGridIcon className="size-5 text-stone-600" strokeWidth={1.8} />
+                </div>
+                <div>
+                  <h1 className="font-heading text-xl font-semibold tracking-tight text-stone-900">Kho sản phẩm</h1>
+                  <p className="text-xs text-stone-500">Chọn một danh mục để xem danh sách sản phẩm</p>
+                </div>
+              </div>
+              <Button onClick={() => { setEditing(null); setFormOpen(true) }} className="h-10 rounded-xl bg-stone-900 px-5 text-sm font-semibold text-white hover:bg-stone-800">
+                <PlusIcon className="mr-2 size-4" />Thêm sản phẩm
+              </Button>
             </div>
-            <div>
-              <h1 className="font-heading text-xl font-semibold tracking-tight text-stone-900">Sản phẩm</h1>
-              <p className="text-xs text-stone-500">Quản lý toàn bộ sản phẩm trong hệ thống</p>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="rounded-2xl border border-stone-100 bg-white p-5 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-stone-400">Tổng sản phẩm</p>
+                <p className="mt-2 font-heading text-3xl font-semibold text-stone-900">{products.length}</p>
+              </div>
+              <div className="rounded-2xl border border-stone-100 bg-white p-5 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-stone-400">Danh mục</p>
+                <p className="mt-2 font-heading text-3xl font-semibold text-stone-900">{categories.length}</p>
+              </div>
+              <div className="rounded-2xl border border-stone-100 bg-white p-5 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-stone-400">Thương hiệu</p>
+                <p className="mt-2 font-heading text-3xl font-semibold text-stone-900">{brands.length}</p>
+              </div>
+              <div className="rounded-2xl border border-stone-100 bg-white p-5 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-stone-400">Sắp hết hàng</p>
+                <p className="mt-2 font-heading text-3xl font-semibold text-stone-900">{lowStockCount}</p>
+              </div>
             </div>
-          </div>
-          <Button onClick={() => { setEditing(null); setFormOpen(true) }} className="h-10 rounded-xl bg-stone-900 px-5 text-sm font-semibold text-white hover:bg-stone-800">
-            <PlusIcon className="mr-2 size-4" />Thêm sản phẩm
-          </Button>
-        </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <StatCard icon={PackageIcon} label="Tổng sản phẩm" value={products.length} gradient="bg-white/70 border border-stone-100" />
-          <StatCard icon={LayersIcon} label="Danh mục" value={categories.length} gradient="bg-white/70 border border-stone-100" />
-          <StatCard icon={StoreIcon} label="Thương hiệu" value={brands.length} gradient="bg-white/70 border border-stone-100" />
-          <StatCard icon={AlertCircleIcon} label="Sắp hết hàng" value={lowStockCount} gradient="bg-white/70 border border-stone-100" />
-        </div>
-
-        {/* Tabs danh mục */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setSelectedCat(null)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-              selectedCat === null
-                ? "bg-stone-900 text-white shadow-sm"
-                : "border border-stone-200 bg-white/80 text-stone-600 hover:bg-white hover:text-stone-900"
-            }`}
-          >
-            Tất cả
-            <span className="ml-1.5 text-xs opacity-60">({products.length})</span>
-          </button>
-          {categories.map((cat) => {
-            const count = products.filter((p) => p.maDanhMuc === cat.maDanhMuc).length
-            return (
-              <button
-                key={cat.maDanhMuc}
-                onClick={() => setSelectedCat(cat.maDanhMuc)}
-                className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                  selectedCat === cat.maDanhMuc
-                    ? "bg-stone-900 text-white shadow-sm"
-                    : "border border-stone-200 bg-white/80 text-stone-600 hover:bg-white hover:text-stone-900"
-                }`}
-              >
-                {cat.tenDanhMuc}
-                <span className="ml-1.5 text-xs opacity-60">({count})</span>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Search */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1">
-            <SearchIcon className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-stone-400" />
-            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm theo tên, danh mục, thương hiệu..." className="h-11 rounded-2xl border-stone-200 bg-white/80 pl-11 text-sm shadow-sm" />
-          </div>
-          <span className="text-sm text-stone-400">
-            {loading ? "…" : <><strong className="text-stone-700">{filtered.length}</strong> / {products.length}</>}
-          </span>
-        </div>
-
-        {/* List */}
-        <div className="rounded-2xl border border-stone-100 bg-white/50 p-2 shadow-sm backdrop-blur-sm">
-          {loading ? (
-            <div className="space-y-2 p-2">
-              {Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-16 animate-pulse rounded-xl bg-stone-100" />)}
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="flex flex-col items-center gap-4 py-20 text-center">
-              <PackageIcon className="size-12 text-stone-300" strokeWidth={1} />
-              <p className="text-sm text-stone-500">{search ? "Không tìm thấy sản phẩm" : "Chưa có sản phẩm nào"}</p>
-              {!search && (
+            {/* Category Grid */}
+            {categories.length === 0 ? (
+              <div className="flex flex-col items-center gap-4 py-20 text-center">
+                <LayersIcon className="size-12 text-stone-300" strokeWidth={1} />
+                <p className="text-sm text-stone-500">Chưa có danh mục nào</p>
                 <Button onClick={() => { setEditing(null); setFormOpen(true) }} className="rounded-xl bg-stone-900 px-5 text-white hover:bg-stone-800">
                   <PlusIcon className="mr-2 size-4" />Thêm sản phẩm đầu tiên
                 </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {categories.map((cat) => (
+                  <CategoryCard
+                    key={cat.maDanhMuc}
+                    cat={cat}
+                    count={products.filter((p) => p.maDanhMuc === cat.maDanhMuc).length}
+                    onClick={() => enterCategory(cat.maDanhMuc)}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+
+        ) : (
+          // ── VIEW 2: HIỂN THỊ SẢN PHẨM THEO DANH MỤC ──────
+          <>
+            {/* Header với nút quay lại */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={backToCategories}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-500 transition hover:bg-stone-50 hover:text-stone-900"
+                >
+                  <ArrowLeftIcon className="size-4" />
+                </button>
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-50 to-orange-50 ring-1 ring-amber-200/50">
+                      <LayersIcon className="size-4.5 text-amber-600" strokeWidth={1.8} />
+                    </div>
+                    <h1 className="font-heading text-xl font-semibold tracking-tight text-stone-900">{selectedCatName}</h1>
+                  </div>
+                  <p className="mt-0.5 text-xs text-stone-400">
+                    {filtered.length} sản phẩm ·{' '}
+                    <button onClick={backToCategories} className="text-stone-500 underline underline-offset-2 hover:text-stone-800">
+                      Quay lại danh mục
+                    </button>
+                  </p>
+                </div>
+              </div>
+              <Button onClick={() => { setEditing(null); setFormOpen(true) }} className="h-10 rounded-xl bg-stone-900 px-5 text-sm font-semibold text-white hover:bg-stone-800">
+                <PlusIcon className="mr-2 size-4" />Thêm sản phẩm
+              </Button>
+            </div>
+
+            {/* Search */}
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1">
+                <SearchIcon className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-stone-400" />
+                <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm sản phẩm trong danh mục..." className="h-11 rounded-2xl border-stone-200 bg-white/80 pl-11 text-sm shadow-sm" />
+              </div>
+              <span className="text-sm text-stone-400">
+                <strong className="text-stone-700">{filtered.length}</strong> / {products.filter((p) => p.maDanhMuc === selectedCat).length}
+              </span>
+            </div>
+
+            {/* Product list */}
+            <div className="rounded-2xl border border-stone-100 bg-white/50 p-2 shadow-sm">
+              {filtered.length === 0 ? (
+                <div className="flex flex-col items-center gap-4 py-20 text-center">
+                  <PackageIcon className="size-12 text-stone-300" strokeWidth={1} />
+                  <p className="text-sm text-stone-500">{search ? "Không tìm thấy sản phẩm" : "Danh mục này chưa có sản phẩm"}</p>
+                  {!search && (
+                    <Button onClick={() => { setEditing(null); setFormOpen(true) }} className="rounded-xl bg-stone-900 px-5 text-white hover:bg-stone-800">
+                      <PlusIcon className="mr-2 size-4" />Thêm sản phẩm
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-1.5 p-1">
+                  <div className="hidden grid-cols-[48px_1fr_140px_100px_100px_80px] gap-4 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-stone-400 sm:grid">
+                    <span /><span>Sản phẩm</span><span className="text-right">Giá</span>
+                    <span className="text-center">Tồn kho</span><span className="text-center">Trạng thái</span><span className="text-right">Thao tác</span>
+                  </div>
+                  {filtered.map((product) => (
+                    <ProductRow key={product.maSanPham} product={product}
+                      onEdit={() => { setEditing(product); setFormOpen(true) }}
+                      onDelete={() => { setDeletingProduct(product); setDeleteOpen(true) }}
+                    />
+                  ))}
+                </div>
               )}
             </div>
-          ) : (
-            <div className="space-y-1.5 p-1">
-              <div className="hidden grid-cols-[48px_1fr_140px_100px_100px_80px] gap-4 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-stone-400 sm:grid">
-                <span /><span>Sản phẩm</span><span className="text-right">Giá</span>
-                <span className="text-center">Tồn kho</span><span className="text-center">Trạng thái</span><span className="text-right">Thao tác</span>
-              </div>
-              {filtered.map((product) => (
-                <ProductRow key={product.maSanPham} product={product}
-                  onEdit={() => { setEditing(product); setFormOpen(true) }}
-                  onDelete={() => { setDeletingProduct(product); setDeleteOpen(true) }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       <ProductFormDialog open={formOpen} onOpenChange={setFormOpen} editing={editing} categories={categories} brands={brands} onSave={handleSave} />
