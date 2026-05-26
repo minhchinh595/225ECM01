@@ -225,27 +225,6 @@ class DonHangController {
 }
 
 @RestController
-@RequestMapping("/api/danh-gia")
-@CrossOrigin(origins = {"http://localhost:3000", "http://127.0.0.1:3000"})
-class DanhGiaController {
-    private final DanhGiaRepository danhGiaRepository;
-
-    DanhGiaController(DanhGiaRepository danhGiaRepository) {
-        this.danhGiaRepository = danhGiaRepository;
-    }
-
-    @GetMapping
-    public ResponseEntity<List<DanhGia>> getAll() {
-        return ResponseEntity.ok(danhGiaRepository.findAll());
-    }
-
-    @PostMapping
-    public ResponseEntity<DanhGia> create(@RequestBody DanhGia danhGia) {
-        return ResponseEntity.ok(danhGiaRepository.save(danhGia));
-    }
-}
-
-@RestController
 @RequestMapping("/api/gio-hang")
 @CrossOrigin(origins = {"http://localhost:3000", "http://127.0.0.1:3000"})
 class GioHangController {

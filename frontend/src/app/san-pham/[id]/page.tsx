@@ -3,9 +3,10 @@
 import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
-import { API_URL, getProductById, getProducts, addToCart } from "@/lib/api"
+import { API_URL, getProductById, getProducts, addToCart, getReviewsByProduct, getReviewStats, createReview } from "@/lib/api"
 import { getStoredUser } from "@/lib/auth"
 import type { NguoiDung, SanPham } from "@/lib/types"
+import type { DanhGia } from "@/lib/api"
 import { UserMenu } from "@/components/user-menu"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -94,8 +95,28 @@ export default function SanPhamDetailPage() {
   const [wishlisted, setWishlisted] = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
   const [qty, setQty] = useState(1)
+  const [reviews, setReviews] = useState<DanhGia[]>([])
+  const [reviewStats, setReviewStats] = useState({ average: 0, total: 0 })
+  const [showReviewForm, setShowReviewForm] = useState(false)
+  const [reviewSao, setReviewSao] = useState(5)
+  const [reviewText, setReviewText] = useState("")
+  const [submittingReview, setSubmittingReview] = useState(false)
+  const [reviewError, setReviewError] = useState("")
+  const [reviewSuccess, setReviewSuccess] = useState("")
 
   useEffect(() => { setCurrentUser(getStoredUser()) }, [])
+
+  // Load reviews
+  useEffect(() => {
+    if (!id) return
+    Promise.all([
+      getReviewsByProduct(id).catch(() => []),
+      getReviewStats(id).catch(() => ({ average: 0, total: 0 })),
+    ]).then(([r, s]) => {
+      setReviews(r)
+      setReviewStats(s)
+    })
+  }, [id])
 
   useEffect(() => {
     if (!id) return
@@ -404,7 +425,126 @@ export default function SanPhamDetailPage() {
                     </div>
                   ))}
                 </div>
+                </div>
               </div>
+            </section>
+
+          {/* ── Reviews section ── */}
+          <section className="border-t border-stone-200/40 py-14 lg:py-16">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="mb-8 flex items-end justify-between">
+                <div>
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-700/80">Đánh giá</p>
+                  <h2 className="font-heading text-2xl font-semibold tracking-tight text-stone-950">
+                    Khách hàng nói gì
+                  </h2>
+                  {reviewStats.total > 0 && (
+                    <p className="mt-1 text-sm text-stone-500">
+                      {reviewStats.average.toFixed(1)} / 5 · {reviewStats.total} đánh giá
+                    </p>
+                  )}
+                </div>
+                {currentUser && (
+                  <Button
+                    onClick={() => { setShowReviewForm(true); setReviewError(""); setReviewSuccess("") }}
+                    className="rounded-full bg-stone-900 px-5 text-xs text-white hover:bg-stone-800"
+                  >
+                    Viết đánh giá
+                  </Button>
+                )}
+              </div>
+
+              {/* Review form */}
+              {showReviewForm && (
+                <div className="mb-8 rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
+                  <h3 className="mb-4 text-sm font-semibold text-stone-900">Đánh giá sản phẩm này</h3>
+                  {reviewError && <p className="mb-3 text-sm text-red-600">{reviewError}</p>}
+                  {reviewSuccess && <p className="mb-3 text-sm text-emerald-600">{reviewSuccess}</p>}
+                  <div className="mb-4 flex items-center gap-1">
+                    {[1,2,3,4,5].map((s) => (
+                      <button key={s} type="button" onClick={() => setReviewSao(s)} className="transition hover:scale-110">
+                        <StarIcon className={`size-6 ${s <= reviewSao ? "fill-amber-400 text-amber-400" : "text-stone-300"}`} />
+                      </button>
+                    ))}
+                    <span className="ml-2 text-sm text-stone-500">{reviewSao}/5</span>
+                  </div>
+                  <textarea
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
+                    className="min-h-24 w-full rounded-xl border border-stone-200 bg-white p-4 text-sm outline-none focus:border-stone-400"
+                    maxLength={500}
+                  />
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-xs text-stone-400">{reviewText.length}/500</span>
+                    <div className="flex gap-3">
+                      <Button variant="outline" onClick={() => setShowReviewForm(false)} className="rounded-full border-stone-200 text-sm text-stone-600">
+                        Hủy
+                      </Button>
+                      <Button
+                        disabled={submittingReview}
+                        onClick={async () => {
+                          setSubmittingReview(true); setReviewError(""); setReviewSuccess("")
+                          try {
+                            const result = await createReview(currentUser!.maNguoiDung, { maSanPham: id, soSao: reviewSao, binhLuan: reviewText })
+                            setReviews((prev) => [result, ...prev])
+                            setReviewStats((prev) => ({
+                              average: (prev.average * prev.total + reviewSao) / (prev.total + 1),
+                              total: prev.total + 1,
+                            }))
+                            setReviewSuccess("Cảm ơn bạn đã đánh giá sản phẩm!")
+                            setReviewText("")
+                            setTimeout(() => setShowReviewForm(false), 1500)
+                          } catch (err) {
+                            setReviewError(err instanceof Error ? err.message : "Gửi đánh giá thất bại")
+                          } finally { setSubmittingReview(false) }
+                        }}
+                        className="rounded-full bg-stone-900 px-5 text-sm text-white hover:bg-stone-800 disabled:opacity-50"
+                      >
+                        {submittingReview ? "Đang gửi..." : "Gửi đánh giá"}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Reviews list */}
+              {reviews.length === 0 ? (
+                <div className="rounded-2xl border border-stone-100 bg-white/50 px-6 py-12 text-center">
+                  <p className="text-sm text-stone-400">Chưa có đánh giá nào cho sản phẩm này.</p>
+                  {!currentUser && (
+                    <Button asChild className="mt-4 rounded-full bg-stone-900 px-5 text-xs text-white">
+                      <Link href="/login">Đăng nhập để đánh giá</Link>
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {reviews.map((review) => (
+                    <div key={review.maDanhGia} className="rounded-2xl border border-stone-100 bg-white/70 p-5">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-amber-200 via-rose-100 to-violet-200 text-xs font-bold text-stone-700">
+                            {review.tenDangNhap.slice(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-stone-900">{review.tenDangNhap}</p>
+                            <div className="flex items-center gap-1">
+                              {[1,2,3,4,5].map((s) => (
+                                <StarIcon key={s} className={`size-3.5 ${s <= review.soSao ? "fill-amber-400 text-amber-400" : "text-stone-200"}`} />
+                              ))}
+                              <span className="ml-1 text-xs text-stone-400">{new Date(review.ngayDanhGia).toLocaleDateString("vi-VN")}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {review.binhLuan && (
+                        <p className="mt-3 text-sm leading-relaxed text-stone-600">{review.binhLuan}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 
