@@ -27,14 +27,7 @@ function formatCurrency(value: number) {
   }).format(value)
 }
 
-const API_ORIGIN = API_URL.replace(/\/api\/?$/, "")
-
-function productImageSrc(hinhAnh?: string | null): string | null {
-  if (!hinhAnh?.trim()) return null
-  const path = hinhAnh.trim()
-  if (/^https?:\/\//i.test(path)) return path
-  return `${API_ORIGIN}${path.startsWith("/") ? path : `/${path}`}`
-}
+import { productImageSrc } from "@/lib/product-image"
 
 // Cấu hình 6 section danh mục
 const CATEGORY_SECTIONS = [

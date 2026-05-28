@@ -25,7 +25,10 @@ function imgSrc(hinhAnh?: string | null): string | null {
   if (!hinhAnh?.trim()) return null
   const p = hinhAnh.trim()
   if (/^https?:\/\//i.test(p)) return p
-  return `${API_ORIGIN}${p.startsWith("/") ? p : `/${p}`}`
+  // Nếu path bắt đầu bằng /, lấy từ backend static files
+  if (p.startsWith("/")) return `${API_ORIGIN}${p}`
+  // Nếu không, lấy từ frontend public/ (Next.js serve ở root)
+  return `/${p}`
 }
 
 function fmt(v: number) {
@@ -103,6 +106,7 @@ export default function SanPhamDetailPage() {
   const [submittingReview, setSubmittingReview] = useState(false)
   const [reviewError, setReviewError] = useState("")
   const [reviewSuccess, setReviewSuccess] = useState("")
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
 
   useEffect(() => { setCurrentUser(getStoredUser()) }, [])
 
@@ -120,7 +124,7 @@ export default function SanPhamDetailPage() {
 
   useEffect(() => {
     if (!id) return
-    setLoading(true); setNotFound(false); setAddedToCart(false); setQty(1)
+    setLoading(true); setNotFound(false); setAddedToCart(false); setQty(1); setActiveImageIndex(0)
     Promise.all([getProductById(id), getProducts()])
       .then(([p, all]) => {
         setProduct(p)
@@ -129,6 +133,21 @@ export default function SanPhamDetailPage() {
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false))
   }, [id])
+
+  // ── Lấy danh sách tất cả ảnh có trong database ──
+  const allImages = useCallback(() => {
+    if (!product) return []
+    const imgs = [
+      product.hinhAnh,
+      product.hinhAnh2,
+      product.hinhAnh3,
+      product.hinhAnh4,
+    ].filter((img): img is string => !!img?.trim())
+    return imgs
+  }, [product])
+
+  const images = allImages()
+  const currentSrc = images[activeImageIndex] ? imgSrc(images[activeImageIndex]) : null
 
   // ── Not found ──
   if (!loading && (notFound || !product)) {
@@ -148,7 +167,6 @@ export default function SanPhamDetailPage() {
     )
   }
 
-  const src = product ? imgSrc(product.hinhAnh) : null
   const inStock = (product?.soLuongTon ?? 0) > 0
   const stockLevel = (product?.soLuongTon ?? 0) > 20 ? "high" : (product?.soLuongTon ?? 0) > 5 ? "medium" : "low"
 
@@ -224,9 +242,9 @@ export default function SanPhamDetailPage() {
 
                   {/* Main image card */}
                   <div className="relative overflow-hidden rounded-[1.75rem] bg-white shadow-[0_20px_60px_-12px_rgba(28,25,23,0.15)] ring-1 ring-stone-200/50">
-                    {src ? (
+                    {currentSrc ? (
                       <img
-                        src={src}
+                        src={currentSrc}
                         alt={product.tenSanPham}
                         className="aspect-[4/5] w-full object-cover object-center"
                       />
@@ -266,6 +284,33 @@ export default function SanPhamDetailPage() {
                     {/* Bottom gradient overlay */}
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white/30 to-transparent" />
                   </div>
+
+                  {/* ── Thumbnail gallery dưới ảnh chính ── */}
+                  {images.length > 1 && (
+                    <div className="mt-4 flex gap-3">
+                      {images.map((img, idx) => {
+                        const thumbSrc = imgSrc(img)
+                        if (!thumbSrc) return null
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => setActiveImageIndex(idx)}
+                            className={`relative shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 ${
+                              idx === activeImageIndex
+                                ? "border-stone-900 ring-1 ring-stone-900/20 shadow-md"
+                                : "border-stone-200 opacity-70 hover:opacity-100 hover:border-stone-400"
+                            }`}
+                          >
+                            <img
+                              src={thumbSrc}
+                              alt={`${product.tenSanPham} ${idx + 1}`}
+                              className="h-20 w-16 object-cover"
+                            />
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
 
                   {/* Share button below image */}
                   <div className="mt-3 flex justify-end">
