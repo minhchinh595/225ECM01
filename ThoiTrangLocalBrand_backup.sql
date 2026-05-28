@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 9QrxecLjsRfyTfNeKPxOQgb2GsV6DgYpbsz41J0oQ77aB76xhcUEvqt2CfzF7eZ
+\restrict 2ifwQepJfsO4gbdhPWw2PQXTpH4qlOOLhjJrdQB6dYUM1SKKf51QKWC17sCBTcg
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
@@ -605,6 +605,9 @@ COPY public.chitietdonhang (ma_chi_tiet_don_hang, ma_don_hang, ma_san_pham, so_l
 6	6	17	1	420000.00
 7	6	28	1	250000.00
 8	7	1	2	850000.00
+9	8	1	1	850000.00
+10	8	9	1	230000.00
+11	8	2	2	550000.00
 \.
 
 
@@ -613,8 +616,6 @@ COPY public.chitietdonhang (ma_chi_tiet_don_hang, ma_don_hang, ma_san_pham, so_l
 --
 
 COPY public.chitietgiohang (ma_gio_hang, ma_san_pham, so_luong) FROM stdin;
-1	1	1
-1	9	1
 2	13	2
 4	4	1
 \.
@@ -660,6 +661,7 @@ COPY public.donhang (ma_don_hang, ma_nguoi_dung, ngay_dat, trang_thai, phuong_th
 2	3	2026-05-20 21:50:30.883012	Da thanh toan	Chuyển khoản	470000.00	25000.00	2	50000.00
 6	3	2026-05-20 22:00:49.185939	Dang xu ly	COD	670000.00	0.00	\N	0.00
 7	3	2026-05-25 20:48:10.753698	Da giao	COD	1600000.00	0.00	1	100000.00
+8	1	2026-05-28 22:55:17.756442	Cho xac nhan	COD	2180000.00	0.00	\N	0.00
 \.
 
 
@@ -668,9 +670,9 @@ COPY public.donhang (ma_don_hang, ma_nguoi_dung, ngay_dat, trang_thai, phuong_th
 --
 
 COPY public.giohang (ma_gio_hang, ma_nguoi_dung) FROM stdin;
-1	1
 2	2
 4	3
+6	1
 \.
 
 
@@ -716,14 +718,13 @@ COPY public.nguoidung (ma_nguoi_dung, ten_dang_nhap, mat_khau, email, so_dien_th
 --
 
 COPY public.sanpham (ma_san_pham, ten_san_pham, gia, so_luong_ton, size, mau_sac, hinh_anh, hinh_anh_2, hinh_anh_3, hinh_anh_4, video, mo_ta, ma_danh_muc, ma_thuong_hieu) FROM stdin;
-2	Áo dài trắng học sinh	550000.00	30	S,M,L,XL	Trắng	ao-dai-trang-hoc-sinh-1.png	ao-dai-trang-hoc-sinh-2.png	ao-dai-trang-hoc-sinh-3.png	\N	ao-dai-trang-hoc-sinh.mp4	Áo dài trắng tinh khôi phù hợp học sinh, sinh viên	1	1
+2	Áo dài trắng học sinh	550000.00	28	S,M,L,XL	Trắng	ao-dai-trang-hoc-sinh-1.png	ao-dai-trang-hoc-sinh-2.png	\N	\N	ao-dai-trang-hoc-sinh.mp4	Áo dài trắng tinh khôi phù hợp học sinh, sinh viên	1	1
 3	Áo dài cách tân hoa nhí	690000.00	25	S,M,L	Kem hoa nhí	ao-dai-cach-tan-hoa-nhi-1.png	ao-dai-cach-tan-hoa-nhi-2.png	ao-dai-cach-tan-hoa-nhi-3.png	\N	\N	Áo dài cách tân trẻ trung với họa tiết hoa nhí nhẹ nhàng	1	1
 4	Áo dài lụa xanh ngọc	790000.00	18	S,M,L,XL	Xanh ngọc	ao-dai-lua-xanh-ngoc-1.png	ao-dai-lua-xanh-ngoc-2.png	ao-dai-lua-xanh-ngoc-3.png	\N	ao-dai-lua-xanh-ngoc.mp4	Áo dài lụa xanh ngọc sang trọng, mềm mại	1	1
 5	Áo dài thêu cổ điển	920000.00	15	S,M,L	Đỏ đô	ao-dai-theu-co-dien-1.png	ao-dai-theu-co-dien-2.png	ao-dai-theu-co-dien-3.png	\N	\N	Áo dài thêu họa tiết cổ điển, phù hợp sự kiện trang trọng	1	1
 6	Áo dài minimal trắng kem	650000.00	22	S,M,L	Trắng kem	ao-dai-minimal-trang-kem-1.png	ao-dai-minimal-trang-kem-2.png	ao-dai-minimal-trang-kem-3.png	\N	\N	Áo dài tối giản màu trắng kem, thanh lịch và dễ mặc	1	1
 7	Áo dài cưới đính ngọc	1500000.00	8	S,M,L	Trắng ngọc	ao-dai-cuoi-dinh-ngoc-1.png	ao-dai-cuoi-dinh-ngoc-2.png	ao-dai-cuoi-dinh-ngoc-3.png	ao-dai-cuoi-dinh-ngoc-4.png	ao-dai-cuoi-dinh-ngoc.mp4	Áo dài cưới đính ngọc sang trọng, phù hợp lễ cưới và chụp ảnh	1	1
 8	Nón lá truyền thống	180000.00	40	Freesize	Tự nhiên	non-la-truyen-thong-1.png	non-la-truyen-thong-2.png	\N	\N	\N	Nón lá truyền thống Việt Nam, nhẹ và bền	2	1
-9	Nón lá quai lụa	230000.00	35	Freesize	Trắng kem	non-la-quai-lua-1.png	non-la-quai-lua-2.png	\N	\N	\N	Nón lá có quai lụa mềm mại, phù hợp phối với áo dài	2	1
 10	Nón lá thêu hoa	280000.00	25	Freesize	Be thêu hoa	non-la-theu-hoa-1.png	non-la-theu-hoa-2.png	non-la-theu-hoa-3.png	\N	\N	Nón lá thêu hoa thủ công, tinh tế và nữ tính	2	1
 11	Nón lá vintage	260000.00	20	Freesize	Nâu nhạt	non-la-vintage-1.png	non-la-vintage-2.png	\N	\N	\N	Nón lá phong cách vintage, phù hợp chụp ảnh ngoại cảnh	2	1
 12	Túi clutch ngọc trai	420000.00	18	Freesize	Trắng ngọc trai	tui-clutch-ngoc-trai-1.png	tui-clutch-ngoc-trai-2.png	tui-clutch-ngoc-trai-3.png	\N	\N	Túi clutch đính ngọc trai sang trọng, hợp với áo dài dự tiệc	3	1
@@ -745,7 +746,8 @@ COPY public.sanpham (ma_san_pham, ten_san_pham, gia, so_luong_ton, size, mau_sac
 30	Khăn lụa luxury	450000.00	15	Freesize	Vàng kem	khan-lua-luxury-1.png	khan-lua-luxury-2.png	khan-lua-luxury-3.png	\N	\N	Khăn lụa cao cấp, sang trọng và mềm mại	6	1
 17	Guốc thêu hoa	420000.00	21	35,36,37,38,39	Kem thêu hoa	guoc-theu-hoa-1.png	guoc-theu-hoa-2.png	guoc-theu-hoa-3.png	\N	\N	Guốc thêu hoa nhẹ nhàng, nữ tính	4	1
 28	Khăn lụa pastel	250000.00	34	Freesize	Pastel	khan-lua-pastel-1.png	khan-lua-pastel-2.png	\N	\N	\N	Khăn lụa pastel nhẹ nhàng, dễ phối đồ	6	1
-1	Áo Dài Lụa Hoa Đào Truyền Thống	850000.00	18	S,M,L,XL	Hồng đào	ao-dai-lua-hoa-dao-1.png	ao-dai-lua-hoa-dao-2.png	ao-dai-lua-hoa-dao-3.png	ao-dai-lua-hoa-dao-4.png	ao-dai-lua-hoa-dao.mp4	Áo dài lụa họa tiết hoa đào truyền thống, dịu dàng và nữ tính	1	1
+1	Áo Dài Lụa Hoa Đào Truyền Thống	850000.00	17	S,M,L,XL	Hồng đào	ao-dai-lua-hoa-dao-1.png	ao-dai-lua-hoa-dao-2.png	ao-dai-lua-hoa-dao-3.png	ao-dai-lua-hoa-dao-4.png	ao-dai-lua-hoa-dao.mp4	Áo dài lụa họa tiết hoa đào truyền thống, dịu dàng và nữ tính	1	1
+9	Nón lá quai lụa	230000.00	34	Freesize	Trắng kem	non-la-quai-lua-1.png	non-la-quai-lua-2.png	\N	\N	\N	Nón lá có quai lụa mềm mại, phù hợp phối với áo dài	2	1
 \.
 
 
@@ -761,6 +763,7 @@ COPY public.thongtingiaohang (ma_giao_hang, ma_don_hang, ten_nguoi_nhan, so_dien
 5	5	Đỗ Thanh Vy	0955555555	Liên Chiểu, Đà Nẵng
 6	6	Nguyễn Văn A	0900000003	Quảng Nam
 7	7	Nguyễn Văn A	0900000003	Quảng Nam
+8	8	admin	0900000001	Đà Nẵng
 \.
 
 
@@ -788,7 +791,7 @@ COPY public.vaitro (ma_vai_tro, ten_vai_tro) FROM stdin;
 -- Name: chitietdonhang_ma_chi_tiet_don_hang_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.chitietdonhang_ma_chi_tiet_don_hang_seq', 8, true);
+SELECT pg_catalog.setval('public.chitietdonhang_ma_chi_tiet_don_hang_seq', 11, true);
 
 
 --
@@ -809,14 +812,14 @@ SELECT pg_catalog.setval('public.danhmuc_ma_danh_muc_seq', 6, true);
 -- Name: donhang_ma_don_hang_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.donhang_ma_don_hang_seq', 7, true);
+SELECT pg_catalog.setval('public.donhang_ma_don_hang_seq', 8, true);
 
 
 --
 -- Name: giohang_ma_gio_hang_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.giohang_ma_gio_hang_seq', 5, true);
+SELECT pg_catalog.setval('public.giohang_ma_gio_hang_seq', 7, true);
 
 
 --
@@ -851,7 +854,7 @@ SELECT pg_catalog.setval('public.sanpham_ma_san_pham_seq', 31, true);
 -- Name: thongtingiaohang_ma_giao_hang_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.thongtingiaohang_ma_giao_hang_seq', 7, true);
+SELECT pg_catalog.setval('public.thongtingiaohang_ma_giao_hang_seq', 8, true);
 
 
 --
@@ -1152,5 +1155,5 @@ ALTER TABLE ONLY public.thongtingiaohang
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 9QrxecLjsRfyTfNeKPxOQgb2GsV6DgYpbsz41J0oQ77aB76xhcUEvqt2CfzF7eZ
+\unrestrict 2ifwQepJfsO4gbdhPWw2PQXTpH4qlOOLhjJrdQB6dYUM1SKKf51QKWC17sCBTcg
 
