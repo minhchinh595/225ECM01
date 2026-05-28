@@ -7,6 +7,7 @@ import com.example.backend.entity.NguoiDung;
 import com.example.backend.entity.SanPham;
 import com.example.backend.exception.BadRequestException;
 import com.example.backend.exception.ResourceNotFoundException;
+import com.example.backend.repository.ChiTietDonHangRepository;
 import com.example.backend.repository.DanhGiaRepository;
 import com.example.backend.repository.NguoiDungRepository;
 import com.example.backend.repository.SanPhamRepository;
@@ -21,13 +22,16 @@ public class DanhGiaService {
     private final DanhGiaRepository danhGiaRepository;
     private final NguoiDungRepository nguoiDungRepository;
     private final SanPhamRepository sanPhamRepository;
+    private final ChiTietDonHangRepository chiTietDonHangRepository;
 
     public DanhGiaService(DanhGiaRepository danhGiaRepository,
                           NguoiDungRepository nguoiDungRepository,
-                          SanPhamRepository sanPhamRepository) {
+                          SanPhamRepository sanPhamRepository,
+                          ChiTietDonHangRepository chiTietDonHangRepository) {
         this.danhGiaRepository = danhGiaRepository;
         this.nguoiDungRepository = nguoiDungRepository;
         this.sanPhamRepository = sanPhamRepository;
+        this.chiTietDonHangRepository = chiTietDonHangRepository;
     }
 
     public List<DanhGiaDTO> getBySanPham(Integer maSanPham) {
@@ -44,6 +48,10 @@ public class DanhGiaService {
     public DanhGiaDTO create(Integer maNguoiDung, DanhGiaRequest request) {
         if (danhGiaRepository.existsByNguoiDungAndSanPham(maNguoiDung, request.getMaSanPham())) {
             throw new BadRequestException("Ban da danh gia san pham nay roi");
+        }
+
+        if (!chiTietDonHangRepository.existsByNguoiDungAndSanPhamAndDaGiao(maNguoiDung, request.getMaSanPham())) {
+            throw new BadRequestException("Ban can mua san pham va nhan hang thanh cong de co the danh gia");
         }
 
         NguoiDung nguoiDung = nguoiDungRepository.findById(maNguoiDung)
