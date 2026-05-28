@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict MQMPiTaPAPX8V8Z97hyt50VHG5rMa5xLMShD3h7I2OXC2yTGKktgzYepYJNAbEg
+\restrict 9QrxecLjsRfyTfNeKPxOQgb2GsV6DgYpbsz41J0oQ77aB76xhcUEvqt2CfzF7eZ
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
@@ -716,36 +716,36 @@ COPY public.nguoidung (ma_nguoi_dung, ten_dang_nhap, mat_khau, email, so_dien_th
 --
 
 COPY public.sanpham (ma_san_pham, ten_san_pham, gia, so_luong_ton, size, mau_sac, hinh_anh, hinh_anh_2, hinh_anh_3, hinh_anh_4, video, mo_ta, ma_danh_muc, ma_thuong_hieu) FROM stdin;
-2	Áo dài trắng học sinh	550000.00	30	S,M,L,XL	Trắng	ao-dai-trang-hoc-sinh-1.jpg	ao-dai-trang-hoc-sinh-2.jpg	ao-dai-trang-hoc-sinh-3.jpg	\N	ao-dai-trang-hoc-sinh.mp4	Áo dài trắng tinh khôi phù hợp học sinh, sinh viên	1	1
-3	Áo dài cách tân hoa nhí	690000.00	25	S,M,L	Kem hoa nhí	ao-dai-cach-tan-hoa-nhi-1.jpg	ao-dai-cach-tan-hoa-nhi-2.jpg	ao-dai-cach-tan-hoa-nhi-3.jpg	\N	\N	Áo dài cách tân trẻ trung với họa tiết hoa nhí nhẹ nhàng	1	1
-4	Áo dài lụa xanh ngọc	790000.00	18	S,M,L,XL	Xanh ngọc	ao-dai-lua-xanh-ngoc-1.jpg	ao-dai-lua-xanh-ngoc-2.jpg	ao-dai-lua-xanh-ngoc-3.jpg	\N	ao-dai-lua-xanh-ngoc.mp4	Áo dài lụa xanh ngọc sang trọng, mềm mại	1	1
-5	Áo dài thêu cổ điển	920000.00	15	S,M,L	Đỏ đô	ao-dai-theu-co-dien-1.jpg	ao-dai-theu-co-dien-2.jpg	ao-dai-theu-co-dien-3.jpg	\N	\N	Áo dài thêu họa tiết cổ điển, phù hợp sự kiện trang trọng	1	1
-6	Áo dài minimal trắng kem	650000.00	22	S,M,L	Trắng kem	ao-dai-minimal-trang-kem-1.jpg	ao-dai-minimal-trang-kem-2.jpg	ao-dai-minimal-trang-kem-3.jpg	\N	\N	Áo dài tối giản màu trắng kem, thanh lịch và dễ mặc	1	1
-7	Áo dài cưới đính ngọc	1500000.00	8	S,M,L	Trắng ngọc	ao-dai-cuoi-dinh-ngoc-1.jpg	ao-dai-cuoi-dinh-ngoc-2.jpg	ao-dai-cuoi-dinh-ngoc-3.jpg	ao-dai-cuoi-dinh-ngoc-4.jpg	ao-dai-cuoi-dinh-ngoc.mp4	Áo dài cưới đính ngọc sang trọng, phù hợp lễ cưới và chụp ảnh	1	1
-8	Nón lá truyền thống	180000.00	40	Freesize	Tự nhiên	non-la-truyen-thong-1.jpg	non-la-truyen-thong-2.jpg	\N	\N	\N	Nón lá truyền thống Việt Nam, nhẹ và bền	2	1
-9	Nón lá quai lụa	230000.00	35	Freesize	Trắng kem	non-la-quai-lua-1.jpg	non-la-quai-lua-2.jpg	\N	\N	\N	Nón lá có quai lụa mềm mại, phù hợp phối với áo dài	2	1
-10	Nón lá thêu hoa	280000.00	25	Freesize	Be thêu hoa	non-la-theu-hoa-1.jpg	non-la-theu-hoa-2.jpg	non-la-theu-hoa-3.jpg	\N	\N	Nón lá thêu hoa thủ công, tinh tế và nữ tính	2	1
-11	Nón lá vintage	260000.00	20	Freesize	Nâu nhạt	non-la-vintage-1.jpg	non-la-vintage-2.jpg	\N	\N	\N	Nón lá phong cách vintage, phù hợp chụp ảnh ngoại cảnh	2	1
-12	Túi clutch ngọc trai	420000.00	18	Freesize	Trắng ngọc trai	tui-clutch-ngoc-trai-1.jpg	tui-clutch-ngoc-trai-2.jpg	tui-clutch-ngoc-trai-3.jpg	\N	\N	Túi clutch đính ngọc trai sang trọng, hợp với áo dài dự tiệc	3	1
-13	Túi vintage gấm	390000.00	20	Freesize	Đỏ gấm	tui-vintage-gam-1.jpg	tui-vintage-gam-2.jpg	tui-vintage-gam-3.jpg	\N	\N	Túi gấm phong cách vintage, nổi bật và cổ điển	3	1
-14	Túi lụa tối giản	320000.00	24	Freesize	Kem	tui-lua-toi-gian-1.jpg	tui-lua-toi-gian-2.jpg	\N	\N	\N	Túi lụa thiết kế tối giản, nhẹ nhàng và thanh lịch	3	1
-15	Túi cói truyền thống	290000.00	30	Freesize	Nâu cói	tui-coi-truyen-thong-1.jpg	tui-coi-truyen-thong-2.jpg	\N	\N	\N	Túi cói truyền thống phối đẹp với trang phục local brand	3	1
-16	Guốc gỗ truyền thống	350000.00	28	35,36,37,38,39	Nâu gỗ	guoc-go-truyen-thong-1.jpg	guoc-go-truyen-thong-2.jpg	\N	\N	\N	Guốc gỗ truyền thống phù hợp mặc cùng áo dài	4	1
-18	Cao gót nude	480000.00	25	35,36,37,38,39	Nude	cao-got-nude-1.jpg	cao-got-nude-2.jpg	\N	\N	\N	Giày cao gót màu nude dễ phối với nhiều mẫu áo dài	4	1
-19	Sandal ngọc trai	450000.00	18	35,36,37,38,39	Trắng ngọc trai	sandal-ngoc-trai-1.jpg	sandal-ngoc-trai-2.jpg	sandal-ngoc-trai-3.jpg	\N	\N	Sandal đính ngọc trai sang trọng, phù hợp đi tiệc	4	1
-20	Sneaker trắng basic	700000.00	26	35,36,37,38,39	Trắng	giay-sneaker-trang-1.jpg	giay-sneaker-trang-2.jpg	\N	\N	\N	Giày búp bê trắng nhẹ nhàng, dễ mang hằng ngày	4	1
-21	Cài áo ngọc trai	180000.00	35	Freesize	Trắng ngọc trai	cai-ao-ngoc-trai-1.jpg	cai-ao-ngoc-trai-2.jpg	\N	\N	\N	Cài áo ngọc trai nhỏ gọn, sang trọng	5	1
-22	Cài áo hoa sen	210000.00	30	Freesize	Vàng đồng	cai-ao-hoa-sen-1.jpg	cai-ao-hoa-sen-2.jpg	\N	\N	\N	Cài áo hình hoa sen mang nét truyền thống Việt Nam	5	1
-23	Cài áo vintage	190000.00	28	Freesize	Đồng cổ	cai-ao-vintage-1.jpg	cai-ao-vintage-2.jpg	\N	\N	\N	Cài áo phong cách vintage, phù hợp áo dài và váy	5	1
-24	Vòng tay ngọc trai	260000.00	25	Freesize	Trắng ngọc trai	vong-tay-ngoc-trai-1.jpg	vong-tay-ngoc-trai-2.jpg	\N	\N	\N	Vòng tay ngọc trai thanh lịch, nữ tính	5	1
-25	Vòng tay lụa đỏ	170000.00	32	Freesize	Đỏ	vong-tay-lua-do-1.jpg	vong-tay-lua-do-2.jpg	\N	\N	\N	Vòng tay lụa đỏ nổi bật, phù hợp phối phụ kiện truyền thống	5	1
-26	Vòng tay bạc	300000.00	20	Freesize	Bạc	vong-tay-bac-1.jpg	vong-tay-bac-2.jpg	\N	\N	\N	Vòng tay bạc đơn giản, tinh tế	5	1
-27	Khăn lụa đỏ truyền thống	280000.00	30	Freesize	Đỏ	khan-lua-do-truyen-thong-1.jpg	khan-lua-do-truyen-thong-2.jpg	\N	\N	\N	Khăn lụa đỏ truyền thống, mềm mại và nổi bật	6	1
-29	Khăn lụa thêu hoa	320000.00	24	Freesize	Kem thêu hoa	khan-lua-theu-hoa-1.jpg	khan-lua-theu-hoa-2.jpg	khan-lua-theu-hoa-3.jpg	\N	\N	Khăn lụa thêu hoa tinh tế, phù hợp làm quà tặng	6	1
-30	Khăn lụa luxury	450000.00	15	Freesize	Vàng kem	khan-lua-luxury-1.jpg	khan-lua-luxury-2.jpg	khan-lua-luxury-3.jpg	\N	\N	Khăn lụa cao cấp, sang trọng và mềm mại	6	1
-17	Guốc thêu hoa	420000.00	21	35,36,37,38,39	Kem thêu hoa	guoc-theu-hoa-1.jpg	guoc-theu-hoa-2.jpg	guoc-theu-hoa-3.jpg	\N	\N	Guốc thêu hoa nhẹ nhàng, nữ tính	4	1
-28	Khăn lụa pastel	250000.00	34	Freesize	Pastel	khan-lua-pastel-1.jpg	khan-lua-pastel-2.jpg	\N	\N	\N	Khăn lụa pastel nhẹ nhàng, dễ phối đồ	6	1
-1	Áo Dài Lụa Hoa Đào Truyền Thống	850000.00	18	S,M,L,XL	Hồng đào	ao-dai-lua-hoa-dao-1.jpg	ao-dai-lua-hoa-dao-2.jpg	ao-dai-lua-hoa-dao-3.jpg	ao-dai-lua-hoa-dao-4.jpg	ao-dai-lua-hoa-dao.mp4	Áo dài lụa họa tiết hoa đào truyền thống, dịu dàng và nữ tính	1	1
+2	Áo dài trắng học sinh	550000.00	30	S,M,L,XL	Trắng	ao-dai-trang-hoc-sinh-1.png	ao-dai-trang-hoc-sinh-2.png	ao-dai-trang-hoc-sinh-3.png	\N	ao-dai-trang-hoc-sinh.mp4	Áo dài trắng tinh khôi phù hợp học sinh, sinh viên	1	1
+3	Áo dài cách tân hoa nhí	690000.00	25	S,M,L	Kem hoa nhí	ao-dai-cach-tan-hoa-nhi-1.png	ao-dai-cach-tan-hoa-nhi-2.png	ao-dai-cach-tan-hoa-nhi-3.png	\N	\N	Áo dài cách tân trẻ trung với họa tiết hoa nhí nhẹ nhàng	1	1
+4	Áo dài lụa xanh ngọc	790000.00	18	S,M,L,XL	Xanh ngọc	ao-dai-lua-xanh-ngoc-1.png	ao-dai-lua-xanh-ngoc-2.png	ao-dai-lua-xanh-ngoc-3.png	\N	ao-dai-lua-xanh-ngoc.mp4	Áo dài lụa xanh ngọc sang trọng, mềm mại	1	1
+5	Áo dài thêu cổ điển	920000.00	15	S,M,L	Đỏ đô	ao-dai-theu-co-dien-1.png	ao-dai-theu-co-dien-2.png	ao-dai-theu-co-dien-3.png	\N	\N	Áo dài thêu họa tiết cổ điển, phù hợp sự kiện trang trọng	1	1
+6	Áo dài minimal trắng kem	650000.00	22	S,M,L	Trắng kem	ao-dai-minimal-trang-kem-1.png	ao-dai-minimal-trang-kem-2.png	ao-dai-minimal-trang-kem-3.png	\N	\N	Áo dài tối giản màu trắng kem, thanh lịch và dễ mặc	1	1
+7	Áo dài cưới đính ngọc	1500000.00	8	S,M,L	Trắng ngọc	ao-dai-cuoi-dinh-ngoc-1.png	ao-dai-cuoi-dinh-ngoc-2.png	ao-dai-cuoi-dinh-ngoc-3.png	ao-dai-cuoi-dinh-ngoc-4.png	ao-dai-cuoi-dinh-ngoc.mp4	Áo dài cưới đính ngọc sang trọng, phù hợp lễ cưới và chụp ảnh	1	1
+8	Nón lá truyền thống	180000.00	40	Freesize	Tự nhiên	non-la-truyen-thong-1.png	non-la-truyen-thong-2.png	\N	\N	\N	Nón lá truyền thống Việt Nam, nhẹ và bền	2	1
+9	Nón lá quai lụa	230000.00	35	Freesize	Trắng kem	non-la-quai-lua-1.png	non-la-quai-lua-2.png	\N	\N	\N	Nón lá có quai lụa mềm mại, phù hợp phối với áo dài	2	1
+10	Nón lá thêu hoa	280000.00	25	Freesize	Be thêu hoa	non-la-theu-hoa-1.png	non-la-theu-hoa-2.png	non-la-theu-hoa-3.png	\N	\N	Nón lá thêu hoa thủ công, tinh tế và nữ tính	2	1
+11	Nón lá vintage	260000.00	20	Freesize	Nâu nhạt	non-la-vintage-1.png	non-la-vintage-2.png	\N	\N	\N	Nón lá phong cách vintage, phù hợp chụp ảnh ngoại cảnh	2	1
+12	Túi clutch ngọc trai	420000.00	18	Freesize	Trắng ngọc trai	tui-clutch-ngoc-trai-1.png	tui-clutch-ngoc-trai-2.png	tui-clutch-ngoc-trai-3.png	\N	\N	Túi clutch đính ngọc trai sang trọng, hợp với áo dài dự tiệc	3	1
+13	Túi vintage gấm	390000.00	20	Freesize	Đỏ gấm	tui-vintage-gam-1.png	tui-vintage-gam-2.png	tui-vintage-gam-3.png	\N	\N	Túi gấm phong cách vintage, nổi bật và cổ điển	3	1
+14	Túi lụa tối giản	320000.00	24	Freesize	Kem	tui-lua-toi-gian-1.png	tui-lua-toi-gian-2.png	\N	\N	\N	Túi lụa thiết kế tối giản, nhẹ nhàng và thanh lịch	3	1
+15	Túi cói truyền thống	290000.00	30	Freesize	Nâu cói	tui-coi-truyen-thong-1.png	tui-coi-truyen-thong-2.png	\N	\N	\N	Túi cói truyền thống phối đẹp với trang phục local brand	3	1
+16	Guốc gỗ truyền thống	350000.00	28	35,36,37,38,39	Nâu gỗ	guoc-go-truyen-thong-1.png	guoc-go-truyen-thong-2.png	\N	\N	\N	Guốc gỗ truyền thống phù hợp mặc cùng áo dài	4	1
+18	Cao gót nude	480000.00	25	35,36,37,38,39	Nude	cao-got-nude-1.png	cao-got-nude-2.png	\N	\N	\N	Giày cao gót màu nude dễ phối với nhiều mẫu áo dài	4	1
+19	Sandal ngọc trai	450000.00	18	35,36,37,38,39	Trắng ngọc trai	sandal-ngoc-trai-1.png	sandal-ngoc-trai-2.png	sandal-ngoc-trai-3.png	\N	\N	Sandal đính ngọc trai sang trọng, phù hợp đi tiệc	4	1
+20	Sneaker trắng basic	700000.00	26	35,36,37,38,39	Trắng	giay-sneaker-trang-1.png	giay-sneaker-trang-2.png	\N	\N	\N	Giày búp bê trắng nhẹ nhàng, dễ mang hằng ngày	4	1
+21	Cài áo ngọc trai	180000.00	35	Freesize	Trắng ngọc trai	cai-ao-ngoc-trai-1.png	cai-ao-ngoc-trai-2.png	\N	\N	\N	Cài áo ngọc trai nhỏ gọn, sang trọng	5	1
+22	Cài áo hoa sen	210000.00	30	Freesize	Vàng đồng	cai-ao-hoa-sen-1.png	cai-ao-hoa-sen-2.png	\N	\N	\N	Cài áo hình hoa sen mang nét truyền thống Việt Nam	5	1
+23	Cài áo vintage	190000.00	28	Freesize	Đồng cổ	cai-ao-vintage-1.png	cai-ao-vintage-2.png	\N	\N	\N	Cài áo phong cách vintage, phù hợp áo dài và váy	5	1
+24	Vòng tay ngọc trai	260000.00	25	Freesize	Trắng ngọc trai	vong-tay-ngoc-trai-1.png	vong-tay-ngoc-trai-2.png	\N	\N	\N	Vòng tay ngọc trai thanh lịch, nữ tính	5	1
+25	Vòng tay lụa đỏ	170000.00	32	Freesize	Đỏ	vong-tay-lua-do-1.png	vong-tay-lua-do-2.png	\N	\N	\N	Vòng tay lụa đỏ nổi bật, phù hợp phối phụ kiện truyền thống	5	1
+26	Vòng tay bạc	300000.00	20	Freesize	Bạc	vong-tay-bac-1.png	vong-tay-bac-2.png	\N	\N	\N	Vòng tay bạc đơn giản, tinh tế	5	1
+27	Khăn lụa đỏ truyền thống	280000.00	30	Freesize	Đỏ	khan-lua-do-truyen-thong-1.png	khan-lua-do-truyen-thong-2.png	\N	\N	\N	Khăn lụa đỏ truyền thống, mềm mại và nổi bật	6	1
+29	Khăn lụa thêu hoa	320000.00	24	Freesize	Kem thêu hoa	khan-lua-theu-hoa-1.png	khan-lua-theu-hoa-2.png	khan-lua-theu-hoa-3.png	\N	\N	Khăn lụa thêu hoa tinh tế, phù hợp làm quà tặng	6	1
+30	Khăn lụa luxury	450000.00	15	Freesize	Vàng kem	khan-lua-luxury-1.png	khan-lua-luxury-2.png	khan-lua-luxury-3.png	\N	\N	Khăn lụa cao cấp, sang trọng và mềm mại	6	1
+17	Guốc thêu hoa	420000.00	21	35,36,37,38,39	Kem thêu hoa	guoc-theu-hoa-1.png	guoc-theu-hoa-2.png	guoc-theu-hoa-3.png	\N	\N	Guốc thêu hoa nhẹ nhàng, nữ tính	4	1
+28	Khăn lụa pastel	250000.00	34	Freesize	Pastel	khan-lua-pastel-1.png	khan-lua-pastel-2.png	\N	\N	\N	Khăn lụa pastel nhẹ nhàng, dễ phối đồ	6	1
+1	Áo Dài Lụa Hoa Đào Truyền Thống	850000.00	18	S,M,L,XL	Hồng đào	ao-dai-lua-hoa-dao-1.png	ao-dai-lua-hoa-dao-2.png	ao-dai-lua-hoa-dao-3.png	ao-dai-lua-hoa-dao-4.png	ao-dai-lua-hoa-dao.mp4	Áo dài lụa họa tiết hoa đào truyền thống, dịu dàng và nữ tính	1	1
 \.
 
 
@@ -1152,5 +1152,5 @@ ALTER TABLE ONLY public.thongtingiaohang
 -- PostgreSQL database dump complete
 --
 
-\unrestrict MQMPiTaPAPX8V8Z97hyt50VHG5rMa5xLMShD3h7I2OXC2yTGKktgzYepYJNAbEg
+\unrestrict 9QrxecLjsRfyTfNeKPxOQgb2GsV6DgYpbsz41J0oQ77aB76xhcUEvqt2CfzF7eZ
 
