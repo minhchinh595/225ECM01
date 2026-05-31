@@ -293,12 +293,12 @@ export default function Home() {
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 {/* Nút mua ngay overlay góc dưới bên phải */}
                 <div className="absolute bottom-0 right-6 pb-6 sm:pb-8">
-                  <a
-                    href={`#${section.key}`}
+                  <Link
+                    href={`/danh-muc/${section.key}`}
                     className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-2.5 text-sm font-semibold tracking-wide text-stone-900 shadow-md transition hover:bg-stone-100"
                   >
                     Mua ngay
-                  </a>
+                  </Link>
                 </div>
               </div>
 
