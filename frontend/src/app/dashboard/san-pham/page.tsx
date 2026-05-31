@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useCallback } from "react"
 import { getProducts, getCategories, getBrands, createProduct, updateProduct, deleteProduct } from "@/lib/api"
+import { productImageSrc } from "@/lib/product-image"
 import type { SanPham, DanhMuc, ThuongHieu } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -246,7 +247,7 @@ function DeleteConfirmDialog({ open, onOpenChange, product, onConfirm }: {
 function ProductRow({ product, onEdit, onDelete }: {
   product: SanPham; onEdit: () => void; onDelete: () => void
 }) {
-  const src = product.hinhAnh?.trim()
+  const src = productImageSrc(product.hinhAnh)
   const stock = getStockLevel(product.soLuongTon)
   return (
     <div className="group grid grid-cols-[48px_1fr_auto] gap-4 rounded-xl border border-stone-100 bg-white/70 px-4 py-3 transition hover:border-stone-200 hover:bg-white sm:grid-cols-[48px_1fr_140px_100px_100px_80px] sm:items-center">

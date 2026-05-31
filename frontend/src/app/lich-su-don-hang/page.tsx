@@ -77,9 +77,10 @@ function formatDate(value?: string | null) {
 
 function productImageSrc(hinhAnh?: string | null): string | null {
   if (!hinhAnh?.trim()) return null
-  const path = hinhAnh.trim()
-  if (/^https?:\/\//i.test(path)) return path
-  return `${API_ORIGIN}${path.startsWith("/") ? path : `/${path}`}`
+  const p = hinhAnh.trim()
+  if (/^https?:\/\//i.test(p)) return p
+  if (p.startsWith("/")) return `${API_ORIGIN}${p}`
+  return `/${p}`
 }
 
 function getStatusInfo(status?: string | null) {
