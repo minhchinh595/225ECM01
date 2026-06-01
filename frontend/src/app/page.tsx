@@ -218,6 +218,8 @@ export default function Home() {
                 { href: "/danh-muc/giay", label: "Giày" },
                 { href: "/danh-muc/trang-suc-khan-lua", label: "Trang Sức" },
                 { href: "/danh-muc/trang-suc-khan-lua", label: "Khăn Lụa" },
+              { href: "/mix-match", label: "✨ Mix & Match" },
+                { href: "/mix-match", label: "Mix & Match" },
               ].map((item) => (
                 <Link
                   key={item.label}
