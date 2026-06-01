@@ -19,6 +19,7 @@ import { UserMenu } from "@/components/user-menu"
 import { HeroSlider } from "@/components/hero-slider"
 import { SearchBar } from "@/components/search-bar"
 import { CartIcon } from "@/components/cart-icon"
+import ReelSlider from "@/components/reel-slider"
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("vi-VN", {
@@ -86,6 +87,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [currentUser, setCurrentUser] = useState<NguoiDung | null>(null)
+  const [reelOpen, setReelOpen] = useState(false)
 
   useEffect(() => {
     setCurrentUser(getStoredUser())
@@ -272,6 +274,37 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* 5 dots reel */}
+      <div className="flex items-center justify-center gap-4 py-6">
+        {CATEGORY_SECTIONS.map((section) => (
+          <button
+            key={section.key}
+            onClick={() => setReelOpen(true)}
+            className="flex flex-col items-center gap-1.5 group"
+          >
+            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-stone-200 shadow-sm transition-all group-hover:border-amber-400 group-hover:shadow-md">
+              <img
+                src={section.image}
+                alt={section.label}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <span className="text-[10px] font-medium text-stone-500 group-hover:text-amber-700 transition">
+              {section.label}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Reel Slider Modal */}
+      <ReelSlider
+        products={products}
+        sections={CATEGORY_SECTIONS}
+        getProductsForSection={getProductsForSection as any}
+        isOpen={reelOpen}
+        onClose={() => setReelOpen(false)}
+      />
 
       {/* Category Sections */}
       <div className="mt-8 space-y-20 pb-20 sm:mt-12 sm:space-y-24 sm:pb-24">
