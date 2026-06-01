@@ -88,6 +88,7 @@ export default function Home() {
   const [error, setError] = useState("")
   const [currentUser, setCurrentUser] = useState<NguoiDung | null>(null)
   const [reelOpen, setReelOpen] = useState(false)
+  const [reelCategory, setReelCategory] = useState("ao-dai")
 
   useEffect(() => {
     setCurrentUser(getStoredUser())
@@ -284,7 +285,7 @@ export default function Home() {
           return (
             <button
               key={section.key}
-              onClick={() => setReelOpen(true)}
+              onClick={() => { setReelCategory(section.key); setReelOpen(true) }}
               className="group relative"
             >
               <div className="w-20 h-20 rounded-full overflow-hidden border-[3px] border-stone-200 shadow-sm transition-all duration-300 group-hover:border-amber-400 group-hover:shadow-lg group-hover:shadow-amber-200/50 group-hover:scale-110">
@@ -303,10 +304,12 @@ export default function Home() {
 
       {/* Reel Slider Modal */}
       <ReelSlider
+        key={reelCategory}
         products={products}
         sections={CATEGORY_SECTIONS}
         getProductsForSection={getProductsForSection as any}
         isOpen={reelOpen}
+        initialCategory={reelCategory}
         onClose={() => setReelOpen(false)}
       />
 

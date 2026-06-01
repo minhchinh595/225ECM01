@@ -18,11 +18,12 @@ interface ReelSliderProps {
   sections: ReelSection[]
   getProductsForSection: (section: ReelSection) => SanPham[]
   isOpen: boolean
+  initialCategory?: string
   onClose: () => void
 }
 
-export default function ReelSlider({ products, sections, getProductsForSection, isOpen, onClose }: ReelSliderProps) {
-  const [activeCategory, setActiveCategory] = useState<string>("ao-dai")
+export default function ReelSlider({ products, sections, getProductsForSection, isOpen, initialCategory, onClose }: ReelSliderProps) {
+  const [activeCategory, setActiveCategory] = useState<string>(initialCategory || "ao-dai")
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
