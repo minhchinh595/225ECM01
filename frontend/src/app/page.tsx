@@ -276,25 +276,29 @@ export default function Home() {
       </section>
 
       {/* 5 dots reel */}
-      <div className="flex items-center justify-center gap-4 py-6">
-        {CATEGORY_SECTIONS.map((section) => (
-          <button
-            key={section.key}
-            onClick={() => setReelOpen(true)}
-            className="flex flex-col items-center gap-1.5 group"
-          >
-            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-stone-200 shadow-sm transition-all group-hover:border-amber-400 group-hover:shadow-md">
-              <img
-                src={section.image}
-                alt={section.label}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <span className="text-[10px] font-medium text-stone-500 group-hover:text-amber-700 transition">
-              {section.label}
-            </span>
-          </button>
-        ))}
+      <div className="flex items-center justify-center gap-5 py-6">
+        {CATEGORY_SECTIONS.map((section) => {
+          // Lấy ảnh sản phẩm đầu tiên cho dot
+          const prods = getProductsForSection(section)
+          const dotSrc = prods.length > 0 && productImageSrc(prods[0].hinhAnh) ? productImageSrc(prods[0].hinhAnh)! : section.image
+          return (
+            <button
+              key={section.key}
+              onClick={() => setReelOpen(true)}
+              className="group relative"
+            >
+              <div className="w-20 h-20 rounded-full overflow-hidden border-[3px] border-stone-200 shadow-sm transition-all duration-300 group-hover:border-amber-400 group-hover:shadow-lg group-hover:shadow-amber-200/50 group-hover:scale-110">
+                <img
+                  src={dotSrc}
+                  alt={section.label}
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-110"
+                />
+              </div>
+              {/* Ring glow effect khi hover */}
+              <div className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-amber-400/30 group-hover:animate-pulse transition-all duration-300 pointer-events-none" style={{ width: '5.5rem', height: '5.5rem', top: '-4px', left: '-4px' }} />
+            </button>
+          )
+        })}
       </div>
 
       {/* Reel Slider Modal */}
