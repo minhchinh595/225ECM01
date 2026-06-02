@@ -477,6 +477,8 @@ const FALLBACK_GRADIENTS = [
 
 function ProductCard({ product, index }: { product: SanPham; index: number }) {
   const src = productImageSrc(product.hinhAnh)
+  const hoverSrc = productImageSrc(product.hinhAnh2)
+  const hasHoverImage = Boolean(src && hoverSrc && hoverSrc !== src)
   const grad = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length]
 
   return (
@@ -484,11 +486,21 @@ function ProductCard({ product, index }: { product: SanPham; index: number }) {
       {/* Ảnh */}
       <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-stone-100">
         {src ? (
-          <img
-            src={src}
-            alt={product.tenSanPham}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-          />
+          <>
+            <img
+              src={src}
+              alt={product.tenSanPham}
+              className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+            />
+            {hasHoverImage && (
+              <img
+                src={hoverSrc!}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 h-full w-full object-cover opacity-0 transition duration-700 ease-out group-hover:scale-[1.04] group-hover:opacity-100"
+              />
+            )}
+          </>
         ) : (
           <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${grad}`}>
             <ShoppingBagIcon className="size-10 text-stone-300" strokeWidth={1} />

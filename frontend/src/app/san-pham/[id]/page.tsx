@@ -61,12 +61,29 @@ function Skeleton() {
 // ── Related card ──────────────────────────────────────────────
 function RelatedCard({ product }: { product: SanPham }) {
   const src = imgSrc(product.hinhAnh)
+  const hoverSrc = imgSrc(product.hinhAnh2)
+  const hasHoverImage = Boolean(src && hoverSrc && hoverSrc !== src)
+
   return (
     <Link href={`/san-pham/${product.maSanPham}`} className="group block">
       <div className="overflow-hidden rounded-[1.25rem] border border-stone-200/50 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(28,25,23,0.12)]">
         <div className="relative aspect-[3/4] overflow-hidden bg-stone-50">
           {src ? (
-            <img src={src} alt={product.tenSanPham} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
+            <>
+              <img
+                src={src}
+                alt={product.tenSanPham}
+                className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+              />
+              {hasHoverImage && (
+                <img
+                  src={hoverSrc!}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 h-full w-full object-cover opacity-0 transition duration-700 ease-out group-hover:scale-[1.04] group-hover:opacity-100"
+                />
+              )}
+            </>
           ) : (
             <div className="flex h-full items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200/60">
               <ShoppingBagIcon className="size-8 text-stone-300" strokeWidth={1} />
