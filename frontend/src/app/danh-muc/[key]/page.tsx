@@ -7,20 +7,9 @@ import type { NguoiDung, SanPham } from "@/lib/types"
 import { CATEGORY_SECTIONS, getProductsForSection } from "@/lib/categories"
 import { getStoredUser } from "@/lib/auth"
 import { UserMenu } from "@/components/user-menu"
-import { Button } from "@/components/ui/button"
 import { SearchBar } from "@/components/search-bar"
 import { CartIcon } from "@/components/cart-icon"
-import {
-  ShoppingBagIcon,
-  ChevronRightIcon,
-  XIcon,
-  ArrowLeftIcon,
-  SlidersHorizontalIcon,
-  SparklesIcon,
-  HeartIcon,
-  EyeIcon,
-  StarIcon,
-} from "lucide-react"
+import { ShoppingBagIcon, ChevronRightIcon, XIcon, UserIcon, MapPinIcon, FilterIcon, ChevronDownIcon } from "lucide-react"
 
 const API_ORIGIN = API_URL.replace(/\/api\/?$/, "")
 
@@ -45,6 +34,67 @@ const FALLBACK_GRADIENTS = [
   "from-stone-100 via-neutral-50 to-zinc-100",
 ]
 
+type SortOption = "default" | "price-asc" | "price-desc" | "name-asc" | "name-desc" | "oldest" | "newest" | "best-selling" | "stock-desc"
+type ProductSalesFields = SanPham & {
+  soLuongDaBan?: number | null
+  daBan?: number | null
+  sold?: number | null
+  totalSold?: number | null
+}
+
+function getSoldCount(product: SanPham) {
+  const p = product as ProductSalesFields
+  return p.soLuongDaBan ?? p.daBan ?? p.sold ?? p.totalSold ?? 0
+}
+
+function HoverDropdown({
+  label,
+  value,
+  options,
+  width = "w-48",
+  onChange,
+}: {
+  label: string
+  value: string
+  options: Array<{ value: string; label: string }>
+  width?: string
+  onChange: (value: string) => void
+}) {
+  const selected = options.find((option) => option.value === value)
+
+  return (
+    <div className={`group relative ${width}`}>
+      <button
+        type="button"
+        className="flex h-12 w-full items-center justify-between rounded-full border border-stone-200 bg-white px-5 text-left text-sm text-stone-700 outline-none transition group-hover:border-stone-400"
+        aria-haspopup="listbox"
+      >
+        <span className="truncate">{selected?.label ?? label}</span>
+        <ChevronDownIcon className="size-4 text-stone-400 transition-transform duration-200 group-hover:rotate-180 group-hover:text-stone-700" />
+      </button>
+
+      <div className="invisible absolute left-0 top-full z-30 mt-2 w-full translate-y-1 rounded-2xl border border-stone-200 bg-white py-2 opacity-0 shadow-[0_18px_50px_-20px_rgba(28,25,23,0.35)] transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => onChange(option.value)}
+            className={`block w-full px-4 py-2.5 text-left text-sm transition ${
+              value === option.value
+                ? "bg-stone-100 font-medium text-stone-950"
+                : "text-stone-700 hover:bg-stone-50 hover:text-stone-950"
+            }`}
+            role="option"
+            aria-selected={value === option.value}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function DanhMucPage({ params }: { params: Promise<{ key: string }> }) {
   const { key } = use(params)
   const section = CATEGORY_SECTIONS.find((s) => s.key === key)
@@ -52,9 +102,9 @@ export default function DanhMucPage({ params }: { params: Promise<{ key: string 
   const [products, setProducts] = useState<SanPham[]>([])
   const [loading, setLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState<NguoiDung | null>(null)
-  const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
 
-  const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc">("default")
+  // Filter states
+  const [sortBy, setSortBy] = useState<SortOption>("default")
   const [selectedColors, setSelectedColors] = useState<string[]>([])
   const [selectedSizes, setSelectedSizes] = useState<string[]>([])
   const [priceMin, setPriceMin] = useState("")
@@ -80,7 +130,7 @@ export default function DanhMucPage({ params }: { params: Promise<{ key: string 
 
   if (!section) {
     return (
-      <div className="flex min-h-svh items-center justify-center bg-[#faf9f7]">
+      <div className="flex min-h-svh items-center justify-center bg-white">
         <p className="text-stone-400">Danh mục không tồn tại.</p>
       </div>
     )
@@ -88,6 +138,7 @@ export default function DanhMucPage({ params }: { params: Promise<{ key: string 
 
   const sectionProducts = getProductsForSection(products, section) as SanPham[]
 
+  // Lấy màu sắc & kích cỡ unique
   const colors = Array.from(new Set(
     sectionProducts.flatMap((p) =>
       (p.mauSac ?? "").split(",").map((c) => c.trim()).filter(Boolean)
@@ -99,6 +150,7 @@ export default function DanhMucPage({ params }: { params: Promise<{ key: string 
     )
   ))
 
+  // Áp dụng filter
   let filtered = [...sectionProducts]
   if (selectedColors.length > 0) {
     filtered = filtered.filter((p) =>
@@ -114,13 +166,13 @@ export default function DanhMucPage({ params }: { params: Promise<{ key: string 
   if (priceMax) filtered = filtered.filter((p) => p.gia <= Number(priceMax))
   if (sortBy === "price-asc") filtered.sort((a, b) => a.gia - b.gia)
   if (sortBy === "price-desc") filtered.sort((a, b) => b.gia - a.gia)
+  if (sortBy === "name-asc") filtered.sort((a, b) => a.tenSanPham.localeCompare(b.tenSanPham, "vi"))
+  if (sortBy === "name-desc") filtered.sort((a, b) => b.tenSanPham.localeCompare(a.tenSanPham, "vi"))
+  if (sortBy === "oldest") filtered.sort((a, b) => a.maSanPham - b.maSanPham)
+  if (sortBy === "newest") filtered.sort((a, b) => b.maSanPham - a.maSanPham)
+  if (sortBy === "best-selling") filtered.sort((a, b) => getSoldCount(b) - getSoldCount(a) || b.maSanPham - a.maSanPham)
+  if (sortBy === "stock-desc") filtered.sort((a, b) => b.soLuongTon - a.soLuongTon)
 
-  function toggleColor(c: string) {
-    setSelectedColors((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c])
-  }
-  function toggleSize(s: string) {
-    setSelectedSizes((prev) => prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s])
-  }
   function resetFilters() {
     setSortBy("default")
     setSelectedColors([])
@@ -130,299 +182,322 @@ export default function DanhMucPage({ params }: { params: Promise<{ key: string 
   }
 
   const hasActiveFilter = sortBy !== "default" || selectedColors.length > 0 || selectedSizes.length > 0 || priceMin || priceMax
+  const priceRangeValue =
+    priceMin === "" && priceMax === "" ? "all" :
+    priceMin === "" && priceMax === "500000" ? "under-500" :
+    priceMin === "500000" && priceMax === "1000000" ? "500-1000" :
+    priceMin === "1000000" && priceMax === "2000000" ? "1000-2000" :
+    priceMin === "2000000" && priceMax === "" ? "over-2000" :
+    "custom"
+
+  function setPriceRange(value: string) {
+    if (value === "under-500") { setPriceMin(""); setPriceMax("500000"); return }
+    if (value === "500-1000") { setPriceMin("500000"); setPriceMax("1000000"); return }
+    if (value === "1000-2000") { setPriceMin("1000000"); setPriceMax("2000000"); return }
+    if (value === "over-2000") { setPriceMin("2000000"); setPriceMax(""); return }
+    setPriceMin("")
+    setPriceMax("")
+  }
+  const priceOptions = [
+    { value: "all", label: "Mức giá" },
+    { value: "under-500", label: "Dưới 500.000đ" },
+    { value: "500-1000", label: "500.000đ - 1.000.000đ" },
+    { value: "1000-2000", label: "1.000.000đ - 2.000.000đ" },
+    { value: "over-2000", label: "Trên 2.000.000đ" },
+  ]
+  const colorOptions = [
+    { value: "all", label: "Màu sắc" },
+    ...colors.map((color) => ({ value: color, label: color })),
+  ]
+  const sizeOptions = [
+    { value: "all", label: "Kích thước" },
+    ...sizes.map((size) => ({ value: size, label: size })),
+  ]
+  const sortOptions: Array<{ value: SortOption; label: string }> = [
+    { value: "default", label: "Sắp xếp" },
+    { value: "price-asc", label: "Giá: Tăng dần" },
+    { value: "price-desc", label: "Giá: Giảm dần" },
+    { value: "name-asc", label: "Tên: A-Z" },
+    { value: "name-desc", label: "Tên: Z-A" },
+    { value: "oldest", label: "Cũ nhất" },
+    { value: "newest", label: "Mới nhất" },
+    { value: "best-selling", label: "Bán chạy nhất" },
+    { value: "stock-desc", label: "Tồn kho giảm dần" },
+  ]
 
   return (
-    <main className="min-h-svh bg-[#faf9f7] text-stone-900 antialiased">
-      {/* Navigation */}
-      <header className="sticky top-0 z-50 border-b border-stone-200/50 bg-white/90 backdrop-blur-xl">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-200 via-rose-100 to-violet-200 shadow-sm ring-1 ring-white/80">
-              <span className="font-heading text-base font-bold text-stone-800">V</span>
-            </div>
-            <span className="font-heading hidden text-base font-semibold tracking-[0.12em] text-stone-900 sm:block">VISILK</span>
-          </Link>
+    <main className="min-h-svh bg-white text-stone-900 antialiased">
 
-          <div className="flex items-center gap-2">
-            <SearchBar />
-            <CartIcon />
+      {/* Top bar */}
+      <div className="border-b border-stone-200 bg-stone-100">
+        <div className="flex w-full items-center justify-between px-20 py-[2px]">
+          <div className="hidden items-center gap-0 sm:flex">
+            {[
+              { label: "VỀ VISILK", href: "/#about" },
+              { label: "LOCAL BRAND", href: "/#collection" },
+              { label: "CÂU CHUYỆN VẢI LỤA VIỆT", href: "/#about" },
+            ].map((item, i) => (
+              <span key={item.label} className="flex items-center">
+                {i > 0 && <span className="mx-3 text-stone-300">|</span>}
+                <Link
+                  href={item.href}
+                  className="text-[11px] font-semibold tracking-[0.18em] text-stone-500 transition hover:text-stone-800"
+                >
+                  {item.label}
+                </Link>
+              </span>
+            ))}
+          </div>
+
+          <div className="ml-auto flex items-center gap-4">
             {currentUser ? (
-              <UserMenu initialUser={currentUser} />
+              <div className="flex items-center gap-3">
+                {(currentUser.maVaiTro === 1 || currentUser.maVaiTro === 2) && (
+                  <>
+                    <Link href="/dashboard" className="text-[11px] font-semibold tracking-[0.18em] text-stone-500 transition hover:text-stone-800">
+                      QUẢN TRỊ
+                    </Link>
+                    <span className="text-stone-300">|</span>
+                  </>
+                )}
+                <span className="text-[11px] font-semibold tracking-[0.18em] text-stone-500">
+                  {currentUser.hoTen?.trim() || currentUser.tenDangNhap}
+                </span>
+              </div>
             ) : (
-              <>
-                <Button asChild size="sm" variant="ghost" className="rounded-full px-4 text-stone-600 hover:bg-white/80">
-                  <Link href="/login">Đăng nhập</Link>
-                </Button>
-                <Button asChild size="sm" className="rounded-full bg-stone-900 px-5 text-white hover:bg-stone-800">
-                  <Link href="/signup">Tham gia</Link>
-                </Button>
-              </>
+              <div className="flex items-center gap-3">
+                <Link href="/login" className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.18em] text-stone-500 transition hover:text-stone-800">
+                  <UserIcon className="size-3" />
+                  ĐĂNG NHẬP
+                </Link>
+                <span className="text-stone-300">|</span>
+                <Link href="/signup" className="text-[11px] font-semibold tracking-[0.18em] text-stone-500 transition hover:text-stone-800">
+                  ĐĂNG KÝ
+                </Link>
+              </div>
             )}
           </div>
-        </nav>
-      </header>
+        </div>
+      </div>
 
-      {/* Hero banner - full width */}
-      <div className="relative w-screen -ml-4 sm:-ml-6 lg:-ml-8" style={{ width: "calc(100vw)" }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-900/80 via-stone-900/40 to-transparent z-10" />
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl backdrop-saturate-150">
+        <div className="border-b border-stone-200/50">
+          <nav className="relative flex w-full items-center px-20 py-3.5">
+            <Link href="/" className="group flex shrink-0 items-center gap-2.5">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <circle cx="18" cy="18" r="17" stroke="url(#logo-ring-list)" strokeWidth="1.2" />
+                <path d="M18 7 L27 18 L18 29 L9 18 Z" fill="url(#logo-diamond-list)" opacity="0.15" />
+                <path d="M11.5 13.5 L18 23 L24.5 13.5" stroke="url(#logo-v-list)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                <circle cx="18" cy="23" r="1.2" fill="url(#logo-dot-list)" />
+                <defs>
+                  <linearGradient id="logo-ring-list" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#d97706" /><stop offset="100%" stopColor="#9333ea" />
+                  </linearGradient>
+                  <linearGradient id="logo-diamond-list" x1="9" y1="7" x2="27" y2="29" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#fbbf24" /><stop offset="100%" stopColor="#a855f7" />
+                  </linearGradient>
+                  <linearGradient id="logo-v-list" x1="11.5" y1="13.5" x2="24.5" y2="23" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#b45309" /><stop offset="100%" stopColor="#7c3aed" />
+                  </linearGradient>
+                  <linearGradient id="logo-dot-list" x1="16.8" y1="21.8" x2="19.2" y2="24.2" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#d97706" /><stop offset="100%" stopColor="#9333ea" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <span className="select-none font-heading text-[1.35rem] font-semibold tracking-[0.18em] text-stone-900 transition-colors group-hover:text-stone-700">
+                VI<span className="bg-gradient-to-r from-amber-700 to-violet-600 bg-clip-text text-transparent">SILK</span>
+              </span>
+            </Link>
+
+            <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
+              {[
+                { href: "/danh-muc/ao-dai", label: "Áo Dài" },
+                { href: "/danh-muc/non-la", label: "Nón Lá" },
+                { href: "/danh-muc/tui", label: "Túi" },
+                { href: "/danh-muc/giay", label: "Giày" },
+                { href: "/danh-muc/trang-suc-khan-lua", label: "Trang Sức" },
+                { href: "/danh-muc/trang-suc-khan-lua", label: "Khăn Lụa" },
+                { href: "/mix-match", label: "✨ Mix & Match" },
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="relative px-3 py-1.5 text-sm font-medium text-stone-500 transition-colors hover:text-stone-900 after:absolute after:bottom-0 after:left-3 after:right-3 after:h-[1.5px] after:origin-left after:scale-x-0 after:bg-stone-900 after:transition-transform after:duration-300 hover:after:scale-x-100"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="ml-auto flex shrink-0 items-center gap-1">
+              <SearchBar />
+              <CartIcon />
+              {currentUser && <UserMenu initialUser={currentUser} />}
+            </div>
+          </nav>
+        </div>
+      </header>
+      {/* Hero banner ảnh danh mục */}
+      <div className="relative w-full overflow-hidden">
         <img src={section.image} alt={section.label} className="block w-full object-cover" />
-        <div className="absolute inset-0 z-10 flex flex-col justify-center px-6 sm:px-12 lg:px-16">
-          <div className="flex items-center gap-2 text-xs text-white/50 mb-2">
-            <Link href="/" className="hover:text-white/80 transition">Trang chủ</Link>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 sm:px-10">
+          <div className="mb-1.5 flex items-center gap-1.5 text-xs text-white/60">
             <ChevronRightIcon className="size-3" />
-            <span className="text-white/80">{section.label}</span>
+            <span className="text-white/90">{section.label}</span>
           </div>
-          <h1 className="font-heading text-3xl sm:text-5xl font-semibold tracking-tight text-white">
+          <h1 className="font-sans text-3xl font-[450] uppercase tracking-widest text-white drop-shadow sm:text-4xl">
             {section.label}
           </h1>
-          <p className="mt-1.5 text-sm text-white/60 max-w-xl">
-            Khám phá bộ sưu tập {section.label.toLowerCase()} tinh tế, được chế tác từ những chất liệu cao cấp nhất
-          </p>
         </div>
       </div>
 
       {/* Body */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex gap-8 lg:gap-12">
-          {/* ── Sidebar ── */}
-          <aside className="hidden lg:block w-64 shrink-0">
-            <div className="sticky top-24 space-y-6">
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <SlidersHorizontalIcon className="size-4 text-stone-400" />
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">Bộ lọc</span>
-                </div>
-                {hasActiveFilter && (
-                  <button onClick={resetFilters} className="text-[11px] text-stone-400 underline underline-offset-2 hover:text-stone-700 transition">
-                    Xóa
-                  </button>
-                )}
-              </div>
-              <div className="h-px bg-gradient-to-r from-stone-200/80 via-stone-200 to-transparent" />
-
-              {/* Sort */}
-              <div className="space-y-3">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500">Sắp xếp</p>
-                <div className="space-y-0.5">
-                  {[
-                    { value: "default", label: "Mặc định" },
-                    { value: "price-asc", label: "Giá: Thấp → Cao" },
-                    { value: "price-desc", label: "Giá: Cao → Thấp" },
-                  ].map((opt) => (
-                    <button key={opt.value} onClick={() => setSortBy(opt.value as typeof sortBy)}
-                      className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all ${
-                        sortBy === opt.value
-                          ? "bg-stone-100 text-stone-900 font-medium"
-                          : "text-stone-500 hover:bg-stone-50 hover:text-stone-800"
-                      }`}>
-                      <span className={`size-1.5 rounded-full transition-all ${sortBy === opt.value ? "bg-stone-900" : "bg-transparent group-hover:bg-stone-300"}`} />
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="h-px bg-gradient-to-r from-stone-200/80 via-stone-200 to-transparent" />
-
-              {/* Price range */}
-              <div className="space-y-3">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500">Khoảng giá</p>
-                <div className="space-y-2.5">
-                  <div className="relative">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-stone-400">₫</span>
-                    <input type="number" placeholder="Từ" value={priceMin} onChange={(e) => setPriceMin(e.target.value)}
-                      className="w-full h-9 rounded-lg border border-stone-200 bg-white/80 px-3 pl-6 text-sm text-stone-700 outline-none transition placeholder:text-stone-300 focus:border-stone-400 focus:bg-white" />
-                  </div>
-                  <div className="relative">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-stone-400">₫</span>
-                    <input type="number" placeholder="Đến" value={priceMax} onChange={(e) => setPriceMax(e.target.value)}
-                      className="w-full h-9 rounded-lg border border-stone-200 bg-white/80 px-3 pl-6 text-sm text-stone-700 outline-none transition placeholder:text-stone-300 focus:border-stone-400 focus:bg-white" />
-                  </div>
-                </div>
-              </div>
-              <div className="h-px bg-gradient-to-r from-stone-200/80 via-stone-200 to-transparent" />
-
-              {/* Colors */}
-              {colors.length > 0 && (
-                <>
-                  <div className="space-y-3">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500">Màu sắc</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {colors.map((color) => (
-                        <button key={color} onClick={() => toggleColor(color)}
-                          className={`rounded-lg border px-2.5 py-1.5 text-[11px] font-medium transition-all ${
-                            selectedColors.includes(color)
-                              ? "border-stone-900 bg-stone-900 text-white shadow-sm"
-                              : "border-stone-200 bg-white/80 text-stone-600 hover:border-stone-400 hover:bg-white"
-                          }`}>
-                          {color}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="h-px bg-gradient-to-r from-stone-200/80 via-stone-200 to-transparent" />
-                </>
-              )}
-
-              {/* Sizes */}
-              {sizes.length > 0 && (
-                <div className="space-y-3">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500">Kích cỡ</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {sizes.map((size) => (
-                      <button key={size} onClick={() => toggleSize(size)}
-                        className={`flex h-8 min-w-[2.25rem] items-center justify-center rounded-lg border px-2 text-[11px] font-medium transition-all ${
-                          selectedSizes.includes(size)
-                            ? "border-stone-900 bg-stone-900 text-white shadow-sm"
-                            : "border-stone-200 bg-white/80 text-stone-600 hover:border-stone-400 hover:bg-white"
-                        }`}>
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </aside>
-
-          {/* ── Product grid ── */}
-          <div className="flex-1 min-w-0">
-            {/* Toolbar */}
-            <div className="mb-6 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Link href="/" className="flex h-8 w-8 items-center justify-center rounded-full border border-stone-200 bg-white/80 text-stone-400 hover:border-stone-400 hover:text-stone-700 transition shadow-sm">
-                  <ArrowLeftIcon className="size-3.5" />
-                </Link>
-                <div>
-                  <p className="text-xs text-stone-400">
-                    <span className="font-semibold text-stone-700">{filtered.length}</span> sản phẩm
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Mobile filter button */}
-                <button onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-                  className="lg:hidden flex h-8 items-center gap-1.5 rounded-full border border-stone-200 bg-white/80 px-3 text-xs text-stone-600 hover:border-stone-400 transition shadow-sm">
-                  <SlidersHorizontalIcon className="size-3" />
-                  Lọc
-                </button>
-              </div>
+      <div className="mx-auto max-w-7xl px-2 py-10 sm:px-4 lg:px-6">
+        <div className="mb-6 flex justify-center">
+          <div className="flex w-full max-w-6xl flex-wrap items-center justify-center gap-4 border-b border-stone-100 pb-6">
+            <div className="flex items-center gap-2 pr-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">
+              <FilterIcon className="size-4 text-stone-400" />
+              Bộ lọc
             </div>
 
-            {/* Mobile filter panel */}
-            {mobileFilterOpen && (
-              <div className="lg:hidden mb-6 rounded-2xl border border-stone-200 bg-white/90 p-5 shadow-sm space-y-5">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">Bộ lọc</span>
-                  {hasActiveFilter && <button onClick={resetFilters} className="text-[11px] text-stone-400 underline hover:text-stone-700">Xóa</button>}
-                </div>
+            <HoverDropdown
+              label="Mức giá"
+              value={priceRangeValue}
+              options={priceOptions}
+              width="w-56"
+              onChange={setPriceRange}
+            />
 
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500 mb-2">Sắp xếp</p>
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      { value: "default", label: "Mặc định" },
-                      { value: "price-asc", label: "Giá ↑" },
-                      { value: "price-desc", label: "Giá ↓" },
-                    ].map((opt) => (
-                      <button key={opt.value} onClick={() => setSortBy(opt.value as typeof sortBy)}
-                        className={`rounded-full border px-3 py-1 text-xs transition ${
-                          sortBy === opt.value ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 text-stone-600"
-                        }`}>
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+            <HoverDropdown
+              label="Màu sắc"
+              value={selectedColors[0] ?? "all"}
+              options={colorOptions}
+              width="w-48"
+              onChange={(value) => setSelectedColors(value === "all" ? [] : [value])}
+            />
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500 mb-2">Giá từ</p>
-                    <input type="number" placeholder="₫ Từ" value={priceMin} onChange={(e) => setPriceMin(e.target.value)}
-                      className="w-full h-9 rounded-lg border border-stone-200 bg-white/80 px-3 text-sm outline-none focus:border-stone-400" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500 mb-2">Giá đến</p>
-                    <input type="number" placeholder="₫ Đến" value={priceMax} onChange={(e) => setPriceMax(e.target.value)}
-                      className="w-full h-9 rounded-lg border border-stone-200 bg-white/80 px-3 text-sm outline-none focus:border-stone-400" />
-                  </div>
-                </div>
+            <HoverDropdown
+              label="Kích thước"
+              value={selectedSizes[0] ?? "all"}
+              options={sizeOptions}
+              width="w-48"
+              onChange={(value) => setSelectedSizes(value === "all" ? [] : [value])}
+            />
 
-                {colors.length > 0 && (
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500 mb-2">Màu sắc</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {colors.map((color) => (
-                        <button key={color} onClick={() => toggleColor(color)}
-                          className={`rounded-lg border px-2.5 py-1.5 text-[11px] font-medium transition ${
-                            selectedColors.includes(color) ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 text-stone-600"
-                          }`}>
-                          {color}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+            <HoverDropdown
+              label="Sắp xếp"
+              value={sortBy}
+              options={sortOptions}
+              width="w-56"
+              onChange={(value) => setSortBy(value as SortOption)}
+            />
 
-                {sizes.length > 0 && (
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500 mb-2">Kích cỡ</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {sizes.map((size) => (
-                        <button key={size} onClick={() => toggleSize(size)}
-                          className={`flex h-8 min-w-[2.25rem] items-center justify-center rounded-lg border px-2 text-[11px] font-medium transition ${
-                            selectedSizes.includes(size) ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 text-stone-600"
-                          }`}>
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <Button onClick={() => setMobileFilterOpen(false)} className="w-full rounded-xl bg-stone-900 text-white text-sm hover:bg-stone-800">
-                  Áp dụng
-                </Button>
-              </div>
-            )}
-
-            {/* Loading / Empty / Grid */}
-            {loading ? (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 gap-y-6">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i}>
-                    <div className="aspect-[3/4] animate-pulse rounded-2xl bg-stone-100" />
-                    <div className="mt-3 space-y-2">
-                      <div className="h-3 w-16 animate-pulse rounded-full bg-stone-100" />
-                      <div className="h-4 w-3/4 animate-pulse rounded-full bg-stone-100" />
-                      <div className="h-4 w-1/3 animate-pulse rounded-full bg-stone-100" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filtered.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-stone-100">
-                  <ShoppingBagIcon className="size-8 text-stone-300" strokeWidth={1} />
-                </div>
-                <h3 className="text-lg font-semibold text-stone-700">Không có sản phẩm</h3>
-                <p className="mt-1 max-w-xs text-sm text-stone-400">Không tìm thấy sản phẩm phù hợp với bộ lọc của bạn.</p>
-                {hasActiveFilter && (
-                  <button onClick={resetFilters} className="mt-4 rounded-full bg-stone-900 px-6 py-2 text-xs font-medium text-white hover:bg-stone-800 transition">
-                    Xóa bộ lọc
-                  </button>
-                )}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 gap-y-7">
-                {filtered.map((product, idx) => (
-                  <ProductCard key={product.maSanPham} product={product} index={idx} />
-                ))}
-              </div>
+            {hasActiveFilter && (
+              <button
+                onClick={resetFilters}
+                className="flex h-12 w-12 items-center justify-center rounded-full border border-stone-200 text-stone-400 transition hover:border-stone-400 hover:bg-stone-50 hover:text-stone-900"
+                aria-label="Xóa bộ lọc"
+                title="Xóa bộ lọc"
+              >
+                <XIcon className="size-4" />
+              </button>
             )}
           </div>
         </div>
+
+        <div className="mb-6 flex items-center justify-between border-b border-stone-100 pb-4">
+          <p className="text-sm text-stone-400">
+            <span className="font-medium text-stone-800">{filtered.length}</span> sản phẩm
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 sm:gap-5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="aspect-[4/5] animate-pulse rounded-lg bg-stone-100" />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="flex h-60 flex-col items-center justify-center gap-3 text-stone-400">
+            <ShoppingBagIcon className="size-10" strokeWidth={1} />
+            <p className="text-sm">Không có sản phẩm phù hợp</p>
+            {hasActiveFilter && (
+              <button
+                onClick={resetFilters}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 text-stone-400 transition hover:border-stone-400 hover:text-stone-800"
+                aria-label="Xóa bộ lọc"
+                title="Xóa bộ lọc"
+              >
+                <XIcon className="size-4" />
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 sm:gap-5">
+            {filtered.map((product, idx) => (
+              <ProductCard key={product.maSanPham} product={product} index={idx} />
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-stone-200/60 bg-white py-14 text-stone-700">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-10 md:grid-cols-4 md:gap-8">
+            <div className="space-y-4 md:col-span-1">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-200 via-rose-100 to-violet-200 shadow-sm ring-1 ring-white">
+                  <span className="font-heading text-sm font-bold text-stone-800">V</span>
+                </div>
+                <span className="font-heading text-lg font-semibold tracking-[0.15em] text-stone-900">VISILK</span>
+              </div>
+              <p className="max-w-xs text-sm leading-relaxed text-stone-500">
+                Không gian mua sắm dành cho người yêu cái đẹp có gu, nhẹ nhàng, sang trọng, luôn chào đón bạn.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-400">Danh mục</h3>
+              <ul className="mt-4 space-y-2.5 text-sm">
+                {[
+                  { key: "ao-dai", label: "Áo Dài" },
+                  { key: "non-la", label: "Nón Lá" },
+                  { key: "tui", label: "Túi" },
+                  { key: "giay", label: "Giày" },
+                  { key: "trang-suc-khan-lua", label: "Trang Sức & Khăn Lụa" },
+                ].map((s) => (
+                  <li key={s.key}>
+                    <Link href={`/danh-muc/${s.key}`} className="text-stone-600 transition hover:text-stone-900">{s.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-400">Tài khoản</h3>
+              <ul className="mt-4 space-y-2.5 text-sm">
+                <li><Link href="/login" className="text-stone-600 transition hover:text-stone-900">Đăng nhập</Link></li>
+                <li><Link href="/signup" className="text-stone-600 transition hover:text-stone-900">Đăng ký</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-400">Liên hệ</h3>
+              <p className="mt-4 flex items-start gap-2 text-sm text-stone-600">
+                <MapPinIcon className="mt-0.5 size-4 shrink-0 text-stone-400" />
+                Hà Nội, Việt Nam
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-stone-200/80 pt-8 text-center sm:flex-row sm:text-left">
+            <p className="text-xs text-stone-500">© {new Date().getFullYear()} ViSilk. Giữ lại mọi vẻ đẹp bạn chọn.</p>
+            <p className="text-xs text-stone-400">Next.js · Spring Boot</p>
+          </div>
+        </div>
+      </footer>
     </main>
   )
 }
@@ -432,70 +507,44 @@ function ProductCard({ product, index }: { product: SanPham; index: number }) {
   const hoverSrc = productImageSrc(product.hinhAnh2)
   const hasHoverImage = Boolean(src && hoverSrc && hoverSrc !== src)
   const grad = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length]
-  const [isWishlisted, setIsWishlisted] = useState(false)
 
   return (
-    <div className="group relative">
-      <Link href={`/san-pham/${product.maSanPham}`} className="block">
-        {/* Image */}
-        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-stone-50 shadow-[0_4px_16px_-6px_rgba(0,0,0,0.04)] transition-all duration-500 group-hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.10)]">
-          {src ? (
-            <>
-              <img src={src} alt={product.tenSanPham}
-                className="h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.06]" />
-              {hasHoverImage && (
-                <img src={hoverSrc!} alt="" aria-hidden="true"
-                  className="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-[1.06] group-hover:opacity-100" />
-              )}
-            </>
-          ) : (
-            <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${grad}`}>
-              <ShoppingBagIcon className="size-12 text-stone-300" strokeWidth={1} />
-            </div>
-          )}
-
-          {/* Gradient overlay */}
-          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/40 via-black/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-          {/* Quick actions on hover */}
-          <div className="absolute top-3 right-3 flex flex-col gap-1.5 opacity-0 translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
-            <button onClick={(e) => { e.preventDefault(); setIsWishlisted(!isWishlisted) }}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-sm hover:bg-white transition">
-              <HeartIcon className={`size-4 transition ${isWishlisted ? "fill-red-400 text-red-400" : "text-stone-500"}`} />
-            </button>
-          </div>
-
-          {/* Rating badge */}
-          <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-white/85 backdrop-blur-sm px-2 py-0.5 shadow-sm">
-            <StarIcon className="size-3 fill-amber-400 text-amber-400" />
-            <span className="text-[10px] font-semibold text-stone-700">4.5</span>
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="mt-3.5 px-0.5">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-stone-400">
-              {product.tenThuongHieu ?? "VISILK"}
-            </span>
-            <span className="size-1 rounded-full bg-stone-200" />
-            <span className="text-[10px] text-stone-400">{product.tenDanhMuc}</span>
-          </div>
-          <h3 className="mt-1 line-clamp-2 text-sm font-medium leading-snug text-stone-900 transition-colors duration-300 group-hover:text-stone-600">
-            {product.tenSanPham}
-          </h3>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-base font-semibold text-stone-950">
-              {formatCurrency(product.gia)}
-            </span>
-            {(product.soLuongTon ?? 0) <= 5 && (
-              <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[9px] font-medium text-rose-600 border border-rose-200">
-                Sắp hết
-              </span>
+    <Link href={`/san-pham/${product.maSanPham}`} className="group block">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-stone-100">
+        {src ? (
+          <>
+            <img
+              src={src}
+              alt={product.tenSanPham}
+              className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+            />
+            {hasHoverImage && (
+              <img
+                src={hoverSrc!}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 h-full w-full object-cover opacity-0 transition duration-700 ease-out group-hover:scale-[1.04] group-hover:opacity-100"
+              />
             )}
+          </>
+        ) : (
+          <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${grad}`}>
+            <ShoppingBagIcon className="size-10 text-stone-300" strokeWidth={1} />
           </div>
-        </div>
-      </Link>
-    </div>
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-black/0 transition duration-500 group-hover:bg-black/8" />
+      </div>
+      <div className="mt-3 px-0.5">
+        <p className="text-[11px] font-medium uppercase tracking-widest text-stone-400">
+          {product.tenThuongHieu ?? ""}
+        </p>
+        <h3 className="mt-0.5 line-clamp-2 text-sm font-medium leading-snug text-stone-900 transition-colors group-hover:text-stone-500">
+          {product.tenSanPham}
+        </h3>
+        <p className="mt-1.5 font-semibold text-stone-950">
+          {formatCurrency(product.gia)}
+        </p>
+      </div>
+    </Link>
   )
 }
