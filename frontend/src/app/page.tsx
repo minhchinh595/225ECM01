@@ -393,17 +393,15 @@ export default function Home() {
                       ))}
                     </div>
 
-                    {hasMore && (
-                      <div className="mt-6 flex justify-center">
-                        <Link
-                          href={`/danh-muc/${section.key}`}
-                          className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-6 py-2.5 text-sm font-medium text-stone-700 shadow-sm transition hover:border-stone-300 hover:bg-stone-50 hover:text-stone-900"
-                        >
-                          <ChevronDownIcon className="size-4" />
-                          Xem thêm
-                        </Link>
-                      </div>
-                    )}
+                    <div className="mt-5 flex justify-center">
+                      <Link
+                        href={`/danh-muc/${section.key}`}
+                        className="group inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/80 px-4 py-1.5 text-xs font-medium text-stone-500 shadow-sm transition-all duration-300 hover:border-stone-900/20 hover:bg-stone-900 hover:text-white hover:shadow-md"
+                      >
+                        Xem thêm
+                        <ChevronDownIcon className="size-3 transition-transform duration-300 group-hover:translate-y-0.5" />
+                      </Link>
+                    </div>
                   </>
                 )}
               </div>
