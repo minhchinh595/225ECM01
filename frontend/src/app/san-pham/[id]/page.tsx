@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { API_URL, getProductById, getProducts, addToCart, getReviewsByProduct, getReviewStats, createReview } from "@/lib/api"
+import { addToCart as addToLocalCart } from "@/lib/cart"
 import { getStoredUser } from "@/lib/auth"
 import type { NguoiDung, SanPham } from "@/lib/types"
 import type { DanhGia } from "@/lib/api"
@@ -28,6 +29,11 @@ function imgSrc(hinhAnh?: string | null): string | null {
 
 function fmt(v: number) {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(v)
+}
+
+type ProductAttribute = {
+  label: string
+  value: string
 }
 
 // ── Skeleton ──────────────────────────────────────────────────
@@ -119,9 +125,10 @@ export default function SanPhamDetailPage() {
   const [related, setRelated] = useState<SanPham[]>([])
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
-  const [currentUser, setCurrentUser] = useState<NguoiDung | null>(null)
+  const [currentUser] = useState<NguoiDung | null>(() => getStoredUser())
   const [wishlisted, setWishlisted] = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
+  const [cartError, setCartError] = useState("")
   const [qty, setQty] = useState(1)
   const [reviews, setReviews] = useState<DanhGia[]>([])
   const [reviewStats, setReviewStats] = useState({ average: 0, total: 0 })
@@ -134,8 +141,6 @@ export default function SanPhamDetailPage() {
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [zoomOpen, setZoomOpen] = useState(false)
 
-  useEffect(() => { setCurrentUser(getStoredUser()) }, [])
-
   useEffect(() => {
     if (!id) return
     Promise.all([
@@ -146,7 +151,14 @@ export default function SanPhamDetailPage() {
 
   useEffect(() => {
     if (!id) return
-    setLoading(true); setNotFound(false); setAddedToCart(false); setQty(1); setActiveImageIndex(0)
+    queueMicrotask(() => {
+      setLoading(true)
+      setNotFound(false)
+      setAddedToCart(false)
+      setCartError("")
+      setQty(1)
+      setActiveImageIndex(0)
+    })
     Promise.all([getProductById(id), getProducts()])
       .then(([p, all]) => {
         setProduct(p)
@@ -627,7 +639,7 @@ export default function SanPhamDetailPage() {
                       label: "Tồn kho",
                       value: inStock ? `${product.soLuongTon} cái` : "Hết hàng",
                     },
-                  ].filter(Boolean).map((attr: any, i) => (
+                  ].filter((attr): attr is ProductAttribute => Boolean(attr)).map((attr, i) => (
                     <div
                       key={attr.label}
                       className="px-5 py-4"
@@ -691,12 +703,26 @@ export default function SanPhamDetailPage() {
                   onClick={async () => {
                     if (!currentUser) { router.push("/login"); return }
                     try {
+                      setCartError("")
                       setAddedToCart(true)
                       await addToCart(currentUser.maNguoiDung, { maSanPham: product.maSanPham, soLuong: qty })
                       window.dispatchEvent(new Event("cart-updated"))
                       router.push("/gio-hang")
-                    } catch {
-                      setAddedToCart(false)
+                    } catch (error) {
+                      try {
+                        addToLocalCart({
+                          maSanPham: product.maSanPham,
+                          tenSanPham: product.tenSanPham,
+                          gia: product.gia,
+                          hinhAnh: product.hinhAnh,
+                          tenThuongHieu: product.tenThuongHieu,
+                          soLuong: qty,
+                        })
+                        router.push("/gio-hang")
+                      } catch {
+                        setAddedToCart(false)
+                        setCartError(error instanceof Error ? error.message : "Thêm vào giỏ hàng thất bại")
+                      }
                     }
                   }}
                   style={{ opacity: inStock ? 1 : 0.4 }}
@@ -709,6 +735,9 @@ export default function SanPhamDetailPage() {
                     )}
                   </span>
                 </button>
+                {cartError && (
+                  <p className="-mt-2 mb-4 text-sm text-red-600">{cartError}</p>
+                )}
 
                 {/* Trust bar */}
                 <div className="grid grid-cols-3 border border-stone-200">
@@ -1004,7 +1033,7 @@ export default function SanPhamDetailPage() {
           )}
         </div>
       )}
-      <footer className="border-t border-stone-200/60 bg-white py-14 text-stone-700">
+      <footer className="border-t border-stone-200/60 bg-amber-50 py-14 text-stone-700">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 md:grid-cols-4 md:gap-8">
             <div className="space-y-4 md:col-span-1">
