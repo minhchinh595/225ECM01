@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ShoppingCartIcon } from "lucide-react"
 import { getCartCount as getLocalCartCount } from "@/lib/cart"
@@ -11,14 +11,7 @@ export function CartIcon() {
   const router = useRouter()
   const [count, setCount] = useState(0)
 
-  useEffect(() => {
-    updateCount()
-    const handler = () => updateCount()
-    window.addEventListener("cart-updated", handler)
-    return () => window.removeEventListener("cart-updated", handler)
-  }, [])
-
-  async function updateCount() {
+  const updateCount = useCallback(async () => {
     const user = getStoredUser()
     if (user) {
       try {
@@ -30,7 +23,14 @@ export function CartIcon() {
       }
     }
     setCount(getLocalCartCount())
-  }
+  }, [])
+
+  useEffect(() => {
+    void updateCount()
+    const handler = () => void updateCount()
+    window.addEventListener("cart-updated", handler)
+    return () => window.removeEventListener("cart-updated", handler)
+  }, [updateCount])
 
   function handleClick() {
     const user = getStoredUser()
