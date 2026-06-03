@@ -9,7 +9,8 @@ import { getStoredUser } from "@/lib/auth"
 import { UserMenu } from "@/components/user-menu"
 import { SearchBar } from "@/components/search-bar"
 import { CartIcon } from "@/components/cart-icon"
-import { ShoppingBagIcon, ChevronRightIcon, XIcon, UserIcon, MapPinIcon, FilterIcon, ChevronDownIcon } from "lucide-react"
+import { ShoppingBagIcon, ChevronRightIcon, XIcon, UserIcon, MapPinIcon, FilterIcon, ChevronDownIcon, StarIcon } from "lucide-react"
+import { getProductRating } from "@/lib/product-rating"
 
 const API_ORIGIN = API_URL.replace(/\/api\/?$/, "")
 
@@ -101,7 +102,7 @@ export default function DanhMucPage({ params }: { params: Promise<{ key: string 
 
   const [products, setProducts] = useState<SanPham[]>([])
   const [loading, setLoading] = useState(true)
-  const [currentUser, setCurrentUser] = useState<NguoiDung | null>(null)
+  const [currentUser] = useState<NguoiDung | null>(() => getStoredUser())
 
   // Filter states
   const [sortBy, setSortBy] = useState<SortOption>("default")
@@ -109,8 +110,6 @@ export default function DanhMucPage({ params }: { params: Promise<{ key: string 
   const [selectedSizes, setSelectedSizes] = useState<string[]>([])
   const [priceMin, setPriceMin] = useState("")
   const [priceMax, setPriceMax] = useState("")
-
-  useEffect(() => { setCurrentUser(getStoredUser()) }, [])
 
   useEffect(() => {
     let active = true
@@ -443,7 +442,7 @@ export default function DanhMucPage({ params }: { params: Promise<{ key: string 
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-stone-200/60 bg-white py-14 text-stone-700">
+      <footer className="border-t border-stone-200/60 bg-amber-50 py-14 text-stone-700">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 md:grid-cols-4 md:gap-8">
             <div className="space-y-4 md:col-span-1">
@@ -507,10 +506,15 @@ function ProductCard({ product, index }: { product: SanPham; index: number }) {
   const hoverSrc = productImageSrc(product.hinhAnh2)
   const hasHoverImage = Boolean(src && hoverSrc && hoverSrc !== src)
   const grad = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length]
+  const rating = getProductRating(product)
 
   return (
     <Link href={`/san-pham/${product.maSanPham}`} className="group block">
       <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-stone-100">
+        <div className="absolute left-2 top-2 z-10 inline-flex w-fit items-center gap-0.5 rounded-full bg-white px-1.5 py-0.5 text-[11px] font-semibold leading-none text-stone-900 shadow-sm ring-1 ring-stone-900/5">
+          <StarIcon className="size-3 shrink-0 fill-amber-400 text-amber-400" />
+          <span>{rating}</span>
+        </div>
         {src ? (
           <>
             <img

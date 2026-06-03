@@ -12,6 +12,7 @@ import {
   MapPinIcon,
   ChevronDownIcon,
   UserIcon,
+  StarIcon,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { getStoredUser } from "@/lib/auth"
@@ -29,6 +30,7 @@ function formatCurrency(value: number) {
 }
 
 import { productImageSrc } from "@/lib/product-image"
+import { getProductRating } from "@/lib/product-rating"
 
 // Cấu hình 6 section danh mục
 const CATEGORY_SECTIONS = [
@@ -86,13 +88,9 @@ export default function Home() {
   const [products, setProducts] = useState<SanPham[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-  const [currentUser, setCurrentUser] = useState<NguoiDung | null>(null)
+  const [currentUser] = useState<NguoiDung | null>(() => getStoredUser())
   const [reelOpen, setReelOpen] = useState(false)
   const [reelCategory, setReelCategory] = useState("ao-dai")
-
-  useEffect(() => {
-    setCurrentUser(getStoredUser())
-  }, [])
 
   useEffect(() => {
     let active = true
@@ -114,7 +112,8 @@ export default function Home() {
     return () => { active = false }
   }, [])
 
-  function getProductsForSection(section: typeof CATEGORY_SECTIONS[0]): SanPham[] {    return products.filter((p) => {
+  function getProductsForSection(section: { keywords: string[] }): SanPham[] {
+    return products.filter((p) => {
       const name = (p.tenDanhMuc ?? "").toLowerCase()
       return section.keywords.some((kw) => name.includes(kw))
     })
@@ -307,7 +306,7 @@ export default function Home() {
         key={reelCategory}
         products={products}
         sections={CATEGORY_SECTIONS}
-        getProductsForSection={getProductsForSection as any}
+        getProductsForSection={getProductsForSection}
         isOpen={reelOpen}
         initialCategory={reelCategory}
         onClose={() => setReelOpen(false)}
@@ -478,11 +477,16 @@ function ProductCard({ product, index }: { product: SanPham; index: number }) {
   const hoverSrc = productImageSrc(product.hinhAnh2)
   const hasHoverImage = Boolean(src && hoverSrc && hoverSrc !== src)
   const grad = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length]
+  const rating = getProductRating(product)
 
   return (
     <Link href={`/san-pham/${product.maSanPham}`} className="group block">
       {/* Ảnh */}
       <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-stone-100">
+        <div className="absolute left-2 top-2 z-10 inline-flex w-fit items-center gap-0.5 rounded-full bg-white px-1.5 py-0.5 text-[11px] font-semibold leading-none text-stone-900 shadow-sm ring-1 ring-stone-900/5">
+          <StarIcon className="size-3 shrink-0 fill-amber-400 text-amber-400" />
+          <span>{rating}</span>
+        </div>
         {src ? (
           <>
             <img
