@@ -413,7 +413,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-stone-200/60 bg-white py-14 text-stone-700">
+      <footer className="border-t border-stone-200/60 bg-amber-50 py-14 text-stone-700">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 md:grid-cols-4 md:gap-8">
             <div className="space-y-4 md:col-span-1">
