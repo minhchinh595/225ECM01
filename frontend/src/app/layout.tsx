@@ -8,6 +8,7 @@ import {
 } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
+import ChatBot from "@/components/chat-bot";
 import "./globals.css";
 
 const bodyFont = Be_Vietnam_Pro({
@@ -56,7 +57,10 @@ export default function RootLayout({
       className={`${bodyFont.variable} ${headingFont.variable} ${categoryFont.variable} ${bebasFont.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          {children}
+          <ChatBot />
+        </TooltipProvider>
         <Toaster position="bottom-right" richColors />
       </body>
     </html>
